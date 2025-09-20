@@ -10,46 +10,107 @@
   <script>tailwind.config={darkMode:'class'};</script>
   <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.10/dist/full.min.css" rel="stylesheet"/>
 
-  <!-- Inter + Material Symbols (discretos/inst.) -->
+  <!-- Inter + Material Symbols -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded" rel="stylesheet" />
   <meta name="color-scheme" content="light dark"/>
+
   <style>
-    :root { font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, "Helvetica Neue", Arial, "Apple Color Emoji","Segoe UI Emoji"; }
-    .brand-gradient { background: radial-gradient(1200px 600px at 0% 0%, rgba(7,89,133,.12), transparent 60%),
-                               radial-gradient(1200px 600px at 100% 0%, rgba(22,163,74,.12), transparent 60%); }
-    .glass { backdrop-filter: saturate(140%) blur(8px); background: color-mix(in oklab, var(--fallback-b1,oklch(1 0 0)) 70%, transparent); }
-    .ring-focus { box-shadow: 0 0 0 4px color-mix(in oklab, oklch(0.6 0.1 240) 55%, transparent); }
+    :root { font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, "Helvetica Neue", Arial; }
+    .brand-gradient { background: radial-gradient(1000px 500px at 0% 0%, rgba(7,89,133,.10), transparent 60%),
+                               radial-gradient(1000px 500px at 100% 0%, rgba(22,163,74,.10), transparent 60%); }
     .btn-quiet { @apply btn btn-sm md:btn-md rounded-xl; }
     .chip { @apply badge badge-outline rounded-xl text-xs; }
     .grid-colx { grid-template-columns: repeat(auto-fill,minmax(240px,1fr)); }
     .elev { box-shadow: 0 10px 30px rgba(2,6,23,.10); }
     .sticky-actions { position: sticky; bottom: 0; z-index: 50; }
     .kbd { @apply px-2 py-[2px] border rounded text-[11px] opacity-70; }
-    .card-sel { outline: 2px solid color-mix(in oklab, oklch(0.6 0.1 240) 55%, transparent); outline-offset: 0; }
-  </style>
+    .card-sel { outline: 2px solid rgba(37,99,235,.55); outline-offset: 0; }
 
-  <!-- Google Identity Services (Login con Google) -->
+    /* Toploader azul institucional */
+    #topLoader{ position:fixed; inset:0 0 auto 0; height:3px; width:0; z-index:2147483647;
+      background: linear-gradient(90deg,#1767ff,#00069a); box-shadow:0 0 12px rgba(23,103,255,.35); transform: translateZ(0); }
+    #topLoader::after{ content:""; position:absolute; inset:0;
+      background: linear-gradient(120deg,transparent,rgba(255,255,255,.6),transparent);
+      background-size:200% 100%; animation: loaderBarShine 1s linear infinite; mix-blend-mode: screen; }
+    .loader-fade{ transition:opacity .4s ease; opacity:0; }
+    @keyframes loaderBarShine{ to{ background-position:-200% 0; } }
+
+    /* Loader “light” con blur suave */
+    #loginLoader{
+      position:fixed; inset:0; z-index:2147483000; display:flex; align-items:center; justify-content:center;
+      background: rgba(15,23,42,.35); /* blur suave */
+      backdrop-filter: blur(6px);
+      transition: opacity .5s ease-out;
+    }
+    .login-animate-pulse{ animation: lpulse 1.6s cubic-bezier(.4,0,.6,1) infinite; }
+    .login-animate-spin-slow{ animation: lspin 3s linear infinite; }
+    .login-fade-out{ animation: lfade .5s ease-out forwards; }
+    @keyframes lpulse { 0%,100%{transform:scale(1);opacity:1} 50%{transform:scale(1.04);opacity:.9} }
+    @keyframes lspin { to { transform: rotate(360deg); } }
+    @keyframes lfade { to { opacity:0; visibility:hidden; } }
+
+    #loginLoader .loader { width:120px; height:18px; display:grid; margin:12px auto 0; }
+    #loginLoader .loader::before, #loginLoader .loader::after{
+      content:""; grid-area:1/1; --c:no-repeat linear-gradient(#1767ff 0 0);
+      background:var(--c),var(--c),var(--c);
+      animation:l16-1 2s infinite linear, l16-2 2s infinite linear;
+      transform: scale(var(--s,-1)) translate(3px,3px);
+    }
+    #loginLoader .loader::after{ --s:1; }
+    @keyframes l16-1{
+      0%,3%{background-size:0 4px,4px 0,0 4px}
+      16.67%{background-size:100% 4px,4px 0,0 4px}
+      33.33%{background-size:100% 4px,4px 100%,0 4px}
+      46%,54%{background-size:100% 4px,4px 100%,100% 4px}
+      66.67%{background-size:0 4px,4px 100%,100% 4px}
+      83.33%{background-size:0 4px,4px 0,100% 4px}
+      96%,100%{background-size:0 4px,4px 0,0 4px}
+    }
+    @keyframes l16-2{
+      0%,49.9%{background-position:0 0,100% 0,100% 100%}
+      50%,100%{background-position:100% 0,100% 100%,0 100%}
+    }
+  </style>
+  <style>
+  /* resalta la opción activa */
+  .dropdown .menu .active { background: rgb(226 232 240 / .6); border-radius: .5rem; font-weight: 600; }
+</style>
+
+  <!-- Google Identity Services -->
   <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body class="min-h-full bg-base-200 text-base-content">
-  <!-- Header institucional -->
+
+  <!-- Toploader -->
+  <div id="topLoader" hidden></div>
+
+  <!-- Loader light con fondo blur e imagen de /static/img -->
+  <div id="loginLoader" aria-hidden="true">
+    <div class="text-center">
+      <div class="relative w-56 h-56 mx-auto mb-4">
+        <img src="/static/img/logo2.png" alt="DGSP" class="w-full h-full object-contain login-animate-pulse">
+        <div class="absolute -top-2 -left-2 w-12 h-12 rounded-full bg-blue-500/20 login-animate-spin-slow"></div>
+        <div class="absolute -bottom-2 -right-2 w-10 h-10 rounded-full bg-purple-500/20 login-animate-spin-slow" style="animation-direction:reverse"></div>
+      </div>
+      <p class="text-base-content/90 text-lg font-semibold">Cargando Candidatos</p>
+      <div class="loader"></div>
+    </div>
+  </div>
+
+  <!-- Header -->
   <header class="brand-gradient border-b border-base-300">
     <div class="max-w-7xl mx-auto px-4 md:px-8 py-4 flex items-center justify-between">
       <div class="flex items-center gap-3">
-        <div class="size-11 md:size-12 grid place-items-center rounded-2xl bg-primary text-primary-content font-extrabold elev">
-          <span class="text-xl">V</span>
-        </div>
+        <img src="/static/img/logo2.png" alt="Logo" class="h-10 w-auto hidden sm:block">
         <div>
           <h1 class="text-xl md:text-2xl font-extrabold leading-tight">Votación 2025 — Persona Servidora Pública Honesta</h1>
-          <p class="text-xs md:text-sm opacity-70">Seleccione exactamente <b>1 mujer</b> y <b>1 hombre</b>. Voto único por persona.</p>
+          <p class="text-xs md:text-sm opacity-70">Elige exactamente <b>1 mujer</b> y <b>1 hombre</b>. Autenticación con Google requerida.</p>
         </div>
       </div>
 
-      <!-- Controles de sesión / tema -->
+      <!-- Sesión / tema -->
       <div class="flex items-center gap-3">
-        <!-- Botón Google -->
-        <div id="googleSignIn" class="hidden"></div>
         <button id="btnGoogle" class="btn btn-outline btn-sm rounded-xl">
           <span class="material-symbols-rounded text-base">account_circle</span>
           <span class="hidden sm:inline">Iniciar sesión</span>
@@ -68,19 +129,18 @@
     </div>
   </header>
 
-  <!-- Avisos -->
+  <!-- Aviso -->
   <section class="max-w-7xl mx-auto px-4 md:px-8 mt-4">
     <div id="ruleBanner" class="alert alert-info elev">
       <div class="flex-1">
         <span class="material-symbols-rounded">gavel</span>
         <div>
-          <h3 class="font-semibold">Reglas de la boleta</h3>
-          <p class="text-sm opacity-80">Debes elegir <b>exactamente 1 mujer</b> y <b>1 hombre</b>. Para emitir el voto, debes iniciar sesión con Google.</p>
+          <h3 class="font-semibold">Reglas</h3>
+          <p class="text-sm opacity-80">Selecciona <b>1 mujer</b> y <b>1 hombre</b>. Para enviar, inicia sesión con Google.</p>
         </div>
       </div>
       <div class="hidden md:flex items-center gap-2">
-        <span class="chip">Duplicidad: bloqueada</span>
-        <span class="chip">Anónimo al público</span>
+        <span class="chip">Duplicidad bloqueada</span>
         <span class="chip">Verificación de identidad</span>
       </div>
     </div>
@@ -90,12 +150,12 @@
   <section class="max-w-7xl mx-auto px-4 md:px-8 mt-6 grid gap-3 md:grid-cols-2">
     <label class="input input-bordered bg-base-100 flex items-center gap-2 elev">
       <span class="material-symbols-rounded opacity-70">search</span>
-      <input id="search" type="text" class="grow" placeholder="Buscar candidata/o por nombre (⌘/Ctrl+K)" />
+      <input id="search" type="text" class="grow" placeholder="Buscar candidata/o (⌘/Ctrl+K)" />
       <kbd class="kbd hidden md:inline">⌘/Ctrl</kbd><kbd class="kbd hidden md:inline">K</kbd>
     </label>
     <div class="bg-base-100 rounded-2xl p-2 elev flex items-center justify-between flex-wrap gap-2">
       <div class="flex items-center gap-2 text-sm opacity-70">
-        <span class="material-symbols-rounded">tune</span> Filtro rápido
+        <span class="material-symbols-rounded">tune</span> Filtro
       </div>
       <div class="join">
         <input class="join-item btn btn-sm" type="radio" name="filtroGenero" id="filtroTodos" checked>
@@ -108,7 +168,7 @@
     </div>
   </section>
 
-  <!-- Listados -->
+  <!-- Listas -->
   <main class="max-w-7xl mx-auto px-4 md:px-8 mt-6 grid gap-6 lg:grid-cols-2">
     <section aria-labelledby="hdrMujer">
       <div class="flex items-baseline justify-between mb-2">
@@ -126,7 +186,7 @@
     </section>
   </main>
 
-  <!-- Resumen & Acciones pegajosas -->
+  <!-- Acciones -->
   <div class="sticky-actions mt-8">
     <div class="max-w-7xl mx-auto px-4 md:px-8">
       <div class="bg-base-100 rounded-2xl border border-base-300 elev">
@@ -138,9 +198,9 @@
               </div>
             </div>
             <div>
-              <h3 class="font-semibold">Resumen de tu boleta</h3>
+              <h3 class="font-semibold">Resumen</h3>
               <ul id="seleccionResumen" class="text-sm opacity-90 mt-1 space-y-1"></ul>
-              <div class="text-xs opacity-60">Debes tener 2 seleccionados: 1 mujer + 1 hombre. Autenticación obligatoria.</div>
+              <div class="text-xs opacity-60">2 seleccionados: 1 mujer + 1 hombre. Autenticación obligatoria.</div>
             </div>
           </div>
           <div class="flex items-center gap-2">
@@ -157,20 +217,18 @@
     </div>
   </div>
 
-  <!-- Modal de confirmación -->
+  <!-- Modal -->
   <dialog id="modalPreview" class="modal">
     <div class="modal-box max-w-xl">
       <h3 class="font-bold text-lg">Confirmar tu boleta</h3>
-      <p class="text-sm opacity-80 mt-1">Revisa que tu selección cumpla la regla de paridad antes de enviar.</p>
+      <p class="text-sm opacity-80 mt-1">Verifica que cumpla la regla de paridad.</p>
       <div class="divider my-3"></div>
       <ul id="previewList" class="space-y-2 text-sm"></ul>
       <div class="divider my-3"></div>
       <div class="flex items-center justify-between">
         <div class="text-xs opacity-70" id="whoami"></div>
         <div class="modal-action">
-          <form method="dialog">
-            <button class="btn btn-ghost rounded-xl">Cancelar</button>
-          </form>
+          <form method="dialog"><button class="btn btn-ghost rounded-xl">Cancelar</button></form>
           <button id="btnConfirm" class="btn btn-primary rounded-xl">
             <span class="material-symbols-rounded">how_to_vote</span> Confirmar y enviar
           </button>
@@ -180,7 +238,6 @@
     <form method="dialog" class="modal-backdrop"><button>close</button></form>
   </dialog>
 
-  <!-- Footer -->
   <footer class="max-w-7xl mx-auto px-4 md:px-8 py-10">
     <div class="text-center text-xs opacity-70">
       © 2025 — Prototipo institucional. La identidad de los votantes se verifica con Google y se envía únicamente al servidor para validación.
@@ -191,102 +248,111 @@
 /** ============================
  * CONFIG
  * ============================ */
-// Poll IDs
 const POLL_ID_MUJER  = "7rnzVbMBanO";
 const POLL_ID_HOMBRE = "e6Z2A3DXXgN";
-
-// option_id por nombre (¡exact match!)
 const OPTION_IDS = {
-  M: { // Hombres
-    "ALVARO HERNANDEZ":  "B2ZBawNAQgJ",
-    "UBALDO YEPEZ":      "61gDkX6Kznw", // en StrawPoll aparece "UBALDO YEPEZ|"
-    "JORGE CORTÉS":      "mpnbbvJMPn5",
-    "MAURICIO VAZQUEZ":  "jVyGeXxokg7",
-    "JOSE VARELA":       "kogjGWq81Z6",
-    "RICARDO CHAGOLLA":  "ajnE7Xx4mZW",
-    "HIGINIO ROSAS":     "YVyPNXwb3gN",
-    "GILBERTO SANDOVAL": "jVyGeX1qkg7",
-    "ANTONIO CASAS":     "NPgxGa81rn2",
-    "LUCIO CHAVEZ":      "wAg3MOwbKy8",
-    "MARCELINO MEDINA":  "6QnM5Xwqane"
+  M: {
+    "ALVARO HERNANDEZ":"B2ZBawNAQgJ","UBALDO YEPEZ":"61gDkX6Kznw","JORGE CORTÉS":"mpnbbvJMPn5",
+    "MAURICIO VAZQUEZ":"jVyGeXxokg7","JOSE VARELA":"kogjGWq81Z6","RICARDO CHAGOLLA":"ajnE7Xx4mZW",
+    "HIGINIO ROSAS":"YVyPNXwb3gN","GILBERTO SANDOVAL":"jVyGeX1qkg7","ANTONIO CASAS":"NPgxGa81rn2",
+    "LUCIO CHAVEZ":"wAg3MOwbKy8","MARCELINO MEDINA":"6QnM5Xwqane"
   },
-  F: { // Mujeres
-    "KARINA VEGA":       "NoZrRwPkBZ3",
-    "IVETTE RODRIGUEZ":  "bVg8AaGqbZY",
-    "NOHEMI RODRIGUEZ":  "xVg7MzQGOyr",
-    "FATIMA CAMACHO":    "QrgeGJmELyp",
-    "JANETH SALINAS":    "wAg3MODddy8",
-    "ALEJANDRA GARCIA":  "DwyodpP8YnA",
-    "BRISSA GARCIA":     "xVg7Mzwbzyr",
-    "TERESA CEJA":       "3RnYb6YR9ge",
-    "YAQUELIN VERGARA":  "QrgeGJLMQyp",
-    "CLAUDIA RODRIGUEZ": "PKglGYB9onp"
+  F: {
+    "KARINA VEGA":"NoZrRwPkBZ3","IVETTE RODRIGUEZ":"bVg8AaGqbZY","NOHEMI RODRIGUEZ":"xVg7MzQGOyr",
+    "FATIMA CAMACHO":"QrgeGJmELyp","JANETH SALINAS":"wAg3MODddy8","ALEJANDRA GARCIA":"DwyodpP8YnA",
+    "BRISSA GARCIA":"xVg7Mzwbzyr","TERESA CEJA":"3RnYb6YR9ge","YAQUELIN VERGARA":"QrgeGJLMQyp",
+    "CLAUDIA RODRIGUEZ":"PKglGYB9onp"
   }
 };
-
-// Tu proxy (Vercel/Workers)
 const PROXY_VOTE_URL = "/api/vote";
 
-// Google OAuth — PON TU CLIENT_ID AQUÍ 🔐
+// 🔐 Sustituye por tu Client ID real (pasos abajo)
 const GOOGLE_CLIENT_ID = "TU_GOOGLE_CLIENT_ID.apps.googleusercontent.com";
 
 /** ============================
- * DATOS (tarjetas)
+ * DATOS (fotos en /static/img)
  * ============================ */
 const CANDIDATURAS = [
-  // Mujeres
-  { id: 'F-01', nombre: 'KARINA VEGA', genero: 'F', foto: 'https://i.pravatar.cc/300?img=47' },
-  { id: 'F-02', nombre: 'IVETTE RODRIGUEZ', genero: 'F', foto: 'https://i.pravatar.cc/300?img=58' },
-  { id: 'F-03', nombre: 'NOHEMI RODRIGUEZ', genero: 'F', foto: 'https://i.pravatar.cc/300?img=65' },
-  { id: 'F-04', nombre: 'FATIMA CAMACHO', genero: 'F', foto: 'https://i.pravatar.cc/300?img=49' },
-  { id: 'F-05', nombre: 'JANETH SALINAS', genero: 'F', foto: 'https://i.pravatar.cc/300?img=51' },
-  { id: 'F-06', nombre: 'ALEJANDRA GARCIA', genero: 'F', foto: 'https://i.pravatar.cc/300?img=52' },
-  { id: 'F-07', nombre: 'BRISSA GARCIA', genero: 'F', foto: 'https://i.pravatar.cc/300?img=53' },
-  { id: 'F-08', nombre: 'TERESA CEJA', genero: 'F', foto: 'https://i.pravatar.cc/300?img=54' },
-  { id: 'F-09', nombre: 'YAQUELIN VERGARA', genero: 'F', foto: 'https://i.pravatar.cc/300?img=55' },
-  { id: 'F-10', nombre: 'CLAUDIA RODRIGUEZ', genero: 'F', foto: 'https://i.pravatar.cc/300?img=56' },
-  // Hombres
-  { id: 'M-01', nombre: 'ALVARO HERNANDEZ', genero: 'M', foto: 'https://i.pravatar.cc/300?img=12' },
-  { id: 'M-02', nombre: 'UBALDO YEPEZ', genero: 'M', foto: 'https://i.pravatar.cc/300?img=13' },
-  { id: 'M-03', nombre: 'JORGE CORTÉS', genero: 'M', foto: 'https://i.pravatar.cc/300?img=14' },
-  { id: 'M-04', nombre: 'MAURICIO VAZQUEZ', genero: 'M', foto: 'https://i.pravatar.cc/300?img=15' },
-  { id: 'M-05', nombre: 'JOSE VARELA', genero: 'M', foto: 'https://i.pravatar.cc/300?img=16' },
-  { id: 'M-06', nombre: 'RICARDO CHAGOLLA', genero: 'M', foto: 'https://i.pravatar.cc/300?img=17' },
-  { id: 'M-07', nombre: 'HIGINIO ROSAS', genero: 'M', foto: 'https://i.pravatar.cc/300?img=18' },
-  { id: 'M-08', nombre: 'GILBERTO SANDOVAL', genero: 'M', foto: 'https://i.pravatar.cc/300?img=19' },
-  { id: 'M-09', nombre: 'ANTONIO CASAS', genero: 'M', foto: 'https://i.pravatar.cc/300?img=20' },
-  { id: 'M-10', nombre: 'LUCIO CHAVEZ', genero: 'M', foto: 'https://i.pravatar.cc/300?img=21' },
-  { id: 'M-11', nombre: 'MARCELINO MEDINA', genero: 'M', foto: 'https://i.pravatar.cc/300?img=22' },
+  // Mujeres (1–10)
+  { id:'F-01', nombre:'KARINA VEGA',       genero:'F', foto:'static/img/1.jpg'  },
+  { id:'F-02', nombre:'IVETTE RODRIGUEZ',  genero:'F', foto:'static/img/2.png'  },
+  { id:'F-03', nombre:'NOHEMI RODRIGUEZ',  genero:'F', foto:'static/img/3.jpg'  },
+  { id:'F-04', nombre:'FATIMA CAMACHO',    genero:'F', foto:'static/img/4.jpg'  },
+  { id:'F-05', nombre:'JANETH SALINAS',    genero:'F', foto:'static/img/5.png'  },
+  { id:'F-06', nombre:'ALEJANDRA GARCIA',  genero:'F', foto:'static/img/6.jpg'  },
+  { id:'F-07', nombre:'BRISSA GARCIA',     genero:'F', foto:'static/img/7.jpg'  },
+  { id:'F-08', nombre:'TERESA CEJA',       genero:'F', foto:'static/img/8.png'  },
+  { id:'F-09', nombre:'YAQUELIN VERGARA',  genero:'F', foto:'static/img/9.png'  },
+  { id:'F-10', nombre:'CLAUDIA RODRIGUEZ', genero:'F', foto:'static/img/10.png' },
+  // Hombres (11–21)
+  { id:'M-01', nombre:'ALVARO HERNANDEZ',  genero:'M', foto:'static/img/11.jpg' },
+  { id:'M-02', nombre:'UBALDO YEPEZ',      genero:'M', foto:'static/img/12.png' },
+  { id:'M-03', nombre:'JORGE CORTÉS',      genero:'M', foto:'static/img/13.jpg' },
+  { id:'M-04', nombre:'MAURICIO VAZQUEZ',  genero:'M', foto:'static/img/14.jpg' },
+  { id:'M-05', nombre:'JOSE VARELA',       genero:'M', foto:'static/img/15.png' },
+  { id:'M-06', nombre:'RICARDO CHAGOLLA',  genero:'M', foto:'static/img/16.png' },
+  { id:'M-07', nombre:'HIGINIO ROSAS',     genero:'M', foto:'static/img/17.jpg' },
+  { id:'M-08', nombre:'GILBERTO SANDOVAL', genero:'M', foto:'static/img/18.jpg' },
+  { id:'M-09', nombre:'ANTONIO CASAS',     genero:'M', foto:'static/img/19.png' },
+  { id:'M-10', nombre:'LUCIO CHAVEZ',      genero:'M', foto:'static/img/20.png' },
+  { id:'M-11', nombre:'MARCELINO MEDINA',  genero:'M', foto:'static/img/21.png' },
 ];
 
 /** ============================
  * ESTADO
  * ============================ */
-const state = {
-  seleccion: { F:null, M:null },
-  filtro: 'ALL',
-  q: '',
-  user: { email: null, name: null, picture: null, idToken: null }
-};
+const state = { seleccion:{F:null,M:null}, filtro:'ALL', q:'', user:{email:null,name:null,picture:null,idToken:null} };
+const $ = s=>document.querySelector(s);
+const $$= s=>Array.from(document.querySelectorAll(s));
 
-const $ = s => document.querySelector(s);
-const $$ = s => Array.from(document.querySelectorAll(s));
+/** ============================
+ * TOPLOADER
+ * ============================ */
+(function(){
+  const bar = document.getElementById('topLoader');
+  let raf, prog=0, active=false;
+  function tick(){ prog += (95 - prog) * 0.1 + 0.5; bar.style.width = prog + '%'; raf = requestAnimationFrame(tick); }
+  function show(){ if(active) return; active=true; bar.hidden=false; bar.classList.remove('loader-fade'); bar.style.width='0%'; prog=0; cancelAnimationFrame(raf); tick(); }
+  function hide(){ cancelAnimationFrame(raf); bar.style.width='100%'; setTimeout(()=> bar.classList.add('loader-fade'), 60);
+    setTimeout(()=>{ bar.hidden=true; bar.classList.remove('loader-fade'); bar.style.width='0%'; prog=0; active=false; }, 400); }
+  document.addEventListener('readystatechange', ()=>{ if(document.readyState==='interactive') show(); if(document.readyState==='complete') hide(); });
+  // úsalo también cuando hagas fetch si quieres (show/hide)
+  window.TOPBAR={show,hide};
+})();
+
+/** ============================
+ * LOADER LIGHT (auto-cierre)
+ * ============================ */
+(function(){
+  const loginLoader = document.getElementById('loginLoader');
+  if(!loginLoader) return;
+  const MIN_SHOW_MS = 1200;
+  const start = performance.now();
+  const close = ()=>{ if(!document.body.contains(loginLoader)) return; loginLoader.classList.add('login-fade-out'); setTimeout(()=>loginLoader.remove(), 500); };
+  if (document.readyState === 'complete'){
+    const remain = Math.max(0, MIN_SHOW_MS - (performance.now()-start)); setTimeout(close, remain);
+  } else {
+    window.addEventListener('load', ()=>{
+      const remain = Math.max(0, MIN_SHOW_MS - (performance.now()-start)); setTimeout(close, remain);
+    }, {once:true});
+    setTimeout(close, MIN_SHOW_MS + 5000); // fallback
+  }
+})();
 
 /** ============================
  * RENDER UI
  * ============================ */
+function isSelected(c){ const s=state.seleccion[c.genero]; return !!(s && s.id===c.id); }
 function cardTemplate(c){
-  const selected = isSelected(c) ? 'card-sel' : '';
-  const badge = c.genero==='F' ? 'badge-secondary' : 'badge-info';
   return `
-  <article class="card bg-base-100 border border-base-300 hover:border-primary/40 hover:translate-y-[-1px] transition-all duration-150 ${selected}">
+  <article class="card bg-base-100 border border-base-300 hover:border-primary/40 hover:translate-y-[-1px] transition-all duration-150 ${isSelected(c)?'card-sel':''}">
     <figure class="px-4 pt-4">
       <img class="rounded-xl w-full h-44 object-cover" src="${c.foto}" alt="${c.nombre}" />
     </figure>
     <div class="card-body">
       <h3 class="card-title text-base">${c.nombre}</h3>
       <div class="flex items-center gap-2">
-        <span class="badge ${badge}">${c.genero==='F'?'Mujer':'Hombre'}</span>
+        <span class="badge ${c.genero==='F'?'badge-secondary':'badge-info'}">${c.genero==='F'?'Mujer':'Hombre'}</span>
         <span class="chip">${c.id}</span>
       </div>
       <div class="card-actions mt-3">
@@ -297,22 +363,14 @@ function cardTemplate(c){
     </div>
   </article>`;
 }
-
-function isSelected(c){
-  const s = state.seleccion[c.genero];
-  return !!(s && s.id === c.id);
-}
-
 function renderListas(){
-  const contM = $('#listaMujer'); const contH = $('#listaHombre');
+  const contM = $('#listaMujer'), contH = $('#listaHombre');
   contM.innerHTML=''; contH.innerHTML='';
-
   const q = state.q.trim().toLowerCase();
-  for (const c of CANDIDATURAS){
-    if (state.filtro==='F' && c.genero!=='F') continue;
-    if (state.filtro==='M' && c.genero!=='M') continue;
-    if (q && !c.nombre.toLowerCase().includes(q)) continue;
-
+  for(const c of CANDIDATURAS){
+    if(state.filtro==='F' && c.genero!=='F') continue;
+    if(state.filtro==='M' && c.genero!=='M') continue;
+    if(q && !c.nombre.toLowerCase().includes(q)) continue;
     const wrap = document.createElement('div');
     wrap.innerHTML = cardTemplate(c);
     wrap.querySelector('.select-btn').addEventListener('click', ()=>toggleSelect(c));
@@ -320,29 +378,20 @@ function renderListas(){
   }
   renderResumen(); updateButtons();
 }
-
 function renderResumen(){
-  const ul = $('#seleccionResumen'); const f = state.seleccion.F; const m = state.seleccion.M;
-  ul.innerHTML = `
+  const f=state.seleccion.F, m=state.seleccion.M;
+  $('#seleccionResumen').innerHTML = `
     <li>🟣 Mujer: <b>${f?f.nombre+' ('+f.id+')':'—'}</b></li>
     <li>🔵 Hombre: <b>${m?m.nombre+' ('+m.id+')':'—'}</b></li>`;
   const ok = !!(f && m);
   const banner = $('#ruleBanner');
   banner.className = `alert ${ok?'alert-success':'alert-info'} elev`;
-  banner.querySelector('p')?.remove();
   const txt = ok ? 'Listo: regla cumplida (1 mujer + 1 hombre).' : 'Debes elegir exactamente 1 mujer y 1 hombre.';
-  banner.querySelector('div > div')?.insertAdjacentHTML('beforeend', `<p class="text-sm opacity-75 mt-1">${txt}</p>`);
-
-  const payload = ok ? { mujer: f.nombre, hombre: m.nombre, ts:new Date().toISOString() } : { seleccion:null };
-  const pre = $('#payload'); pre.textContent = JSON.stringify(payload, null, 2);
+  banner.querySelector('p')?.replaceWith(Object.assign(document.createElement('p'),{className:'text-sm opacity-80',textContent:txt}));
+  const payload = ok ? { mujer:f?.nombre, hombre:m?.nombre, ts:new Date().toISOString() } : { seleccion:null };
+  $('#payload').textContent = JSON.stringify(payload,null,2);
 }
-
-function toggleSelect(c){
-  const cur = state.seleccion[c.genero];
-  state.seleccion[c.genero] = (cur && cur.id===c.id) ? null : {id:c.id, nombre:c.nombre};
-  renderListas();
-}
-
+function toggleSelect(c){ const cur=state.seleccion[c.genero]; state.seleccion[c.genero]=(cur&&cur.id===c.id)?null:{id:c.id,nombre:c.nombre}; renderListas(); }
 function updateButtons(){
   const ready = !!(state.seleccion.F && state.seleccion.M);
   const authed = !!state.user.idToken;
@@ -354,131 +403,159 @@ function updateButtons(){
  * BÚSQUEDA / FILTRO / HOTKEY
  * ============================ */
 $('#search').addEventListener('input', e=>{ state.q=e.target.value||''; renderListas();});
-$$('input[name="filtroGenero"]').forEach(r=>r.addEventListener('change', ()=>{
-  state.filtro = $('#filtroMujer').checked?'F' : $('#filtroHombre').checked?'M' : 'ALL';
-  renderListas();
-}));
-window.addEventListener('keydown', (e)=>{
-  if ((e.ctrlKey||e.metaKey) && e.key.toLowerCase()==='k'){ e.preventDefault(); $('#search').focus(); }
-});
+$$('input[name="filtroGenero"]').forEach(r=>r.addEventListener('change', ()=>{ state.filtro = $('#filtroMujer').checked?'F' : $('#filtroHombre').checked?'M' : 'ALL'; renderListas(); }));
+window.addEventListener('keydown', (e)=>{ if((e.ctrlKey||e.metaKey) && e.key.toLowerCase()==='k'){ e.preventDefault(); $('#search').focus(); }});
 
 /** ============================
  * PREVIEW & ENVÍO
  * ============================ */
 $('#btnPreview').addEventListener('click', ()=>{
-  const f = state.seleccion.F, m = state.seleccion.M;
-  if (!(f && m)) return alert('Falta seleccionar 1 mujer y 1 hombre.');
+  const f=state.seleccion.F, m=state.seleccion.M;
+  if(!(f&&m)) return alert('Falta seleccionar 1 mujer y 1 hombre.');
   $('#previewList').innerHTML = `
     <li>🟣 <b>Mujer</b>: ${f.nombre} <span class="chip">${f.id}</span></li>
-    <li>🔵 <b>Hombre</b>: ${m.nombre} <span class="chip">${m.id}</span></li>
-  `;
+    <li>🔵 <b>Hombre</b>: ${m.nombre} <span class="chip">${m.id}</span></li>`;
   $('#whoami').textContent = state.user.email ? `Se enviará como: ${state.user.email}` : 'Inicia sesión para continuar';
   document.getElementById('modalPreview').showModal();
 });
 
 $('#btnConfirm').addEventListener('click', async ()=>{
-  const f = state.seleccion.F, m = state.seleccion.M;
-  if (!(f && m)) return;
-  const optIdF = OPTION_IDS.F[f.nombre];
-  const optIdM = OPTION_IDS.M[m.nombre];
-  if (!optIdF || !optIdM) return alert('Faltan option_id reales en OPTION_IDS.');
-
+  const f=state.seleccion.F, m=state.seleccion.M;
+  if(!(f&&m)) return;
+  const optIdF = OPTION_IDS.F[f.nombre], optIdM = OPTION_IDS.M[m.nombre];
+  if(!optIdF || !optIdM) return alert('Faltan option_id reales en OPTION_IDS.');
   try{
+    TOPBAR.show();
     const res = await fetch(PROXY_VOTE_URL, {
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
+      method:'POST', headers:{'Content-Type':'application/json'},
       body: JSON.stringify({
-        id_token: state.user.idToken, // <- el backend debe verificarlo con Google
+        id_token: state.user.idToken, // <-- el backend debe validar el ID token
         votes: [
           { poll_id: POLL_ID_MUJER,  option_id: optIdF },
           { poll_id: POLL_ID_HOMBRE, option_id: optIdM }
         ]
       })
     });
-    if (!res.ok){
-      const t = await res.text();
-      return alert('Error al votar: '+t);
-    }
+    if(!res.ok){ const t = await res.text(); throw new Error(t||'Error al votar'); }
     document.getElementById('modalPreview').close();
-    toast('¡Voto registrado en ambas encuestas! 🎉');
-    // Bloquea cambios si quieres:
-    // disableUI();
-  }catch(err){
-    alert('No se pudo enviar el voto.');
-  }
+    alert('¡Voto registrado en ambas encuestas! 🎉');
+  }catch(e){ alert(e.message||'No se pudo enviar el voto.'); }
+  finally{ TOPBAR.hide(); }
 });
 
-$('#btnLimpiar').addEventListener('click', ()=>{
-  state.seleccion.F = null; state.seleccion.M = null; renderListas();
-});
+$('#btnLimpiar').addEventListener('click', ()=>{ state.seleccion.F=null; state.seleccion.M=null; renderListas(); });
 
 /** ============================
  * TEMA
  * ============================ */
 $('#themeLight').addEventListener('click', ()=>{ document.documentElement.classList.remove('dark'); localStorage.setItem('theme','light'); });
-$('#themeDark').addEventListener('click', ()=>{ document.documentElement.classList.add('dark'); localStorage.setItem('theme','dark'); });
-$('#themeAuto').addEventListener('click', ()=>{ localStorage.removeItem('theme'); applyAutoTheme(); });
+$('#themeDark').addEventListener('click',  ()=>{ document.documentElement.classList.add('dark');    localStorage.setItem('theme','dark');  });
+$('#themeAuto').addEventListener('click',  ()=>{ localStorage.removeItem('theme'); applyAutoTheme(); });
 function applyAutoTheme(){
   const saved = localStorage.getItem('theme');
-  if (!saved){
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    document.documentElement.classList.toggle('dark', prefersDark);
-  }
+  if (!saved){ const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches; document.documentElement.classList.toggle('dark', prefersDark); }
 }
-
-/** ============================
- * TOAST mínimo
- * ============================ */
-function toast(msg){
-  const el = document.createElement('div');
-  el.className = 'toast toast-end';
-  el.innerHTML = `<div class="alert alert-success"><span>${msg}</span></div>`;
-  document.body.appendChild(el);
-  setTimeout(()=> el.remove(), 3000);
-}
+(function initTheme(){ const saved=localStorage.getItem('theme'); if(saved==='dark') document.documentElement.classList.add('dark'); else if(saved==='light') document.documentElement.classList.remove('dark'); else applyAutoTheme(); })();
 
 /** ============================
  * GOOGLE LOGIN (GIS)
  * ============================ */
 window.handleCredentialResponse = (resp) => {
-  // resp.credential es el ID token JWT
   state.user.idToken = resp.credential;
-  // (Opcional) decodifica el payload (sin validar) para pintar UI:
-  try {
+  try{
     const payload = JSON.parse(atob(resp.credential.split('.')[1]));
-    state.user.email = payload.email || null;
-    state.user.name = payload.name || null;
+    state.user.email   = payload.email   || null;
+    state.user.name    = payload.name    || null;
     state.user.picture = payload.picture || null;
-  } catch {}
-  // Cambia botón y habilita envío si ya hay selección
+  }catch{}
   $('#btnGoogle').innerHTML = `<span class="material-symbols-rounded text-base">verified_user</span> ${state.user.email || 'Sesión iniciada'}`;
   updateButtons();
 };
-
-// Render del botón clásico al click (para control visual)
+// Botón -> popup GIS
 $('#btnGoogle').addEventListener('click', ()=>{
-  google.accounts.id.initialize({
-    client_id: GOOGLE_CLIENT_ID, // <- coloca tu client_id aquí
-    callback: handleCredentialResponse,
-    ux_mode: 'popup',
-    auto_select: false
-  });
-  google.accounts.id.prompt(); // one-tap / popup
+  google.accounts.id.initialize({ client_id: GOOGLE_CLIENT_ID, callback: handleCredentialResponse, ux_mode:'popup', auto_select:false });
+  google.accounts.id.prompt();
 });
 
 /** ============================
  * INIT
  * ============================ */
-function initTheme(){
-  const saved = localStorage.getItem('theme');
-  if (saved==='dark') document.documentElement.classList.add('dark');
-  else if (saved==='light') document.documentElement.classList.remove('dark');
-  else applyAutoTheme();
-}
-
-initTheme();
 renderListas();
 updateButtons();
 </script>
+
+
+<script>
+  // ===== THEME DROPDOWN DaisyUI (real) =====
+  (function () {
+    const root = document.documentElement;        // <html>
+    const THEME_KEY = 'theme';                    // 'light' | 'dark' | 'auto'
+    const btn   = document.querySelector('.dropdown-end [role="button"]');
+    const liLight = document.getElementById('themeLight');
+    const liDark  = document.getElementById('themeDark');
+    const liAuto  = document.getElementById('themeAuto');
+    const iconEl  = btn?.querySelector('.material-symbols-rounded');
+    const mqlDark = window.matchMedia('(prefers-color-scheme: dark)');
+
+    // Aplica tema DaisyUI (usa data-theme). Nota: no dependemos de class="dark"
+    function applyTheme(mode, { persist = true } = {}) {
+      let effective = mode;
+      if (mode === 'auto') effective = mqlDark.matches ? 'dark' : 'light';
+
+      // Establece el tema DaisyUI
+      root.setAttribute('data-theme', effective);
+      // Asegura que no quede "dark" colgando que te ensucie estilos
+      root.classList.toggle('dark', false);
+
+      if (persist) localStorage.setItem(THEME_KEY, mode);
+      setIcon(mode);
+      markActive(mode);
+      // meta color-scheme para barras del navegador
+      const meta = document.querySelector('meta[name="color-scheme"]');
+      if (meta) meta.setAttribute('content', effective === 'dark' ? 'dark light' : 'light dark');
+    }
+
+    function setIcon(mode) {
+      if (!iconEl) return;
+      iconEl.textContent = mode === 'dark'
+        ? 'dark_mode'
+        : mode === 'light'
+        ? 'light_mode'
+        : 'auto_awesome';
+    }
+
+    function markActive(mode) {
+      [liLight, liDark, liAuto].forEach(el => el?.classList.remove('active'));
+      (mode === 'light' ? liLight : mode === 'dark' ? liDark : liAuto)?.classList.add('active');
+    }
+
+    function closeDropdown() {
+      const dd = btn?.closest('.dropdown');
+      dd?.classList.remove('dropdown-open');
+      document.activeElement?.blur();
+      setTimeout(() => btn?.blur(), 10);
+    }
+
+    // Clicks
+    liLight?.addEventListener('click', () => { applyTheme('light'); closeDropdown(); });
+    liDark ?.addEventListener('click', () => { applyTheme('dark');  closeDropdown(); });
+    liAuto ?.addEventListener('click', () => { applyTheme('auto');  closeDropdown(); });
+
+    // Cambios del SO cuando estás en Auto
+    mqlDark.addEventListener?.('change', () => {
+      const mode = localStorage.getItem(THEME_KEY) || 'auto';
+      if (mode === 'auto') applyTheme('auto', { persist: false });
+    });
+
+    // INIT
+    const saved = localStorage.getItem(THEME_KEY) || 'auto';
+    applyTheme(saved, { persist: false });
+  })();
+</script>
+<style>
+  /* Opcional: resalta opción activa del menú */
+  .dropdown .menu .active{ background: rgb(226 232 240 / .6); border-radius:.5rem; font-weight:600; }
+</style>
+
 </body>
 </html>
