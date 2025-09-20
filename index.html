@@ -1,0 +1,484 @@
+<!doctype html>
+<html lang="es" class="h-full">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Votación 2025 — Persona Servidora Pública Honesta</title>
+
+  <!-- Tailwind + DaisyUI -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>tailwind.config={darkMode:'class'};</script>
+  <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.10/dist/full.min.css" rel="stylesheet"/>
+
+  <!-- Inter + Material Symbols (discretos/inst.) -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded" rel="stylesheet" />
+  <meta name="color-scheme" content="light dark"/>
+  <style>
+    :root { font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, "Helvetica Neue", Arial, "Apple Color Emoji","Segoe UI Emoji"; }
+    .brand-gradient { background: radial-gradient(1200px 600px at 0% 0%, rgba(7,89,133,.12), transparent 60%),
+                               radial-gradient(1200px 600px at 100% 0%, rgba(22,163,74,.12), transparent 60%); }
+    .glass { backdrop-filter: saturate(140%) blur(8px); background: color-mix(in oklab, var(--fallback-b1,oklch(1 0 0)) 70%, transparent); }
+    .ring-focus { box-shadow: 0 0 0 4px color-mix(in oklab, oklch(0.6 0.1 240) 55%, transparent); }
+    .btn-quiet { @apply btn btn-sm md:btn-md rounded-xl; }
+    .chip { @apply badge badge-outline rounded-xl text-xs; }
+    .grid-colx { grid-template-columns: repeat(auto-fill,minmax(240px,1fr)); }
+    .elev { box-shadow: 0 10px 30px rgba(2,6,23,.10); }
+    .sticky-actions { position: sticky; bottom: 0; z-index: 50; }
+    .kbd { @apply px-2 py-[2px] border rounded text-[11px] opacity-70; }
+    .card-sel { outline: 2px solid color-mix(in oklab, oklch(0.6 0.1 240) 55%, transparent); outline-offset: 0; }
+  </style>
+
+  <!-- Google Identity Services (Login con Google) -->
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+</head>
+<body class="min-h-full bg-base-200 text-base-content">
+  <!-- Header institucional -->
+  <header class="brand-gradient border-b border-base-300">
+    <div class="max-w-7xl mx-auto px-4 md:px-8 py-4 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="size-11 md:size-12 grid place-items-center rounded-2xl bg-primary text-primary-content font-extrabold elev">
+          <span class="text-xl">V</span>
+        </div>
+        <div>
+          <h1 class="text-xl md:text-2xl font-extrabold leading-tight">Votación 2025 — Persona Servidora Pública Honesta</h1>
+          <p class="text-xs md:text-sm opacity-70">Seleccione exactamente <b>1 mujer</b> y <b>1 hombre</b>. Voto único por persona.</p>
+        </div>
+      </div>
+
+      <!-- Controles de sesión / tema -->
+      <div class="flex items-center gap-3">
+        <!-- Botón Google -->
+        <div id="googleSignIn" class="hidden"></div>
+        <button id="btnGoogle" class="btn btn-outline btn-sm rounded-xl">
+          <span class="material-symbols-rounded text-base">account_circle</span>
+          <span class="hidden sm:inline">Iniciar sesión</span>
+        </button>
+        <div class="dropdown dropdown-end">
+          <div tabindex="0" role="button" class="btn btn-ghost btn-circle">
+            <span class="material-symbols-rounded">dark_mode</span>
+          </div>
+          <ul tabindex="0" class="dropdown-content z-[60] menu p-2 shadow bg-base-100 rounded-box w-40">
+            <li><a id="themeLight">Claro</a></li>
+            <li><a id="themeDark">Oscuro</a></li>
+            <li><a id="themeAuto">Auto</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Avisos -->
+  <section class="max-w-7xl mx-auto px-4 md:px-8 mt-4">
+    <div id="ruleBanner" class="alert alert-info elev">
+      <div class="flex-1">
+        <span class="material-symbols-rounded">gavel</span>
+        <div>
+          <h3 class="font-semibold">Reglas de la boleta</h3>
+          <p class="text-sm opacity-80">Debes elegir <b>exactamente 1 mujer</b> y <b>1 hombre</b>. Para emitir el voto, debes iniciar sesión con Google.</p>
+        </div>
+      </div>
+      <div class="hidden md:flex items-center gap-2">
+        <span class="chip">Duplicidad: bloqueada</span>
+        <span class="chip">Anónimo al público</span>
+        <span class="chip">Verificación de identidad</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Controles -->
+  <section class="max-w-7xl mx-auto px-4 md:px-8 mt-6 grid gap-3 md:grid-cols-2">
+    <label class="input input-bordered bg-base-100 flex items-center gap-2 elev">
+      <span class="material-symbols-rounded opacity-70">search</span>
+      <input id="search" type="text" class="grow" placeholder="Buscar candidata/o por nombre (⌘/Ctrl+K)" />
+      <kbd class="kbd hidden md:inline">⌘/Ctrl</kbd><kbd class="kbd hidden md:inline">K</kbd>
+    </label>
+    <div class="bg-base-100 rounded-2xl p-2 elev flex items-center justify-between flex-wrap gap-2">
+      <div class="flex items-center gap-2 text-sm opacity-70">
+        <span class="material-symbols-rounded">tune</span> Filtro rápido
+      </div>
+      <div class="join">
+        <input class="join-item btn btn-sm" type="radio" name="filtroGenero" id="filtroTodos" checked>
+        <label class="join-item btn btn-sm" for="filtroTodos">Todos</label>
+        <input class="join-item btn btn-sm" type="radio" name="filtroGenero" id="filtroMujer">
+        <label class="join-item btn btn-sm" for="filtroMujer">Mujer</label>
+        <input class="join-item btn btn-sm" type="radio" name="filtroGenero" id="filtroHombre">
+        <label class="join-item btn btn-sm" for="filtroHombre">Hombre</label>
+      </div>
+    </div>
+  </section>
+
+  <!-- Listados -->
+  <main class="max-w-7xl mx-auto px-4 md:px-8 mt-6 grid gap-6 lg:grid-cols-2">
+    <section aria-labelledby="hdrMujer">
+      <div class="flex items-baseline justify-between mb-2">
+        <h2 id="hdrMujer" class="text-lg font-semibold">Candidatas (Mujer)</h2>
+        <span class="chip">Selecciona 1</span>
+      </div>
+      <div id="listaMujer" class="grid gap-4 grid-colx"></div>
+    </section>
+    <section aria-labelledby="hdrHombre">
+      <div class="flex items-baseline justify-between mb-2">
+        <h2 id="hdrHombre" class="text-lg font-semibold">Candidatos (Hombre)</h2>
+        <span class="chip">Selecciona 1</span>
+      </div>
+      <div id="listaHombre" class="grid gap-4 grid-colx"></div>
+    </section>
+  </main>
+
+  <!-- Resumen & Acciones pegajosas -->
+  <div class="sticky-actions mt-8">
+    <div class="max-w-7xl mx-auto px-4 md:px-8">
+      <div class="bg-base-100 rounded-2xl border border-base-300 elev">
+        <div class="p-4 md:p-6 grid gap-4 md:grid-cols-[1fr_auto] items-center">
+          <div class="flex items-center gap-4">
+            <div class="avatar placeholder">
+              <div class="bg-primary text-primary-content rounded-xl w-12">
+                <span class="material-symbols-rounded">how_to_vote</span>
+              </div>
+            </div>
+            <div>
+              <h3 class="font-semibold">Resumen de tu boleta</h3>
+              <ul id="seleccionResumen" class="text-sm opacity-90 mt-1 space-y-1"></ul>
+              <div class="text-xs opacity-60">Debes tener 2 seleccionados: 1 mujer + 1 hombre. Autenticación obligatoria.</div>
+            </div>
+          </div>
+          <div class="flex items-center gap-2">
+            <button id="btnLimpiar" class="btn btn-ghost rounded-xl">Limpiar</button>
+            <button id="btnPreview" class="btn btn-outline rounded-xl">Previsualizar</button>
+            <button id="btnEnviar" class="btn btn-primary rounded-xl" disabled>
+              <span class="material-symbols-rounded">lock</span> Enviar voto
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="text-xs opacity-60 mt-2 px-1" id="sessionHint">No has iniciado sesión.</div>
+      <pre id="payload" class="mt-3 text-xs bg-base-200 p-3 rounded-2xl overflow-auto hidden"></pre>
+    </div>
+  </div>
+
+  <!-- Modal de confirmación -->
+  <dialog id="modalPreview" class="modal">
+    <div class="modal-box max-w-xl">
+      <h3 class="font-bold text-lg">Confirmar tu boleta</h3>
+      <p class="text-sm opacity-80 mt-1">Revisa que tu selección cumpla la regla de paridad antes de enviar.</p>
+      <div class="divider my-3"></div>
+      <ul id="previewList" class="space-y-2 text-sm"></ul>
+      <div class="divider my-3"></div>
+      <div class="flex items-center justify-between">
+        <div class="text-xs opacity-70" id="whoami"></div>
+        <div class="modal-action">
+          <form method="dialog">
+            <button class="btn btn-ghost rounded-xl">Cancelar</button>
+          </form>
+          <button id="btnConfirm" class="btn btn-primary rounded-xl">
+            <span class="material-symbols-rounded">how_to_vote</span> Confirmar y enviar
+          </button>
+        </div>
+      </div>
+    </div>
+    <form method="dialog" class="modal-backdrop"><button>close</button></form>
+  </dialog>
+
+  <!-- Footer -->
+  <footer class="max-w-7xl mx-auto px-4 md:px-8 py-10">
+    <div class="text-center text-xs opacity-70">
+      © 2025 — Prototipo institucional. La identidad de los votantes se verifica con Google y se envía únicamente al servidor para validación.
+    </div>
+  </footer>
+
+<script>
+/** ============================
+ * CONFIG
+ * ============================ */
+// Poll IDs
+const POLL_ID_MUJER  = "7rnzVbMBanO";
+const POLL_ID_HOMBRE = "e6Z2A3DXXgN";
+
+// option_id por nombre (¡exact match!)
+const OPTION_IDS = {
+  M: { // Hombres
+    "ALVARO HERNANDEZ":  "B2ZBawNAQgJ",
+    "UBALDO YEPEZ":      "61gDkX6Kznw", // en StrawPoll aparece "UBALDO YEPEZ|"
+    "JORGE CORTÉS":      "mpnbbvJMPn5",
+    "MAURICIO VAZQUEZ":  "jVyGeXxokg7",
+    "JOSE VARELA":       "kogjGWq81Z6",
+    "RICARDO CHAGOLLA":  "ajnE7Xx4mZW",
+    "HIGINIO ROSAS":     "YVyPNXwb3gN",
+    "GILBERTO SANDOVAL": "jVyGeX1qkg7",
+    "ANTONIO CASAS":     "NPgxGa81rn2",
+    "LUCIO CHAVEZ":      "wAg3MOwbKy8",
+    "MARCELINO MEDINA":  "6QnM5Xwqane"
+  },
+  F: { // Mujeres
+    "KARINA VEGA":       "NoZrRwPkBZ3",
+    "IVETTE RODRIGUEZ":  "bVg8AaGqbZY",
+    "NOHEMI RODRIGUEZ":  "xVg7MzQGOyr",
+    "FATIMA CAMACHO":    "QrgeGJmELyp",
+    "JANETH SALINAS":    "wAg3MODddy8",
+    "ALEJANDRA GARCIA":  "DwyodpP8YnA",
+    "BRISSA GARCIA":     "xVg7Mzwbzyr",
+    "TERESA CEJA":       "3RnYb6YR9ge",
+    "YAQUELIN VERGARA":  "QrgeGJLMQyp",
+    "CLAUDIA RODRIGUEZ": "PKglGYB9onp"
+  }
+};
+
+// Tu proxy (Vercel/Workers)
+const PROXY_VOTE_URL = "/api/vote";
+
+// Google OAuth — PON TU CLIENT_ID AQUÍ 🔐
+const GOOGLE_CLIENT_ID = "TU_GOOGLE_CLIENT_ID.apps.googleusercontent.com";
+
+/** ============================
+ * DATOS (tarjetas)
+ * ============================ */
+const CANDIDATURAS = [
+  // Mujeres
+  { id: 'F-01', nombre: 'KARINA VEGA', genero: 'F', foto: 'https://i.pravatar.cc/300?img=47' },
+  { id: 'F-02', nombre: 'IVETTE RODRIGUEZ', genero: 'F', foto: 'https://i.pravatar.cc/300?img=58' },
+  { id: 'F-03', nombre: 'NOHEMI RODRIGUEZ', genero: 'F', foto: 'https://i.pravatar.cc/300?img=65' },
+  { id: 'F-04', nombre: 'FATIMA CAMACHO', genero: 'F', foto: 'https://i.pravatar.cc/300?img=49' },
+  { id: 'F-05', nombre: 'JANETH SALINAS', genero: 'F', foto: 'https://i.pravatar.cc/300?img=51' },
+  { id: 'F-06', nombre: 'ALEJANDRA GARCIA', genero: 'F', foto: 'https://i.pravatar.cc/300?img=52' },
+  { id: 'F-07', nombre: 'BRISSA GARCIA', genero: 'F', foto: 'https://i.pravatar.cc/300?img=53' },
+  { id: 'F-08', nombre: 'TERESA CEJA', genero: 'F', foto: 'https://i.pravatar.cc/300?img=54' },
+  { id: 'F-09', nombre: 'YAQUELIN VERGARA', genero: 'F', foto: 'https://i.pravatar.cc/300?img=55' },
+  { id: 'F-10', nombre: 'CLAUDIA RODRIGUEZ', genero: 'F', foto: 'https://i.pravatar.cc/300?img=56' },
+  // Hombres
+  { id: 'M-01', nombre: 'ALVARO HERNANDEZ', genero: 'M', foto: 'https://i.pravatar.cc/300?img=12' },
+  { id: 'M-02', nombre: 'UBALDO YEPEZ', genero: 'M', foto: 'https://i.pravatar.cc/300?img=13' },
+  { id: 'M-03', nombre: 'JORGE CORTÉS', genero: 'M', foto: 'https://i.pravatar.cc/300?img=14' },
+  { id: 'M-04', nombre: 'MAURICIO VAZQUEZ', genero: 'M', foto: 'https://i.pravatar.cc/300?img=15' },
+  { id: 'M-05', nombre: 'JOSE VARELA', genero: 'M', foto: 'https://i.pravatar.cc/300?img=16' },
+  { id: 'M-06', nombre: 'RICARDO CHAGOLLA', genero: 'M', foto: 'https://i.pravatar.cc/300?img=17' },
+  { id: 'M-07', nombre: 'HIGINIO ROSAS', genero: 'M', foto: 'https://i.pravatar.cc/300?img=18' },
+  { id: 'M-08', nombre: 'GILBERTO SANDOVAL', genero: 'M', foto: 'https://i.pravatar.cc/300?img=19' },
+  { id: 'M-09', nombre: 'ANTONIO CASAS', genero: 'M', foto: 'https://i.pravatar.cc/300?img=20' },
+  { id: 'M-10', nombre: 'LUCIO CHAVEZ', genero: 'M', foto: 'https://i.pravatar.cc/300?img=21' },
+  { id: 'M-11', nombre: 'MARCELINO MEDINA', genero: 'M', foto: 'https://i.pravatar.cc/300?img=22' },
+];
+
+/** ============================
+ * ESTADO
+ * ============================ */
+const state = {
+  seleccion: { F:null, M:null },
+  filtro: 'ALL',
+  q: '',
+  user: { email: null, name: null, picture: null, idToken: null }
+};
+
+const $ = s => document.querySelector(s);
+const $$ = s => Array.from(document.querySelectorAll(s));
+
+/** ============================
+ * RENDER UI
+ * ============================ */
+function cardTemplate(c){
+  const selected = isSelected(c) ? 'card-sel' : '';
+  const badge = c.genero==='F' ? 'badge-secondary' : 'badge-info';
+  return `
+  <article class="card bg-base-100 border border-base-300 hover:border-primary/40 hover:translate-y-[-1px] transition-all duration-150 ${selected}">
+    <figure class="px-4 pt-4">
+      <img class="rounded-xl w-full h-44 object-cover" src="${c.foto}" alt="${c.nombre}" />
+    </figure>
+    <div class="card-body">
+      <h3 class="card-title text-base">${c.nombre}</h3>
+      <div class="flex items-center gap-2">
+        <span class="badge ${badge}">${c.genero==='F'?'Mujer':'Hombre'}</span>
+        <span class="chip">${c.id}</span>
+      </div>
+      <div class="card-actions mt-3">
+        <button class="btn ${isSelected(c)?'btn-error':'btn-primary'} btn-quiet select-btn">
+          ${isSelected(c)?'Quitar':'Seleccionar'}
+        </button>
+      </div>
+    </div>
+  </article>`;
+}
+
+function isSelected(c){
+  const s = state.seleccion[c.genero];
+  return !!(s && s.id === c.id);
+}
+
+function renderListas(){
+  const contM = $('#listaMujer'); const contH = $('#listaHombre');
+  contM.innerHTML=''; contH.innerHTML='';
+
+  const q = state.q.trim().toLowerCase();
+  for (const c of CANDIDATURAS){
+    if (state.filtro==='F' && c.genero!=='F') continue;
+    if (state.filtro==='M' && c.genero!=='M') continue;
+    if (q && !c.nombre.toLowerCase().includes(q)) continue;
+
+    const wrap = document.createElement('div');
+    wrap.innerHTML = cardTemplate(c);
+    wrap.querySelector('.select-btn').addEventListener('click', ()=>toggleSelect(c));
+    (c.genero==='F'?contM:contH).appendChild(wrap.firstElementChild);
+  }
+  renderResumen(); updateButtons();
+}
+
+function renderResumen(){
+  const ul = $('#seleccionResumen'); const f = state.seleccion.F; const m = state.seleccion.M;
+  ul.innerHTML = `
+    <li>🟣 Mujer: <b>${f?f.nombre+' ('+f.id+')':'—'}</b></li>
+    <li>🔵 Hombre: <b>${m?m.nombre+' ('+m.id+')':'—'}</b></li>`;
+  const ok = !!(f && m);
+  const banner = $('#ruleBanner');
+  banner.className = `alert ${ok?'alert-success':'alert-info'} elev`;
+  banner.querySelector('p')?.remove();
+  const txt = ok ? 'Listo: regla cumplida (1 mujer + 1 hombre).' : 'Debes elegir exactamente 1 mujer y 1 hombre.';
+  banner.querySelector('div > div')?.insertAdjacentHTML('beforeend', `<p class="text-sm opacity-75 mt-1">${txt}</p>`);
+
+  const payload = ok ? { mujer: f.nombre, hombre: m.nombre, ts:new Date().toISOString() } : { seleccion:null };
+  const pre = $('#payload'); pre.textContent = JSON.stringify(payload, null, 2);
+}
+
+function toggleSelect(c){
+  const cur = state.seleccion[c.genero];
+  state.seleccion[c.genero] = (cur && cur.id===c.id) ? null : {id:c.id, nombre:c.nombre};
+  renderListas();
+}
+
+function updateButtons(){
+  const ready = !!(state.seleccion.F && state.seleccion.M);
+  const authed = !!state.user.idToken;
+  $('#btnEnviar').disabled = !(ready && authed);
+  $('#sessionHint').textContent = authed ? `Sesión iniciada como ${state.user.email||state.user.name}` : 'No has iniciado sesión.';
+}
+
+/** ============================
+ * BÚSQUEDA / FILTRO / HOTKEY
+ * ============================ */
+$('#search').addEventListener('input', e=>{ state.q=e.target.value||''; renderListas();});
+$$('input[name="filtroGenero"]').forEach(r=>r.addEventListener('change', ()=>{
+  state.filtro = $('#filtroMujer').checked?'F' : $('#filtroHombre').checked?'M' : 'ALL';
+  renderListas();
+}));
+window.addEventListener('keydown', (e)=>{
+  if ((e.ctrlKey||e.metaKey) && e.key.toLowerCase()==='k'){ e.preventDefault(); $('#search').focus(); }
+});
+
+/** ============================
+ * PREVIEW & ENVÍO
+ * ============================ */
+$('#btnPreview').addEventListener('click', ()=>{
+  const f = state.seleccion.F, m = state.seleccion.M;
+  if (!(f && m)) return alert('Falta seleccionar 1 mujer y 1 hombre.');
+  $('#previewList').innerHTML = `
+    <li>🟣 <b>Mujer</b>: ${f.nombre} <span class="chip">${f.id}</span></li>
+    <li>🔵 <b>Hombre</b>: ${m.nombre} <span class="chip">${m.id}</span></li>
+  `;
+  $('#whoami').textContent = state.user.email ? `Se enviará como: ${state.user.email}` : 'Inicia sesión para continuar';
+  document.getElementById('modalPreview').showModal();
+});
+
+$('#btnConfirm').addEventListener('click', async ()=>{
+  const f = state.seleccion.F, m = state.seleccion.M;
+  if (!(f && m)) return;
+  const optIdF = OPTION_IDS.F[f.nombre];
+  const optIdM = OPTION_IDS.M[m.nombre];
+  if (!optIdF || !optIdM) return alert('Faltan option_id reales en OPTION_IDS.');
+
+  try{
+    const res = await fetch(PROXY_VOTE_URL, {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        id_token: state.user.idToken, // <- el backend debe verificarlo con Google
+        votes: [
+          { poll_id: POLL_ID_MUJER,  option_id: optIdF },
+          { poll_id: POLL_ID_HOMBRE, option_id: optIdM }
+        ]
+      })
+    });
+    if (!res.ok){
+      const t = await res.text();
+      return alert('Error al votar: '+t);
+    }
+    document.getElementById('modalPreview').close();
+    toast('¡Voto registrado en ambas encuestas! 🎉');
+    // Bloquea cambios si quieres:
+    // disableUI();
+  }catch(err){
+    alert('No se pudo enviar el voto.');
+  }
+});
+
+$('#btnLimpiar').addEventListener('click', ()=>{
+  state.seleccion.F = null; state.seleccion.M = null; renderListas();
+});
+
+/** ============================
+ * TEMA
+ * ============================ */
+$('#themeLight').addEventListener('click', ()=>{ document.documentElement.classList.remove('dark'); localStorage.setItem('theme','light'); });
+$('#themeDark').addEventListener('click', ()=>{ document.documentElement.classList.add('dark'); localStorage.setItem('theme','dark'); });
+$('#themeAuto').addEventListener('click', ()=>{ localStorage.removeItem('theme'); applyAutoTheme(); });
+function applyAutoTheme(){
+  const saved = localStorage.getItem('theme');
+  if (!saved){
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    document.documentElement.classList.toggle('dark', prefersDark);
+  }
+}
+
+/** ============================
+ * TOAST mínimo
+ * ============================ */
+function toast(msg){
+  const el = document.createElement('div');
+  el.className = 'toast toast-end';
+  el.innerHTML = `<div class="alert alert-success"><span>${msg}</span></div>`;
+  document.body.appendChild(el);
+  setTimeout(()=> el.remove(), 3000);
+}
+
+/** ============================
+ * GOOGLE LOGIN (GIS)
+ * ============================ */
+window.handleCredentialResponse = (resp) => {
+  // resp.credential es el ID token JWT
+  state.user.idToken = resp.credential;
+  // (Opcional) decodifica el payload (sin validar) para pintar UI:
+  try {
+    const payload = JSON.parse(atob(resp.credential.split('.')[1]));
+    state.user.email = payload.email || null;
+    state.user.name = payload.name || null;
+    state.user.picture = payload.picture || null;
+  } catch {}
+  // Cambia botón y habilita envío si ya hay selección
+  $('#btnGoogle').innerHTML = `<span class="material-symbols-rounded text-base">verified_user</span> ${state.user.email || 'Sesión iniciada'}`;
+  updateButtons();
+};
+
+// Render del botón clásico al click (para control visual)
+$('#btnGoogle').addEventListener('click', ()=>{
+  google.accounts.id.initialize({
+    client_id: GOOGLE_CLIENT_ID, // <- coloca tu client_id aquí
+    callback: handleCredentialResponse,
+    ux_mode: 'popup',
+    auto_select: false
+  });
+  google.accounts.id.prompt(); // one-tap / popup
+});
+
+/** ============================
+ * INIT
+ * ============================ */
+function initTheme(){
+  const saved = localStorage.getItem('theme');
+  if (saved==='dark') document.documentElement.classList.add('dark');
+  else if (saved==='light') document.documentElement.classList.remove('dark');
+  else applyAutoTheme();
+}
+
+initTheme();
+renderListas();
+updateButtons();
+</script>
+</body>
+</html>
