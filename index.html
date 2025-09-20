@@ -129,7 +129,47 @@
     }
 
 
-
+/* ===== Footer Deep Institucional ===== */
+.govfoot{
+  position: relative;
+  background:
+    radial-gradient(900px 400px at 20% -80%, rgba(12,80,128,.18), transparent 60%),
+    radial-gradient(700px 300px at 100% 0%, rgba(34,197,94,.10), transparent 55%),
+    linear-gradient(180deg, rgba(2,6,23,.94), rgba(2,6,23,.98));
+  color: #e6eef7;
+  border-top: 1px solid rgba(255,255,255,.08);
+}
+.govfoot .brandline{
+  position:absolute; inset:0 0 auto 0; height:3px; background:#0c5080; opacity:.95;
+  box-shadow:0 0 18px rgba(12,80,128,.35);
+}
+.govfoot .wrap{ max-width: 80rem; margin: 0 auto; padding: 28px 1rem 34px; }
+.govfoot .meta{
+  display:flex; align-items:center; justify-content:center; gap:.75rem; 
+  font-size: .8rem; opacity:.9; text-wrap:balance; text-align:center;
+}
+.govfoot .chip{
+  display:inline-flex; align-items:center; gap:.35rem;
+  padding:.28rem .55rem; font-size:.7rem; border-radius:999px;
+  border:1px solid rgba(255,255,255,.16); background: rgba(255,255,255,.06);
+}
+.govfoot .mark{
+  display:inline-grid;
+  place-items:center;
+  width:60px; height:60px;
+  border-radius:10px;
+  box-shadow:0 8px 18px rgba(12,80,128,.35);
+  overflow:hidden;
+  background:none; /* 🔥 quitar el azul */
+}
+.govfoot .mark img{
+  width:100%; height:100%; object-fit:contain;
+}
+.govfoot .legal{ margin-top:.6rem; font-size:.72rem; opacity:.75; }
+@media (max-width:640px){
+  .govfoot .wrap{ padding:22px 1rem 26px; }
+  .govfoot .meta{ flex-direction:column; gap:.5rem; }
+}
 
     /* ===== NAVBAR INSTITUCIONAL ===== */
 .govbar {
@@ -410,12 +450,23 @@
     </div>
   </section>
 
-  <!-- Footer -->
-  <footer class="max-w-7xl mx-auto px-4 md:px-8 py-10">
-    <div class="text-center text-xs opacity-70">
-      © 2025 — Prototipo institucional. La identidad de los votantes se valida localmente para esta prueba.
+<footer class="govfoot mt-12">
+  <div class="brandline" aria-hidden="true"></div>
+  <div class="wrap">
+    <div class="meta">
+ <span class="mark">
+  <img src="static/img/logo_brand.png" alt="Logo institucional">
+</span>
+      <span>© 2025 — Dirección de Tecnologías de la Información y Control Penitenciario · Dirección General del Sistema Penitenciario · Secretaría de Seguridad y Paz</span>
+      <span class="chip">DTICP</span>
+      <span class="chip">DGSP</span>
     </div>
-  </footer>
+    <div class="legal text-center">
+      La identidad de los votantes se valida localmente para esta prueba.
+    </div>
+  </div>
+</footer>
+
 
 <script>
 /** =========================
