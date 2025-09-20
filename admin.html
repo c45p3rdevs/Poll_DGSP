@@ -25,16 +25,15 @@
       radial-gradient(1200px 600px at 100% 0%, rgba(22,163,74,.12), transparent 60%); }
     .elev{ box-shadow:0 10px 30px rgba(2,6,23,.10); }
 
-    /* Top loader */
-    #topLoader{ position:fixed; top:0; left:0; height:3px; width:0; z-index:2147483647;
-      background: linear-gradient(90deg, #1767ff, #00069a); box-shadow:0 0 12px rgba(23,103,255,.35); transform:translateZ(0); }
-    #topLoader::after{ content:""; position:absolute; inset:0;
-      background: linear-gradient(120deg, transparent, rgba(255,255,255,.6), transparent);
-      background-size:200% 100%; animation:loaderBarShine 1s linear infinite; mix-blend-mode:screen; }
-    .loader-fade{ transition:opacity .4s ease; opacity:0; }
-    @keyframes loaderBarShine{ to{ background-position:-200% 0; } }
+    /* Top loader sólido (sin gradientes) */
+    #topLoader{
+      position:fixed; top:0; left:0; height:3px; width:0; z-index:2147483647;
+      background:#0c5080; box-shadow:0 0 8px rgba(12,80,128,.45), 0 0 2px rgba(12,80,128,.9) inset;
+      transform:translateZ(0); transition:opacity .35s ease;
+    }
+    .loader-fade{ opacity:0; }
 
-    /* Login overlay netflix-lite azul (local, para proteger la URL de civiles) */
+    /* Overlay login admin (netflix-lite) */
     #adminLogin{ position:fixed; inset:0; z-index:2147483000; display:none; align-items:center; justify-content:center; padding:1.25rem; backdrop-filter:blur(6px); background:rgba(2,6,23,.5); }
     .nf-panel{ width:100%; max-width:420px; border-radius:14px; overflow:hidden;
       background: linear-gradient(180deg, rgba(2,6,23,.55), rgba(2,6,23,.35));
@@ -56,6 +55,24 @@
     .nf-btn{ width:100%; border:none; border-radius:10px; margin-top:8px; background:var(--accent); color:#fff; font-weight:800; letter-spacing:.2px; padding:.85rem 1rem; box-shadow:0 16px 28px color-mix(in oklab, var(--accent) 35%, transparent); }
     .spin{ width:16px; height:16px; border:2px solid #fff; border-right-color:transparent; border-radius:50%; display:inline-block; animation:s .65s linear infinite; vertical-align:-3px }
     @keyframes s{ to{ transform:rotate(360deg);} }
+
+    /* Alturas firmes para charts (adiós “estirón”) */
+    .chart-wrap{ height:18rem; } /* h-72 */
+    .chart-wrap-sm{ height:16rem; } /* h-64 */
+
+    /* Tarjeta perfil candidata/o */
+    .person-card{
+      display:flex; align-items:center; gap:.9rem; padding:.75rem; border:1px solid rgba(2,6,23,.08);
+      background:var(--fallback-b1,oklch(var(--b1))); border-radius:14px;
+    }
+    .person-img{
+      width:52px; height:52px; border-radius:12px; object-fit:cover; background:#eef2f7;
+      box-shadow:0 6px 16px rgba(2,6,23,.10);
+    }
+    .person-meta{ line-height:1.15; }
+    .person-name{ font-weight:700; font-size:.95rem; }
+    .person-sub{ font-size:.76rem; opacity:.75; }
+    .person-badge{ font-size:.75rem; border-radius:999px; padding:.2rem .5rem; border:1px solid rgba(2,6,23,.12); }
   </style>
 </head>
 <body class="min-h-full bg-base-200 text-base-content">
@@ -113,15 +130,28 @@
 
     <!-- Gráficas -->
     <section class="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6">
-      <div class="card bg-base-100 shadow col-span-2"><div class="card-body">
-        <h3 class="card-title">Votos por candidata/o</h3>
-        <canvas id="barChart" height="100"></canvas>
-      </div></div>
-      <div class="card bg-base-100 shadow"><div class="card-body">
-        <h3 class="card-title">Distribución por género</h3>
-        <canvas id="pieChart" height="100"></canvas>
-        <div class="text-xs opacity-70 mt-2">Actualizado: <span id="lastUpdate">—</span></div>
-      </div></div>
+      <div class="card bg-base-100 shadow col-span-2">
+        <div class="card-body">
+          <h3 class="card-title">Votos por candidata/o</h3>
+          <div class="chart-wrap"><canvas id="barChart" class="w-full h-full"></canvas></div>
+        </div>
+      </div>
+      <div class="card bg-base-100 shadow">
+        <div class="card-body">
+          <h3 class="card-title">Distribución por género</h3>
+          <div class="chart-wrap-sm"><canvas id="pieChart" class="w-full h-full"></canvas></div>
+          <div class="text-xs opacity-70 mt-2">Actualizado: <span id="lastUpdate">—</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Mosaico de personas (con foto) -->
+    <section class="mt-6">
+      <div class="flex items-center justify-between mb-3">
+        <h3 class="font-bold text-lg">Candidatas y candidatos</h3>
+        <div class="text-xs opacity-70">Ordenado por votos</div>
+      </div>
+      <div id="peopleGrid" class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"></div>
     </section>
 
     <!-- Tablas -->
@@ -165,18 +195,21 @@
 
 <script>
 /** ========= CONFIG ========= */
-const STATS_URL = './data/stats.json'; // generado por Actions
+const STATS_URL = './data/stats.json';
 const POLL_ID_MUJER  = "7rnzVbMBanO";
 const POLL_ID_HOMBRE = "e6Z2A3DXXgN";
 
-/** ========= THEME + LOADER ========= */
+/** ========= TOP LOADER ========= */
 const topLoader=document.getElementById('topLoader'); let raf,prog=0,active=false;
-function tick(){ prog+=(95-prog)*.1+.5; topLoader.style.width=prog+'%'; raf=requestAnimationFrame(tick); }
+function tick(){ prog+=(95-prog)*.12+.6; topLoader.style.width=prog+'%'; raf=requestAnimationFrame(tick); }
 function showTop(){ if(active) return; active=true; topLoader.hidden=false; topLoader.classList.remove('loader-fade'); topLoader.style.width='0%'; prog=0; cancelAnimationFrame(raf); tick(); }
-function hideTop(){ cancelAnimationFrame(raf); topLoader.style.width='100%'; setTimeout(()=>topLoader.classList.add('loader-fade'),60);
-  setTimeout(()=>{ topLoader.hidden=true; topLoader.classList.remove('loader-fade'); topLoader.style.width='0%'; prog=0; active=false; },400); }
+function hideTop(){ cancelAnimationFrame(raf); topLoader.style.width='100%';
+  setTimeout(()=>topLoader.classList.add('loader-fade'),40);
+  setTimeout(()=>{ topLoader.hidden=true; topLoader.classList.remove('loader-fade'); topLoader.style.width='0%'; prog=0; active=false; },350);
+}
 document.addEventListener('readystatechange',()=>{ if(document.readyState==='interactive') showTop(); if(document.readyState==='complete') hideTop(); });
 
+/** ========= THEME ========= */
 function setTheme(mode){
   if(mode==='light'){ document.documentElement.setAttribute('data-theme','light'); localStorage.setItem('theme','light'); }
   else if(mode==='dark'){ document.documentElement.setAttribute('data-theme','dark'); localStorage.setItem('theme','dark'); }
@@ -189,7 +222,7 @@ document.getElementById('themeAuto').addEventListener('click', ()=>setTheme('aut
 (function(){ const saved=localStorage.getItem('theme'); if(saved==='light'||saved==='dark') setTheme(saved); else setTheme('auto'); })();
 
 /** ========= LOGIN (local) ========= */
-const ADMIN_CREDENTIALS = { "admin":"adm1", "ker":"ker1" }; // cambia si quieres
+const ADMIN_CREDENTIALS = { "admin":"adm1", "ker":"ker1" }; // cámbialos si gustas
 const adminLogin = document.getElementById('adminLogin');
 const loginForm  = document.getElementById('loginForm');
 const btnLogin   = document.getElementById('btnLogin');
@@ -205,7 +238,7 @@ function paintAdmin(u){ adminBox.classList.remove('hidden'); adminName.textConte
 (function initAdminSession(){
   const raw = localStorage.getItem('admin_user');
   if(!raw){ showAdminLogin(); return; }
-  try{ const u=JSON.parse(raw); if(u&&u.name){ paintAdmin(u.name); } else showAdminLogin(); }
+  try{ const u=JSON.parse(raw); if(u&&u.name){ paintAdmin(u.name); startRealtime(); } else showAdminLogin(); }
   catch{ showAdminLogin(); }
 })();
 loginForm.addEventListener('submit', (e)=>{
@@ -214,11 +247,9 @@ loginForm.addEventListener('submit', (e)=>{
   const p=(inpPass.value||'').trim();
   if(!ADMIN_CREDENTIALS[u] || ADMIN_CREDENTIALS[u]!==p){ alert('Acceso inválido'); return; }
   const prev=btnLogin.innerHTML; btnLogin.disabled=true; btnLogin.innerHTML='<i class="spin"></i> Verificando…';
-  setTimeout(()=>{ localStorage.setItem('admin_user', JSON.stringify({name:u})); btnLogin.disabled=false; btnLogin.innerHTML=prev; hideAdminLogin(); startRealtime(); },650);
+  setTimeout(()=>{ localStorage.setItem('admin_user', JSON.stringify({name:u})); btnLogin.disabled=false; btnLogin.innerHTML=prev; hideAdminLogin(); paintAdmin(u); startRealtime(); },650);
 });
-document.getElementById('btnLogout').addEventListener('click', ()=>{
-  localStorage.removeItem('admin_user'); location.reload();
-});
+document.getElementById('btnLogout').addEventListener('click', ()=>{ localStorage.removeItem('admin_user'); location.reload(); });
 
 /** ========= CHARTS ========= */
 let barChart, pieChart;
@@ -227,16 +258,37 @@ function ensureCharts(){
     barChart=new Chart(document.getElementById('barChart'),{
       type:'bar',
       data:{ labels:[], datasets:[{ label:'Votos', data:[] }]},
-      options:{ responsive:true, maintainAspectRatio:false, scales:{ y:{ beginAtZero:true, ticks:{ precision:0 }}}}
+      options:{
+        responsive:true, maintainAspectRatio:false,
+        scales:{ y:{ beginAtZero:true, ticks:{ precision:0 }}, x:{ ticks:{ maxRotation:45, minRotation:0 } } },
+        plugins:{ legend:{ display:false }, tooltip:{ mode:'index', intersect:false } }
+      }
     });
   }
   if(!pieChart){
     pieChart=new Chart(document.getElementById('pieChart'),{
       type:'doughnut',
       data:{ labels:['Mujeres','Hombres'], datasets:[{ data:[0,0] }]},
-      options:{ responsive:true, maintainAspectRatio:false, cutout:'60%' }
+      options:{ responsive:true, maintainAspectRatio:false, cutout:'60%', plugins:{ legend:{ position:'bottom' } } }
     });
   }
+}
+
+/** ========= FOTOS ========== */
+/* Mapea por nombre exacto igual que en tu boleta (ajusta rutas si cambian) */
+const PHOTO_MAP = {
+  "KARINA VEGA":"static/img/1.jpg","IVETTE RODRIGUEZ":"static/img/2.png","NOHEMI RODRIGUEZ":"static/img/3.jpg",
+  "FATIMA CAMACHO":"static/img/4.jpg","JANETH SALINAS":"static/img/5.png","ALEJANDRA GARCIA":"static/img/6.jpg",
+  "BRISSA GARCIA":"static/img/7.jpg","TERESA CEJA":"static/img/8.png","YAQUELIN VERGARA":"static/img/9.png",
+  "CLAUDIA RODRIGUEZ":"static/img/10.png","ALVARO HERNANDEZ":"static/img/11.jpg","UBALDO YEPEZ":"static/img/12.png",
+  "JORGE CORTÉS":"static/img/13.jpg","MAURICIO VAZQUEZ":"static/img/14.jpg","JOSE VARELA":"static/img/15.png",
+  "RICARDO CHAGOLLA":"static/img/16.png","HIGINIO ROSAS":"static/img/17.jpg","GILBERTO SANDOVAL":"static/img/18.jpg",
+  "ANTONIO CASAS":"static/img/19.png","LUCIO CHAVEZ":"static/img/20.png","MARCELINO MEDINA":"static/img/21.png"
+};
+function getPhoto(name){
+  return PHOTO_MAP[name] || 'data:image/svg+xml;utf8,' + encodeURIComponent(
+    `<svg xmlns="http://www.w3.org/2000/svg" width="120" height="120"><rect width="100%" height="100%" fill="%23e5e7eb"/><text x="50%" y="54%" font-size="20" text-anchor="middle" fill="%239ca3af" font-family="Inter,Arial">SIN FOTO</text></svg>`
+  );
 }
 
 /** ========= RENDER ========= */
@@ -258,6 +310,26 @@ function renderTables(arr, tbodyId){
     const tr=document.createElement('tr');
     tr.innerHTML=`<td>${idx+1}</td><td>${r.name}</td><td><b>${r.votes}</b></td>`;
     tb.appendChild(tr);
+  });
+}
+function renderPeopleGrid(women, men){
+  const grid=document.getElementById('peopleGrid'); grid.innerHTML='';
+  const combined=[
+    ...women.options.map(o=>({ ...o, gender:'F'})),
+    ...men.options.map(o=>({ ...o, gender:'M'})),
+  ].sort((a,b)=>b.votes-a.votes);
+  combined.forEach((p,idx)=>{
+    const el=document.createElement('div');
+    el.className='person-card';
+    el.innerHTML=`
+      <img class="person-img" src="${getPhoto(p.name)}" alt="${p.name}"/>
+      <div class="person-meta min-w-0">
+        <div class="person-name truncate">${p.name}</div>
+        <div class="person-sub">${p.gender==='F'?'Mujer':'Hombre'} • Votos: <b>${p.votes}</b></div>
+      </div>
+      <span class="ml-auto person-badge ${p.gender==='F'?'text-secondary':'text-info'}">${idx+1}</span>
+    `;
+    grid.appendChild(el);
   });
 }
 function updateUI(data){
@@ -286,9 +358,10 @@ function updateUI(data){
 
   renderTables([...women.options].sort((a,b)=>b.votes-a.votes),'tblWomen');
   renderTables([...men.options].sort((a,b)=>b.votes-a.votes),'tblMen');
+  renderPeopleGrid(women, men);
 }
 
-/** ========= “Realtime” (polling al JSON en Pages) ========= */
+/** ========= “Realtime” (polling al JSON) ========= */
 let pollTimer=null;
 async function fetchOnce(){
   try{
@@ -296,7 +369,7 @@ async function fetchOnce(){
     if(!r.ok) throw 0;
     return await r.json();
   }catch{
-    // demo si aún no existe data/stats.json
+    // fallback si aún no existe data/stats.json
     return {
       women:{ poll_meta:{vote_count:0,participant_count:0,view_count:0}, poll_options:[] },
       men:{   poll_meta:{vote_count:0,participant_count:0,view_count:0}, poll_options:[] }
@@ -312,8 +385,9 @@ function startRealtime(){
 
 /** ========= INIT ========= */
 (function(){
+  // si ya hay sesión, empieza
   const saved=localStorage.getItem('admin_user');
-  if(saved) startRealtime(); // ya logueado
+  if(saved){ try{ const u=JSON.parse(saved); if(u?.name){ paintAdmin(u.name); startRealtime(); } }catch{} }
 })();
 </script>
 </body>

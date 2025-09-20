@@ -17,26 +17,27 @@
   <meta name="color-scheme" content="light dark"/>
   <style>
     :root{ --accent:#0c5080; font-family:Inter, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, "Helvetica Neue", Arial; }
-    .brand-gradient{ background:
-      radial-gradient(1200px 600px at 0% 0%, rgba(7,89,133,.12), transparent 60%),
-      radial-gradient(1200px 600px at 100% 0%, rgba(22,163,74,.12), transparent 60%); }
-    .grid-colx{ grid-template-columns: repeat(auto-fill,minmax(240px,1fr)); }
+    .grid-colx{ grid-template-columns: repeat(auto-fill,minmax(200px,1fr)); }
     .elev{ box-shadow:0 10px 30px rgba(2,6,23,.10); }
     .card-sel{ outline:2px solid color-mix(in oklab, var(--accent) 55%, transparent); outline-offset:0; }
     .chip{ @apply badge badge-outline rounded-xl text-xs; }
     .sticky-actions{ position:sticky; bottom:0; z-index:40; }
     .kbd{ @apply px-2 py-[2px] border rounded text-[11px] opacity-70; }
 
-    /* ===== Top loader azul institucional ===== */
-    #topLoader{ position:fixed; top:0; left:0; height:3px; width:0; z-index:2147483647;
-      background: linear-gradient(90deg, #1767ff, #00069a); box-shadow:0 0 12px rgba(23,103,255,.35); transform:translateZ(0); }
-    #topLoader::after{ content:""; position:absolute; inset:0;
-      background: linear-gradient(120deg, transparent, rgba(255,255,255,.6), transparent);
-      background-size:200% 100%; animation:loaderBarShine 1s linear infinite; mix-blend-mode:screen; }
-    .loader-fade{ transition:opacity .4s ease; opacity:0; }
-    @keyframes loaderBarShine{ to{ background-position:-200% 0; } }
+    /* Imagen responsiva con proporción estable (mejor en móvil) */
+    .card-img{ width:100%; aspect-ratio:4/5; object-fit:cover; border-radius:0.75rem; }
 
-    /* ===== Loader central (blur suave + logo) ===== */
+    /* ===== Top loader sólido #0c5080 ===== */
+    #topLoader{
+      position:fixed; top:0; left:0; height:3px; width:0; z-index:2147483647;
+      background:#0c5080;
+      box-shadow:0 0 8px rgba(12,80,128,.45), 0 0 2px rgba(12,80,128,.9) inset;
+      transform:translateZ(0);
+      transition:opacity .35s ease;
+    }
+    .loader-fade{ opacity:0; }
+
+    /* ===== Loader central ===== */
     #pageLoader{
       position:fixed; inset:0; z-index:2147483000; display:flex;
       align-items:center; justify-content:center; padding: 20px;
@@ -44,9 +45,7 @@
       background: rgba(2,6,23,.55);
       transition: opacity .45s ease, visibility .45s ease;
     }
-    /* ← añadido pointer-events:none cuando está oculto para no bloquear clics */
     #pageLoader.hidden{ opacity:0; visibility:hidden; pointer-events:none; }
-
     .pl-card{
       width:min(92vw,440px);
       border-radius:16px; padding:28px 24px 22px;
@@ -55,41 +54,128 @@
       box-shadow: 0 24px 64px rgba(0,0,0,.35), 0 2px 10px rgba(0,0,0,.25);
       color:#eaf2ff; text-align:center;
     }
-    .pl-logo{
-      width:110px; height:110px; margin:0 auto 12px; position:relative;
-    }
-    .pl-logo img{
-      width:100%; height:100%; object-fit:contain;
-      filter: drop-shadow(0 12px 24px rgba(12,80,128,.35));
-    }
-    .pl-orbs::before, .pl-orbs::after{
-      content:""; position:absolute; border-radius:9999px; inset:auto;
-      animation: orb 3.2s ease-in-out infinite;
-      filter: blur(10px);
-    }
+    .pl-logo{ width:110px; height:110px; margin:0 auto 12px; position:relative; }
+    .pl-logo img{ width:100%; height:100%; object-fit:contain; filter: drop-shadow(0 12px 24px rgba(12,80,128,.35)); }
+    .pl-orbs::before, .pl-orbs::after{ content:""; position:absolute; border-radius:9999px; inset:auto; animation: orb 3.2s ease-in-out infinite; filter: blur(10px); }
     .pl-orbs::before{ width:32px; height:32px; left:-8px; top:-8px; background:#3b82f6aa; }
     .pl-orbs::after { width:26px; height:26px; right:-8px; bottom:-8px; background:#22d3ee88; animation-direction:reverse; }
     @keyframes orb{ 50%{ transform: translate3d(6px,-4px,0) scale(1.08); } }
-
     .pl-title{ font-weight:800; font-size:20px; margin-top:6px; }
     .pl-sub{ opacity:.85; font-size:13px; margin-top:2px; }
-
     .pl-bar{ margin:14px auto 4px; width:180px; height:6px; border-radius:999px; background:rgba(255,255,255,.16); overflow:hidden; }
-    .pl-bar i{ display:block; height:100%; width:60%; border-radius:999px;
-      background: linear-gradient(90deg, #0c5080, #3b82f6);
-      animation: bar 1.4s ease-in-out infinite; }
+    .pl-bar i{ display:block; height:100%; width:60%; border-radius:999px; background:#0c5080; animation: bar 1.4s ease-in-out infinite; }
     @keyframes bar{ 50%{ transform: translateX(80%)} 100%{ transform: translateX(0)} }
+
+    /* ===== Rule Banner UI/UX ===== */
+    .rule-card{
+      border-radius:18px;
+      border:1px solid color-mix(in oklab, var(--accent) 22%, transparent);
+      background:
+        radial-gradient(1200px 600px at 0% 0%, color-mix(in oklab, var(--accent) 15%, transparent), transparent 60%),
+        linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+      backdrop-filter: blur(6px);
+      display:grid; grid-template-columns: 1fr auto; align-items:center; gap:18px; padding:18px 20px;
+    }
+    .rule-ribbon{ position:absolute; inset:0 0 auto 0; height:3px; background:#0c5080; opacity:.95; }
+    .rule-icon{
+      width:44px; height:44px; border-radius:12px; display:grid; place-items:center; color:white;
+      background: linear-gradient(180deg, color-mix(in oklab, var(--accent) 92%, #0b1220 8%), #0c5080);
+      box-shadow:0 12px 30px color-mix(in oklab, var(--accent) 35%, transparent);
+    }
+    .pill{ display:inline-flex; align-items:center; gap:.4rem; padding:.35rem .65rem; border-radius:999px; font-size:12px; border:1px solid rgba(255,255,255,.14); background: rgba(255,255,255,.06); }
+    .rule-state{ display:inline-flex; align-items:center; gap:.5rem; font-size:12px; padding:.35rem .55rem; border-radius:10px; border:1px solid rgba(255,255,255,.14); background: rgba(255,255,255,.04); }
+    .rule-state .dot{ width:8px; height:8px; border-radius:999px; display:inline-block; background:#f59e0b; box-shadow:0 0 0 4px rgba(245,158,11,.12); }
+    #ruleBanner.alert-success .rule-state .dot{ background:#22c55e; box-shadow:0 0 0 4px rgba(34,197,94,.14); }
+
+    /* Header sólido + blur para que no se mezcle con el banner */
+    header.sticky{ background-color:rgb(var(--b1)/.9); -webkit-backdrop-filter:blur(8px); backdrop-filter:blur(8px); }
+
+    /* ====== LOGIN OVERLAY (restaurado) ====== */
+    #loginOverlay{
+      position:fixed; inset:0; z-index:2147483600; display:none;
+      align-items:center; justify-content:center; padding:1.25rem;
+      background:rgba(2,6,23,.55); -webkit-backdrop-filter:blur(6px); backdrop-filter:blur(6px);
+    }
+    .nf-panel{
+      width:100%; max-width:420px; border-radius:14px; overflow:hidden;
+      background: linear-gradient(180deg, rgba(2,6,23,.55), rgba(2,6,23,.35));
+      border:1px solid rgba(255,255,255,.10);
+      box-shadow:0 30px 70px rgba(2,6,23,.40), 0 2px 8px rgba(2,6,23,.25);
+      color:#e5eef8;
+    }
+    .nf-head{ padding:26px 26px 0 26px; }
+    .nf-brand{ display:flex; align-items:center; gap:.6rem; }
+    .nf-logo{ width:34px; height:34px; border-radius:10px; background:var(--accent); display:grid; place-items:center; color:#fff; font-weight:800; box-shadow:0 10px 24px color-mix(in oklab, var(--accent) 40%, transparent); }
+    .nf-title{ font-size:26px; font-weight:800; color:#fff; margin:10px 0 6px; }
+    .nf-sub{ font-size:12.5px; opacity:.8; }
+    .nf-body{ padding:18px 26px 24px; }
+    .nf-field{ margin-bottom:12px; }
+    .nf-label{ display:block; font-size:12px; opacity:.85; margin:0 0 6px 2px; }
+    .nf-input{ width:100%; border-radius:10px; border:1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.06); color:white; padding:.85rem .9rem; outline:none;
+      transition:border-color .15s ease, background .15s ease; }
+    .nf-input::placeholder{ color:#c7d2fe88; }
+    .nf-input:focus{ border-color: color-mix(in oklab, var(--accent) 65%, white 0%); background:rgba(255,255,255,.10); }
+    .nf-help{ display:flex; justify-content:space-between; align-items:center; font-size:12px; opacity:.9; }
+    .nf-link{ color:#cfe3ff; }
+    .nf-btn{ width:100%; border:none; border-radius:10px; margin-top:8px; background:var(--accent); color:#fff; font-weight:800; letter-spacing:.2px; padding:.85rem 1rem; box-shadow:0 16px 28px color-mix(in oklab, var(--accent) 35%, transparent); }
+    .nf-meta, .nf-footer{ padding:0 26px 18px; font-size:11.5px; color:#a9b6cd; }
+
+    /* Navbar/mobile compact */
+    @media (max-width:640px){
+      header .max-w-7xl > div{ gap:10px }
+      header h1{ font-size:1rem }
+      header p{ display:none } /* compactamos subtítulo en móvil */
+    }
+
+
+
+
+    /* ===== NAVBAR INSTITUCIONAL ===== */
+.govbar {
+  position: sticky; top: 0; z-index: 30;
+  background: rgba(255,255,255,.85);
+  backdrop-filter: saturate(1.1) blur(8px);
+  -webkit-backdrop-filter: saturate(1.1) blur(8px);
+  border-bottom: 1px solid rgb(229 231 235); /* base-300 */
+}
+[data-theme="dark"] .govbar{
+  background: rgba(17,24,39,.75); /* base-100 en oscuro */
+  border-bottom-color: rgb(55 65 81);
+}
+.govbrand {
+  display:flex; align-items:center; gap:.75rem; min-width:0;
+}
+.govtitle {
+  font-weight: 800; line-height: 1.1;
+  font-size: clamp(1rem, 2vw, 1.375rem);
+}
+.govsub {
+  font-size: .75rem; opacity:.75;
+}
+.govlogo {
+  height: 44px; width:auto; border-radius: .75rem; box-shadow: 0 6px 16px rgba(2,6,23,.12);
+}
+@media (max-width:640px){
+  .govsub{ display:none; }
+}
+
+
+
+
+.rule-card{ position:relative; }      /* asegura contexto */
+.rule-ribbon{ display:none !important; }  /* <— adiós superposición */
+
   </style>
 </head>
 <body class="min-h-full bg-base-200 text-base-content">
   <!-- Top loader -->
   <div id="topLoader" hidden></div>
 
-  <!-- ===== LOADER CENTRAL (reaparecido) ===== -->
+  <!-- Loader central -->
   <div id="pageLoader" aria-hidden="true">
     <div class="pl-card">
       <div class="pl-logo pl-orbs">
-        <!-- Coloca tu imagen en static/img/loader.png -->
         <img src="static/img/logo2.png" alt="Cargando…" />
       </div>
       <div class="pl-title">Preparando tu votación…</div>
@@ -99,61 +185,67 @@
   </div>
 
   <!-- Header -->
-  <header class="brand-gradient border-b border-base-300 sticky top-0 z-30">
-    <div class="max-w-7xl mx-auto px-4 md:px-8 py-4 flex items-center justify-between">
-      <div class="flex items-center gap-3">
-        <!-- Logo -->
-        <div class="flex-shrink-0">
-          <img src="static/img/logo2.png" alt="Logo Institucional" class="h-12 w-auto rounded-xl elev"/>
-        </div>
-        <!-- Títulos -->
-        <div>
-          <h1 class="text-xl md:text-2xl font-extrabold leading-tight">
-            Votación 2025 — Persona Servidora Pública Honesta
-          </h1>
-          <p class="text-xs md:text-sm opacity-70">
-            Seleccione exactamente <b>1 mujer</b> y <b>1 hombre</b>. Voto único por persona.
-          </p>
-        </div>
-      </div>
-
-      <div class="flex items-center gap-2">
-        <!-- Sesión -->
-        <div id="sessionBox" class="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-xl border border-base-300 bg-base-100">
-          <span class="material-symbols-rounded text-base opacity-70">account_circle</span>
-          <span id="sessionName" class="text-sm font-semibold">—</span>
-          <button id="btnLogout" class="btn btn-xs">Salir</button>
-        </div>
-
-        <!-- Tema -->
-        <div class="dropdown dropdown-end">
-          <div tabindex="0" role="button" class="btn btn-ghost btn-circle" title="Tema">
-            <span class="material-symbols-rounded">dark_mode</span>
-          </div>
-          <ul tabindex="0" class="dropdown-content z-[60] menu p-2 shadow bg-base-100 rounded-box w-40">
-            <li><a id="themeLight">Claro</a></li>
-            <li><a id="themeDark">Oscuro</a></li>
-            <li><a id="themeAuto">Auto</a></li>
-          </ul>
-        </div>
+ <header class="govbar">
+  <div class="max-w-7xl mx-auto px-4 md:px-8 py-3 flex items-center justify-between">
+    <div class="govbrand">
+      <img src="static/img/logo2.png" alt="Logo institucional" class="govlogo">
+      <div class="min-w-0">
+        <h1 class="govtitle truncate text-base-content">
+          Votación 2025 — Persona Servidora Pública Honesta
+        </h1>
+        <p class="govsub">Seleccione exactamente <b>1 mujer</b> y <b>1 hombre</b>. Voto único por persona.</p>
       </div>
     </div>
-  </header>
 
+    <div class="flex items-center gap-2">
+      <!-- Botón admin -->
+      <a id="btnAdmin" href="admin.html"
+         class="btn btn-sm btn-outline rounded-xl hidden"
+         title="Resultados en tiempo real">
+        <span class="material-symbols-rounded text-base">monitoring</span>
+        Resultados (admin)
+      </a>
+
+      <!-- Sesión -->
+      <div id="sessionBox" class="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-xl border border-base-300 bg-base-100">
+        <span class="material-symbols-rounded text-base opacity-70">account_circle</span>
+        <span id="sessionName" class="text-sm font-semibold">—</span>
+        <button id="btnLogout" class="btn btn-xs">Salir</button>
+      </div>
+
+      <!-- Tema -->
+      <div class="dropdown dropdown-end">
+        <div tabindex="0" role="button" class="btn btn-ghost btn-circle" title="Tema">
+          <span class="material-symbols-rounded">dark_mode</span>
+        </div>
+        <ul tabindex="0" class="dropdown-content z-[60] menu p-2 shadow bg-base-100 rounded-box w-40">
+          <li><a id="themeLight">Claro</a></li>
+          <li><a id="themeDark">Oscuro</a></li>
+          <li><a id="themeAuto">Auto</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</header>
   <!-- Avisos -->
-  <section class="max-w-7xl mx-auto px-4 md:px-8 mt-4">
-    <div id="ruleBanner" class="alert alert-info elev">
-      <div class="flex-1">
-        <span class="material-symbols-rounded">gavel</span>
-        <div>
-          <h3 class="font-semibold">Reglas de la boleta</h3>
-          <p class="text-sm opacity-80">Debes elegir <b>exactamente 1 mujer</b> y <b>1 hombre</b>. Para emitir el voto, debes iniciar sesión.</p>
+  <section class="max-w-7xl mx-auto px-4 md:px-8 mt-6">
+    <div id="ruleBanner" class="alert alert-info elev rule-card overflow-hidden">
+      <div class="rule-ribbon" aria-hidden="true"></div>
+      <div class="flex-1 flex items-start gap-4">
+        <div class="rule-icon"><span class="material-symbols-rounded">gavel</span></div>
+        <div class="min-w-0">
+          <h3 class="font-extrabold text-base md:text-lg leading-tight tracking-tight">Reglas de la boleta</h3>
+          <p class="text-sm opacity-85 mt-0.5">Debes elegir <b>exactamente 1 mujer</b> y <b>1 hombre</b>. Para emitir el voto, debes iniciar sesión.</p>
+          <div class="mt-3 flex flex-wrap gap-2">
+            <span class="pill">Duplicidad bloqueada</span>
+            <span class="pill">Anónimo al público</span>
+            <span class="pill">Verificación local</span>
+          </div>
         </div>
       </div>
-      <div class="hidden md:flex items-center gap-2">
-        <span class="chip">Duplicidad: bloqueada</span>
-        <span class="chip">Anónimo al público</span>
-        <span class="chip">Verificación local</span>
+      <div class="shrink-0 flex flex-col items-end gap-2">
+        <div class="rule-state"><span class="dot"></span><span class="label">Paridad requerida</span></div>
+        <button class="btn btn-sm rounded-xl rule-cta"><span class="material-symbols-rounded text-base">visibility</span> Ver reglas</button>
       </div>
     </div>
   </section>
@@ -250,7 +342,30 @@
     <form method="dialog" class="modal-backdrop"><button>close</button></form>
   </dialog>
 
-  <!-- Overlay LOGIN (tipo Netflix azul) -->
+  <!-- Modal identidad -->
+  <dialog id="modalIdentity" class="modal">
+    <div class="modal-box max-w-md">
+      <h3 class="font-bold text-lg">Datos para registrar tu voto</h3>
+      <p class="text-sm opacity-80 mt-1">Solo para control interno del proceso.</p>
+      <form id="identityForm" class="mt-4 grid gap-3">
+        <label class="form-control">
+          <span class="label-text">Nombre completo</span>
+          <input id="fullName" class="input input-bordered" placeholder="Nombre(s) y Apellidos" required>
+        </label>
+        <label class="form-control">
+          <span class="label-text">Usuario (área/municipio)</span>
+          <input id="loginUser" class="input input-bordered bg-base-200" readonly>
+        </label>
+        <div class="modal-action">
+          <button type="button" class="btn btn-ghost rounded-xl" onclick="document.getElementById('modalIdentity').close()">Cancelar</button>
+          <button type="submit" class="btn btn-primary rounded-xl">Continuar</button>
+        </div>
+      </form>
+    </div>
+    <form method="dialog" class="modal-backdrop"><button>close</button></form>
+  </dialog>
+
+  <!-- Overlay LOGIN (restaurado y centrado) -->
   <section id="loginOverlay" aria-hidden="true" style="display:none">
     <div class="nf-panel">
       <div class="nf-head">
@@ -310,35 +425,34 @@ const POLL_ID_MUJER  = "7rnzVbMBanO";
 const POLL_ID_HOMBRE = "e6Z2A3DXXgN";
 const PROXY_VOTE_URL = "/api/vote"; // tu proxy
 
-// option_id por nombre (StrawPoll)
 const OPTION_IDS = {
   M:{ "ALVARO HERNANDEZ":"B2ZBawNAQgJ","UBALDO YEPEZ":"61gDkX6Kznw","JORGE CORTÉS":"mpnbbvJMPn5","MAURICIO VAZQUEZ":"jVyGeXxokg7","JOSE VARELA":"kogjGWq81Z6","RICARDO CHAGOLLA":"ajnE7Xx4mZW","HIGINIO ROSAS":"YVyPNXwb3gN","GILBERTO SANDOVAL":"jVyGeX1qkg7","ANTONIO CASAS":"NPgxGa81rn2","LUCIO CHAVEZ":"wAg3MOwbKy8","MARCELINO MEDINA":"6QnM5Xwqane" },
   F:{ "KARINA VEGA":"NoZrRwPkBZ3","IVETTE RODRIGUEZ":"bVg8AaGqbZY","NOHEMI RODRIGUEZ":"xVg7MzQGOyr","FATIMA CAMACHO":"QrgeGJmELyp","JANETH SALINAS":"wAg3MODddy8","ALEJANDRA GARCIA":"DwyodpP8YnA","BRISSA GARCIA":"xVg7Mzwbzyr","TERESA CEJA":"3RnYb6YR9ge","YAQUELIN VERGARA":"QrgeGJLMQyp","CLAUDIA RODRIGUEZ":"PKglGYB9onp" }
 };
 
-// Imágenes locales
+/* Agrega aquí 'lugar' desde StrawPoll; si se omite, usa id como fallback */
 const CANDIDATURAS = [
-  { id:'F-01', nombre:'KARINA VEGA',       genero:'F', foto:'static/img/1.jpg'  },
-  { id:'F-02', nombre:'IVETTE RODRIGUEZ',  genero:'F', foto:'static/img/2.png'  },
-  { id:'F-03', nombre:'NOHEMI RODRIGUEZ',  genero:'F', foto:'static/img/3.jpg'  },
-  { id:'F-04', nombre:'FATIMA CAMACHO',    genero:'F', foto:'static/img/4.jpg'  },
-  { id:'F-05', nombre:'JANETH SALINAS',    genero:'F', foto:'static/img/5.png'  },
-  { id:'F-06', nombre:'ALEJANDRA GARCIA',  genero:'F', foto:'static/img/6.jpg'  },
-  { id:'F-07', nombre:'BRISSA GARCIA',     genero:'F', foto:'static/img/7.jpg'  },
-  { id:'F-08', nombre:'TERESA CEJA',       genero:'F', foto:'static/img/8.png'  },
-  { id:'F-09', nombre:'YAQUELIN VERGARA',  genero:'F', foto:'static/img/9.png'  },
-  { id:'F-10', nombre:'CLAUDIA RODRIGUEZ', genero:'F', foto:'static/img/10.png' },
-  { id:'M-01', nombre:'ALVARO HERNANDEZ',  genero:'M', foto:'static/img/11.jpg' },
-  { id:'M-02', nombre:'UBALDO YEPEZ',      genero:'M', foto:'static/img/12.png' },
-  { id:'M-03', nombre:'JORGE CORTÉS',      genero:'M', foto:'static/img/13.jpg' },
-  { id:'M-04', nombre:'MAURICIO VAZQUEZ',  genero:'M', foto:'static/img/14.jpg' },
-  { id:'M-05', nombre:'JOSE VARELA',       genero:'M', foto:'static/img/15.png' },
-  { id:'M-06', nombre:'RICARDO CHAGOLLA',  genero:'M', foto:'static/img/16.png' },
-  { id:'M-07', nombre:'HIGINIO ROSAS',     genero:'M', foto:'static/img/17.jpg' },
-  { id:'M-08', nombre:'GILBERTO SANDOVAL', genero:'M', foto:'static/img/18.jpg' },
-  { id:'M-09', nombre:'ANTONIO CASAS',     genero:'M', foto:'static/img/19.png' },
-  { id:'M-10', nombre:'LUCIO CHAVEZ',      genero:'M', foto:'static/img/20.png' },
-  { id:'M-11', nombre:'MARCELINO MEDINA',  genero:'M', foto:'static/img/21.png' }
+  { id:'F-01', nombre:'KARINA VEGA',       genero:'F', foto:'static/img/1.jpg',  lugar:'CEPRERESO SAN FELIPE' },
+  { id:'F-02', nombre:'IVETTE RODRIGUEZ',  genero:'F', foto:'static/img/2.png',  lugar:'CEPRERESO GUANAJUATO' },
+  { id:'F-03', nombre:'NOHEMI RODRIGUEZ',  genero:'F', foto:'static/img/3.jpg',  lugar:'CEPRESO CELAYA' },
+  { id:'F-04', nombre:'FATIMA CAMACHO',    genero:'F', foto:'static/img/4.jpg',  lugar:'CEPRERESO PÉNJAMO' },
+  { id:'F-05', nombre:'JANETH SALINAS',    genero:'F', foto:'static/img/5.png',  lugar:'CEPRERESO VALLE DE SANTIAGO FEMENIL' },
+  { id:'F-06', nombre:'ALEJANDRA GARCIA',  genero:'F', foto:'static/img/6.jpg',  lugar:'CEPRERESO LEÓN' },
+  { id:'F-07', nombre:'BRISSA GARCIA',     genero:'F', foto:'static/img/7.jpg',  lugar:'CEPRERESO SAN MIGUEL DE ALLENDE' },
+  { id:'F-08', nombre:'TERESA CEJA',       genero:'F', foto:'static/img/8.png',  lugar:'CEPRERESO VALLE DE SANTIAGO VARONIL' },
+  { id:'F-09', nombre:'YAQUELIN VERGARA',  genero:'F', foto:'static/img/9.png',  lugar:'CEPRERESO ACÁMBARO' },
+  { id:'F-10', nombre:'CLAUDIA RODRIGUEZ', genero:'F', foto:'static/img/10.png', lugar:'CEPRERESO SALAMANCA' },
+  { id:'M-01', nombre:'ALVARO HERNANDEZ',  genero:'M', foto:'static/img/11.jpg', lugar:'CEPRERESO SAN FELIPE' },
+  { id:'M-02', nombre:'UBALDO YEPEZ',      genero:'M', foto:'static/img/12.png', lugar:'CEPRERESO GUANAJUATO' },
+  { id:'M-03', nombre:'JORGE CORTÉS',      genero:'M', foto:'static/img/13.jpg', lugar:'CEPRESO CELAYA' },
+  { id:'M-04', nombre:'MAURICIO VAZQUEZ',  genero:'M', foto:'static/img/14.jpg', lugar:'CEPRERESO PÉNJAMO' },
+  { id:'M-05', nombre:'JOSE VARELA',       genero:'M', foto:'static/img/15.png', lugar:'CEPRERESO VALLE DE SANTIAGO VARONIL' },
+  { id:'M-06', nombre:'RICARDO CHAGOLLA',  genero:'M', foto:'static/img/16.png', lugar:'CEPRERESO LEÓN' },
+  { id:'M-07', nombre:'HIGINIO ROSAS',     genero:'M', foto:'static/img/17.jpg', lugar:'CEPRERESO SALAMANCA' },
+  { id:'M-08', nombre:'GILBERTO SANDOVAL', genero:'M', foto:'static/img/18.png', lugar:'CEPRERESO VALLE DE SANTIAGO VARONIL' },
+  { id:'M-09', nombre:'ANTONIO CASAS',     genero:'M', foto:'static/img/19.png', lugar:'CEPRERESO SAN MIGUEL DE ALLENDE' },
+  { id:'M-10', nombre:'LUCIO CHAVEZ',      genero:'M', foto:'static/img/20.png', lugar:'CEPRESP IRAPUATO' },
+  { id:'M-11', nombre:'MARCELINO MEDINA',  genero:'M', foto:'static/img/21.png', lugar:'CEPRERESO ACÁMBARO' }
 ];
 
 // Login local
@@ -349,53 +463,30 @@ const CREDENTIALS = {
 
 /** ===== Helpers/estado ===== */
 const $=s=>document.querySelector(s); const $$=s=>Array.from(document.querySelectorAll(s));
-const state={ seleccion:{F:null,M:null}, filtro:'ALL', q:'', user:null };
+const state={ seleccion:{F:null,M:null}, filtro:'ALL', q:'', user:null, identity:{ full_name:'' } };
 
 /** ===== TopLoader ===== */
 const topLoader=document.getElementById('topLoader'); let raf,prog=0,active=false;
-function tick(){ prog+=(95-prog)*.1+.5; topLoader.style.width=prog+'%'; raf=requestAnimationFrame(tick); }
+function tick(){ prog+=(95-prog)*.12+.6; topLoader.style.width=prog+'%'; raf=requestAnimationFrame(tick); }
 function showTop(){ if(active) return; active=true; topLoader.hidden=false; topLoader.classList.remove('loader-fade'); topLoader.style.width='0%'; prog=0; cancelAnimationFrame(raf); tick(); }
-function hideTop(){ cancelAnimationFrame(raf); topLoader.style.width='100%'; setTimeout(()=>topLoader.classList.add('loader-fade'),60);
-  setTimeout(()=>{ topLoader.hidden=true; topLoader.classList.remove('loader-fade'); topLoader.style.width='0%'; prog=0; active=false; },400); }
-document.addEventListener('readystatechange',()=>{ if(document.readyState==='interactive') showTop(); if(document.readyState==='complete') hideTop(); });
+function hideTop(){ cancelAnimationFrame(raf); topLoader.style.width='100%';
+  setTimeout(()=>topLoader.classList.add('loader-fade'),40);
+  setTimeout(()=>{ topLoader.hidden=true; topLoader.classList.remove('loader-fade'); topLoader.style.width='0%'; prog=0; active=false; },350);
+}
 
-/** ===== Loader central control (robusto) ===== */
+/** ===== Orquestación de loaders ===== */
 const pageLoader = document.getElementById('pageLoader');
 (function mountPageLoader(){
   if (!pageLoader) return;
-
-  const MIN_MS = 900;         // mínimo visible ~0.9s
-  const HARD_TIMEOUT = 3500;  // respaldo duro a 3.5s
-  const start = performance.now();
-
-  const hideSoft = () => pageLoader.classList.add('hidden');
-  const hideHard = () => pageLoader.remove();
-
-  // Si el DOM ya está listo, agenda cierre suave
-  if (document.readyState === 'interactive' || document.readyState === 'complete') {
-    const elapsed = performance.now() - start;
-    const wait = Math.max(0, MIN_MS - elapsed);
-    setTimeout(hideSoft, wait);
-  } else {
-    // Cierra al estar listo el DOM (sin esperar imágenes/CDNs)
-    document.addEventListener('DOMContentLoaded', () => {
-      const elapsed = performance.now() - start;
-      const wait = Math.max(0, MIN_MS - elapsed);
-      setTimeout(hideSoft, wait);
-    }, { once:true });
-  }
-
-  // Refuerzo al llegar 'load' (por si acaso)
-  window.addEventListener('load', () => {
-    const elapsed = performance.now() - start;
-    const wait = Math.max(0, MIN_MS - elapsed);
-    setTimeout(hideSoft, wait);
-  }, { once:true });
-
-  // Respaldo duro: remover del DOM
-  setTimeout(() => {
-    if (document.body.contains(pageLoader)) hideHard();
-  }, HARD_TIMEOUT);
+  const MIN_MS = 900, HARD_TIMEOUT = 3500, start = performance.now();
+  showTop();
+  const closeBoth = () => { pageLoader.classList.add('hidden'); hideTop(); };
+  const hardRemove = () => { if (document.body.contains(pageLoader)) pageLoader.remove(); };
+  const scheduleClose = () => { const elapsed = performance.now() - start; const wait = Math.max(0, MIN_MS - elapsed); setTimeout(closeBoth, wait); };
+  if (document.readyState === 'interactive' || document.readyState === 'complete') scheduleClose();
+  else document.addEventListener('DOMContentLoaded', scheduleClose, { once:true });
+  window.addEventListener('load', scheduleClose, { once:true });
+  setTimeout(()=>{ hardRemove(); hideTop(); }, HARD_TIMEOUT);
 })();
 
 /** ===== Tema ===== */
@@ -410,15 +501,26 @@ $('#themeDark').addEventListener('click', ()=>setTheme('dark'));
 $('#themeAuto').addEventListener('click', ()=>setTheme('auto'));
 (function(){ const saved=localStorage.getItem('theme'); if(saved==='light'||saved==='dark') setTheme(saved); else setTheme('auto'); })();
 
-/** ===== Login estilo Netflix ===== */
+/** ===== Login overlay ===== */
 const loginOverlay=$('#loginOverlay'), loginForm=$('#loginForm'), inpUser=$('#inpUser'), inpPass=$('#inpPass'), loginBtn=$('#loginBtn');
 const sessionBox=$('#sessionBox'), sessionName=$('#sessionName'), btnLogout=$('#btnLogout');
+const btnAdmin=$('#btnAdmin');
 
 function normalize(u){ return (u||'').toString().trim().toLowerCase(); }
 function showLogin(){ loginOverlay.style.display='flex'; inpUser.focus(); }
 function hideLogin(){ loginOverlay.style.display='none'; }
-function paintSession(){ sessionBox.classList.remove('hidden'); sessionName.textContent=state.user?.name||'—'; $('#sessionHint').textContent=`Sesión iniciada como ${state.user?.name}`; updateButtons(); }
-function tryAutoSession(){ const raw=localStorage.getItem('voto_user'); if(!raw) return false; try{ const u=JSON.parse(raw); if(u&&u.name){ state.user=u; paintSession(); return true; } }catch{} return false; }
+function paintSession(){
+  sessionBox.classList.remove('hidden');
+  sessionName.textContent=state.user?.name||'—';
+  $('#sessionHint').textContent=`Sesión iniciada como ${state.user?.name}`;
+  if (state.user?.name === 'admin') btnAdmin.classList.remove('hidden'); else btnAdmin.classList.add('hidden');
+  updateButtons();
+}
+function tryAutoSession(){
+  const raw=localStorage.getItem('voto_user'); if(!raw) return false;
+  try{ const u=JSON.parse(raw); if(u&&u.name){ state.user=u; paintSession(); return true; } }catch{}
+  return false;
+}
 
 loginForm.addEventListener('submit', (e)=>{
   e.preventDefault();
@@ -428,22 +530,34 @@ loginForm.addEventListener('submit', (e)=>{
   setTimeout(()=>{ state.user={name:u}; if($('#remember').checked) localStorage.setItem('voto_user', JSON.stringify(state.user));
     loginBtn.disabled=false; loginBtn.innerHTML=prev; hideLogin(); paintSession(); }, 650);
 });
-btnLogout.addEventListener('click', ()=>{ localStorage.removeItem('voto_user'); state.user=null; sessionBox.classList.add('hidden'); $('#sessionHint').textContent='No has iniciado sesión.'; showLogin(); updateButtons(); });
+btnLogout.addEventListener('click', ()=>{
+  localStorage.removeItem('voto_user'); state.user=null;
+  sessionBox.classList.add('hidden'); $('#sessionHint').textContent='No has iniciado sesión.';
+  btnAdmin.classList.add('hidden');
+  showLogin(); updateButtons();
+});
+
+/** ===== Full name persist ===== */
+(function loadFullName(){
+  const saved = localStorage.getItem('voto_fullname');
+  if(saved){ state.identity.full_name = saved; }
+})();
 
 /** ===== Render tarjetas ===== */
+function displayLugar(c){ return c.lugar && c.lugar.trim() ? c.lugar : c.id; }
 function isSelected(c){ const s=state.seleccion[c.genero]; return !!(s && s.id===c.id); }
 function cardTemplate(c){
   const badge = c.genero==='F' ? 'badge-secondary' : 'badge-info';
   return `
   <article class="card bg-base-100 border border-base-300 hover:border-primary/40 hover:translate-y-[-1px] transition-all duration-150 ${isSelected(c)?'card-sel':''}">
     <figure class="px-4 pt-4">
-      <img class="rounded-xl w-full h-44 object-cover" src="${c.foto}" alt="${c.nombre}"/>
+      <img class="card-img" src="${c.foto}" alt="${c.nombre}"/>
     </figure>
     <div class="card-body">
       <h3 class="card-title text-base">${c.nombre}</h3>
-      <div class="flex items-center gap-2">
+      <div class="flex items-center gap-2 flex-wrap">
         <span class="badge ${badge}">${c.genero==='F'?'Mujer':'Hombre'}</span>
-        <span class="chip">${c.id}</span>
+        <span class="chip" title="Municipio/CERESO">${displayLugar(c)}</span>
       </div>
       <div class="card-actions mt-3">
         <button class="btn ${isSelected(c)?'btn-error':'btn-primary'} btn-sm select-btn">
@@ -466,21 +580,24 @@ function renderListas(){
   }
   renderResumen(); updateButtons();
 }
-function toggleSelect(c){ const cur=state.seleccion[c.genero]; state.seleccion[c.genero]=(cur && cur.id===c.id)?null:{id:c.id, nombre:c.nombre}; renderListas(); }
+function toggleSelect(c){ const cur=state.seleccion[c.genero]; state.seleccion[c.genero]=(cur && cur.id===c.id)?null:{id:c.id, nombre:c.nombre, lugar: displayLugar(c)}; renderListas(); }
 function renderResumen(){
   const ul=$('#seleccionResumen'), f=state.seleccion.F, m=state.seleccion.M;
-  ul.innerHTML=`<li>🟣 Mujer: <b>${f?f.nombre+' ('+f.id+')':'—'}</b></li><li>🔵 Hombre: <b>${m?m.nombre+' ('+m.id+')':'—'}</b></li>`;
+  ul.innerHTML=
+    `<li>🟣 Mujer: <b>${f?f.nombre:'—'}</b>${f?` <span class="chip">${f.lugar||f.id}</span>`:''}</li>
+     <li>🔵 Hombre: <b>${m?m.nombre:'—'}</b>${m?` <span class="chip">${m.lugar||m.id}</span>`:''}</li>`;
   const ok=!!(f&&m); const banner=$('#ruleBanner');
-  banner.className=`alert ${ok?'alert-success':'alert-info'} elev`;
+  banner.className=`alert ${ok?'alert-success':'alert-info'} elev rule-card overflow-hidden`;
   const text=ok?'Listo: regla cumplida (1 mujer + 1 hombre).':'Debes elegir exactamente 1 mujer y 1 hombre.';
   banner.querySelector('div > div')?.querySelector('p')?.remove();
   banner.querySelector('div > div')?.insertAdjacentHTML('beforeend', `<p class="text-sm opacity-75 mt-1">${text}</p>`);
-  const payload = ok ? { mujer:f.nombre, hombre:m.nombre, ts:new Date().toISOString() } : { seleccion:null };
+  const payload = ok ? { mujer:f.nombre, mujer_lugar:f.lugar||f.id, hombre:m.nombre, hombre_lugar:m.lugar||m.id, ts:new Date().toISOString() } : { seleccion:null };
   $('#payload').textContent = JSON.stringify(payload,null,2);
 }
 function updateButtons(){ const ready=!!(state.seleccion.F && state.seleccion.M); const authed=!!state.user;
   $('#btnEnviar').disabled=!(ready&&authed);
-  $('#sessionHint').textContent=authed?`Sesión iniciada como ${state.user?.name}`:'No has iniciado sesión.'; }
+  $('#sessionHint').textContent=authed?`Sesión iniciada como ${state.user?.name}`:'No has iniciado sesión.';
+}
 
 /** ===== Búsqueda / Filtro / Hotkey ===== */
 $('#search').addEventListener('input', e=>{ state.q=e.target.value||''; renderListas(); });
@@ -489,29 +606,75 @@ $$('input[name="filtroGenero"]').forEach(r=>r.addEventListener('change', ()=>{
 }));
 window.addEventListener('keydown', e=>{ if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='k'){ e.preventDefault(); $('#search').focus(); } });
 
-/** ===== Preview & Envío ===== */
-$('#btnPreview').addEventListener('click', ()=>{
-  const f=state.seleccion.F, m=state.seleccion.M; if(!(f&&m)) return alert('Falta seleccionar 1 mujer y 1 hombre.');
-  $('#previewList').innerHTML=`<li>🟣 <b>Mujer</b>: ${f.nombre} <span class="chip">${f.id}</span></li><li>🔵 <b>Hombre</b>: ${m.nombre} <span class="chip">${m.id}</span></li>`;
-  $('#whoami').textContent=state.user?`Se enviará como: ${state.user.name}`:'Inicia sesión para continuar';
+/** ===== Flujo Envío: Identity -> Preview -> Confirm ===== */
+const identityModal = document.getElementById('modalIdentity');
+const identityForm  = document.getElementById('identityForm');
+const fullNameInput = document.getElementById('fullName');
+const loginUserInput= document.getElementById('loginUser');
+
+document.getElementById('btnEnviar').addEventListener('click', ()=>{
+  const f=state.seleccion.F, m=state.seleccion.M;
+  if(!(f&&m)) return alert('Falta seleccionar 1 mujer y 1 hombre.');
+  if(!state.user) return alert('Inicia sesión para continuar.');
+  loginUserInput.value = state.user.name || '';
+  fullNameInput.value  = state.identity.full_name || localStorage.getItem('voto_fullname') || '';
+  identityModal.showModal();
+});
+
+identityForm.addEventListener('submit', (e)=>{
+  e.preventDefault();
+  const name = (fullNameInput.value||'').trim();
+  if(!name){ fullNameInput.focus(); return; }
+  state.identity.full_name = name;
+  localStorage.setItem('voto_fullname', name);
+  identityModal.close();
+
+  const f=state.seleccion.F, m=state.seleccion.M;
+  $('#previewList').innerHTML=
+    `<li>🟣 <b>Mujer</b>: ${f.nombre} <span class="chip">${f.lugar||f.id}</span></li>
+     <li>🔵 <b>Hombre</b>: ${m.nombre} <span class="chip">${m.lugar||m.id}</span></li>
+     <li>🧾 <b>Nombre</b>: ${state.identity.full_name}</li>
+     <li>🏷️ <b>Usuario</b>: ${state.user?.name||'—'}</li>`;
+  $('#whoami').textContent = `Se enviará como: ${state.user?.name} — ${state.identity.full_name}`;
   document.getElementById('modalPreview').showModal();
 });
-$('#btnConfirm').addEventListener('click', async ()=>{
+
+/** ===== Previsualizar directo ===== */
+document.getElementById('btnPreview').addEventListener('click', ()=>{
+  const f=state.seleccion.F, m=state.seleccion.M; if(!(f&&m)) return alert('Falta seleccionar 1 mujer y 1 hombre.');
+  $('#previewList').innerHTML=
+    `<li>🟣 <b>Mujer</b>: ${f.nombre} <span class="chip">${f.lugar||f.id}</span></li>
+     <li>🔵 <b>Hombre</b>: ${m.nombre} <span class="chip">${m.lugar||m.id}</span></li>
+     ${state.identity.full_name?`<li>🧾 <b>Nombre</b>: ${state.identity.full_name}</li>`:''}
+     ${state.user?`<li>🏷️ <b>Usuario</b>: ${state.user.name}</li>`:''}`;
+  $('#whoami').textContent=state.user?`Se enviará como: ${state.user.name}${state.identity.full_name?' — '+state.identity.full_name:''}`:'Inicia sesión para continuar';
+  document.getElementById('modalPreview').showModal();
+});
+
+/** ===== Confirm & Send ===== */
+document.getElementById('btnConfirm').addEventListener('click', async ()=>{
   const f=state.seleccion.F, m=state.seleccion.M; if(!(f&&m)) return;
   const optIdF=OPTION_IDS.F[f.nombre], optIdM=OPTION_IDS.M[m.nombre]; if(!optIdF||!optIdM) return alert('Faltan option_id reales en OPTION_IDS.');
   try{
-    const res=await fetch(PROXY_VOTE_URL,{ method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ local_user: state.user?.name||null, votes:[{poll_id:POLL_ID_MUJER,option_id:optIdF},{poll_id:POLL_ID_HOMBRE,option_id:optIdM}] })});
+    const body = {
+      local_user: state.user?.name || null,
+      full_name: state.identity.full_name || null,
+      votes:[
+        {poll_id:POLL_ID_MUJER, option_id:optIdF},
+        {poll_id:POLL_ID_HOMBRE, option_id:optIdM}
+      ]
+    };
+    const res=await fetch(PROXY_VOTE_URL,{ method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body)});
     if(!res.ok){ const t=await res.text(); return alert('Error al votar: '+t); }
     document.getElementById('modalPreview').close();
     alert('¡Voto registrado en ambas encuestas! 🎉');
   }catch{ alert('No se pudo enviar el voto.'); }
 });
-$('#btnLimpiar').addEventListener('click', ()=>{ state.seleccion.F=null; state.seleccion.M=null; renderListas(); });
+
+document.getElementById('btnLimpiar').addEventListener('click', ()=>{ state.seleccion.F=null; state.seleccion.M=null; renderListas(); });
 
 /** ===== INIT ===== */
 (function init(){
-  // muestra login cuando se oculte el loader central
   const openLogin = ()=>{ if(!tryAutoSession()) showLogin(); else paintSession(); };
   if (pageLoader.classList.contains('hidden')) openLogin();
   else {
