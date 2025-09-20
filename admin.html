@@ -25,15 +25,10 @@
       radial-gradient(1200px 600px at 100% 0%, rgba(22,163,74,.12), transparent 60%); }
     .elev{ box-shadow:0 10px 30px rgba(2,6,23,.10); }
 
-    /* Top loader sólido (sin gradientes) */
-    #topLoader{
-      position:fixed; top:0; left:0; height:3px; width:0; z-index:2147483647;
-      background:#0c5080; box-shadow:0 0 8px rgba(12,80,128,.45), 0 0 2px rgba(12,80,128,.9) inset;
-      transform:translateZ(0); transition:opacity .35s ease;
-    }
+    #topLoader{ position:fixed; top:0; left:0; height:3px; width:0; z-index:2147483647;
+      background:#0c5080; box-shadow:0 0 8px rgba(12,80,128,.45), 0 0 2px rgba(12,80,128,.9) inset; transition:opacity .35s ease; }
     .loader-fade{ opacity:0; }
 
-    /* Overlay login admin (netflix-lite) */
     #adminLogin{ position:fixed; inset:0; z-index:2147483000; display:none; align-items:center; justify-content:center; padding:1.25rem; backdrop-filter:blur(6px); background:rgba(2,6,23,.5); }
     .nf-panel{ width:100%; max-width:420px; border-radius:14px; overflow:hidden;
       background: linear-gradient(180deg, rgba(2,6,23,.55), rgba(2,6,23,.35));
@@ -48,27 +43,19 @@
     .nf-field{ margin-bottom:12px; }
     .nf-label{ display:block; font-size:12px; opacity:.85; margin:0 0 6px 2px; }
     .nf-input{ width:100%; border-radius:10px; border:1px solid rgba(255,255,255,.14);
-      background: rgba(255,255,255,.06); color:white; padding:.85rem .9rem; outline:none;
-      transition:border-color .15s ease, background .15s ease; }
+      background: rgba(255,255,255,.06); color:white; padding:.85rem .9rem; outline:none; transition:border-color .15s ease, background .15s ease; }
     .nf-input::placeholder{ color:#c7d2fe88; }
     .nf-input:focus{ border-color: color-mix(in oklab, var(--accent) 65%, white 0%); background:rgba(255,255,255,.10); }
     .nf-btn{ width:100%; border:none; border-radius:10px; margin-top:8px; background:var(--accent); color:#fff; font-weight:800; letter-spacing:.2px; padding:.85rem 1rem; box-shadow:0 16px 28px color-mix(in oklab, var(--accent) 35%, transparent); }
     .spin{ width:16px; height:16px; border:2px solid #fff; border-right-color:transparent; border-radius:50%; display:inline-block; animation:s .65s linear infinite; vertical-align:-3px }
     @keyframes s{ to{ transform:rotate(360deg);} }
 
-    /* Alturas firmes para charts (adiós “estirón”) */
-    .chart-wrap{ height:18rem; } /* h-72 */
-    .chart-wrap-sm{ height:16rem; } /* h-64 */
+    .chart-wrap{ height:18rem; }
+    .chart-wrap-sm{ height:16rem; }
 
-    /* Tarjeta perfil candidata/o */
-    .person-card{
-      display:flex; align-items:center; gap:.9rem; padding:.75rem; border:1px solid rgba(2,6,23,.08);
-      background:var(--fallback-b1,oklch(var(--b1))); border-radius:14px;
-    }
-    .person-img{
-      width:52px; height:52px; border-radius:12px; object-fit:cover; background:#eef2f7;
-      box-shadow:0 6px 16px rgba(2,6,23,.10);
-    }
+    .person-card{ display:flex; align-items:center; gap:.9rem; padding:.75rem; border:1px solid rgba(2,6,23,.08);
+      background:var(--fallback-b1,oklch(var(--b1))); border-radius:14px; }
+    .person-img{ width:52px; height:52px; border-radius:12px; object-fit:cover; background:#eef2f7; box-shadow:0 6px 16px rgba(2,6,23,.10); }
     .person-meta{ line-height:1.15; }
     .person-name{ font-weight:700; font-size:.95rem; }
     .person-sub{ font-size:.76rem; opacity:.75; }
@@ -83,12 +70,10 @@
   <header class="brand-gradient border-b border-base-300 sticky top-0 z-20">
     <div class="max-w-7xl mx-auto px-4 md:px-8 py-4 flex items-center justify-between">
       <div class="flex items-center gap-3">
-        <div class="size-11 grid place-items-center rounded-2xl bg-primary text-primary-content font-extrabold elev">
-          <span class="text-xl">V</span>
-        </div>
+        <img src="./static/img/logo_brand.png" alt="Logo" class="h-11 w-11 rounded-2xl elev object-contain bg-base-100"/>
         <div>
           <h1 class="text-xl md:text-2xl font-extrabold leading-tight">Panel Admin — Estadísticas</h1>
-          <p class="text-xs md:text-sm opacity-70">Datos desde <code>data/stats.json</code> (actualizado por GitHub Actions).</p>
+          <p class="text-xs md:text-sm opacity-70">Datos desde <code>data/stats.json</code> (GitHub Actions).</p>
         </div>
       </div>
       <div class="flex items-center gap-2">
@@ -195,7 +180,7 @@
 
 <script>
 /** ========= CONFIG ========= */
-const STATS_URL = './data/stats.json';
+const STATS_URL = './data/stats.json';          // ← relativo, sirve en Pages y en GitHub Pages
 const POLL_ID_MUJER  = "7rnzVbMBanO";
 const POLL_ID_HOMBRE = "e6Z2A3DXXgN";
 
@@ -222,7 +207,7 @@ document.getElementById('themeAuto').addEventListener('click', ()=>setTheme('aut
 (function(){ const saved=localStorage.getItem('theme'); if(saved==='light'||saved==='dark') setTheme(saved); else setTheme('auto'); })();
 
 /** ========= LOGIN (local) ========= */
-const ADMIN_CREDENTIALS = { "admin":"adm1", "ker":"ker1" }; // cámbialos si gustas
+const ADMIN_CREDENTIALS = { "admin":"adm1", "ker":"ker1" };
 const adminLogin = document.getElementById('adminLogin');
 const loginForm  = document.getElementById('loginForm');
 const btnLogin   = document.getElementById('btnLogin');
@@ -275,15 +260,14 @@ function ensureCharts(){
 }
 
 /** ========= FOTOS ========== */
-/* Mapea por nombre exacto igual que en tu boleta (ajusta rutas si cambian) */
 const PHOTO_MAP = {
-  "KARINA VEGA":"static/img/1.jpg","IVETTE RODRIGUEZ":"static/img/2.png","NOHEMI RODRIGUEZ":"static/img/3.jpg",
-  "FATIMA CAMACHO":"static/img/4.jpg","JANETH SALINAS":"static/img/5.png","ALEJANDRA GARCIA":"static/img/6.jpg",
-  "BRISSA GARCIA":"static/img/7.jpg","TERESA CEJA":"static/img/8.png","YAQUELIN VERGARA":"static/img/9.png",
-  "CLAUDIA RODRIGUEZ":"static/img/10.png","ALVARO HERNANDEZ":"static/img/11.jpg","UBALDO YEPEZ":"static/img/12.png",
-  "JORGE CORTÉS":"static/img/13.jpg","MAURICIO VAZQUEZ":"static/img/14.jpg","JOSE VARELA":"static/img/15.png",
-  "RICARDO CHAGOLLA":"static/img/16.png","HIGINIO ROSAS":"static/img/17.jpg","GILBERTO SANDOVAL":"static/img/18.jpg",
-  "ANTONIO CASAS":"static/img/19.png","LUCIO CHAVEZ":"static/img/20.png","MARCELINO MEDINA":"static/img/21.png"
+  "KARINA VEGA":"./static/img/1.jpg","IVETTE RODRIGUEZ":"./static/img/2.png","NOHEMI RODRIGUEZ":"./static/img/3.jpg",
+  "FATIMA CAMACHO":"./static/img/4.jpg","JANETH SALINAS":"./static/img/5.png","ALEJANDRA GARCIA":"./static/img/6.jpg",
+  "BRISSA GARCIA":"./static/img/7.jpg","TERESA CEJA":"./static/img/8.png","YAQUELIN VERGARA":"./static/img/9.png",
+  "CLAUDIA RODRIGUEZ":"./static/img/10.png","ALVARO HERNANDEZ":"./static/img/11.jpg","UBALDO YEPEZ":"./static/img/12.png",
+  "JORGE CORTÉS":"./static/img/13.jpg","MAURICIO VAZQUEZ":"./static/img/14.jpg","JOSE VARELA":"./static/img/15.png",
+  "RICARDO CHAGOLLA":"./static/img/16.png","HIGINIO ROSAS":"./static/img/17.jpg","GILBERTO SANDOVAL":"./static/img/18.jpg",
+  "ANTONIO CASAS":"./static/img/19.png","LUCIO CHAVEZ":"./static/img/20.png","MARCELINO MEDINA":"./static/img/21.png"
 };
 function getPhoto(name){
   return PHOTO_MAP[name] || 'data:image/svg+xml;utf8,' + encodeURIComponent(
@@ -291,18 +275,10 @@ function getPhoto(name){
   );
 }
 
-/** ========= RENDER ========= */
-function normalizePoll(raw){
-  const totals = raw?.poll_meta?.vote_count ?? 0;
-  const participants = raw?.poll_meta?.participant_count ?? 0;
-  const views = raw?.poll_meta?.view_count ?? 0;
-  const options = (raw?.poll_options||[]).map(o=>({ name:o.value, votes:o.vote_count||0 }));
-  return { totals, participants, views, options, title:raw?.title||'', id:raw?.id||'' };
-}
-function buildFromCombined(payload){
-  const women = normalizePoll(payload?.women || {});
-  const men   = normalizePoll(payload?.men   || {});
-  return { women, men };
+/** ========= RENDER (usa stats.json simple) ========= */
+function objToSortedArray(obj){
+  return Object.entries(obj||{}).map(([name, votes])=>({name, votes:+votes||0}))
+         .sort((a,b)=>b.votes-a.votes);
 }
 function renderTables(arr, tbodyId){
   const tb=document.getElementById(tbodyId); tb.innerHTML='';
@@ -312,12 +288,9 @@ function renderTables(arr, tbodyId){
     tb.appendChild(tr);
   });
 }
-function renderPeopleGrid(women, men){
+function renderPeopleGrid(wArr, mArr){
   const grid=document.getElementById('peopleGrid'); grid.innerHTML='';
-  const combined=[
-    ...women.options.map(o=>({ ...o, gender:'F'})),
-    ...men.options.map(o=>({ ...o, gender:'M'})),
-  ].sort((a,b)=>b.votes-a.votes);
+  const combined=[...wArr.map(x=>({...x,gender:'F'})), ...mArr.map(x=>({...x,gender:'M'}))].sort((a,b)=>b.votes-a.votes);
   combined.forEach((p,idx)=>{
     const el=document.createElement('div');
     el.className='person-card';
@@ -334,47 +307,39 @@ function renderPeopleGrid(women, men){
 }
 function updateUI(data){
   ensureCharts();
-  const { women, men } = buildFromCombined(data);
 
-  document.getElementById('kpiWomen').textContent = women.totals ?? '0';
-  document.getElementById('kpiMen').textContent   = men.totals ?? '0';
-  document.getElementById('kpiWomenViews').textContent = `Vistas: ${women.views ?? '0'}`;
-  document.getElementById('kpiMenViews').textContent   = `Vistas: ${men.views ?? '0'}`;
-  document.getElementById('kpiPartWomen').textContent  = women.participants ?? '0';
-  document.getElementById('kpiPartMen').textContent    = men.participants ?? '0';
-  document.getElementById('lastUpdate').textContent    = new Date().toLocaleString();
+  const wArr = objToSortedArray(data.mujer);
+  const mArr = objToSortedArray(data.hombre);
+  const wTotal = wArr.reduce((a,b)=>a+b.votes,0);
+  const mTotal = mArr.reduce((a,b)=>a+b.votes,0);
 
-  const combined = [
-    ...women.options.map(o=>({name:o.name, votes:o.votes})),
-    ...men.options.map(o=>({name:o.name, votes:o.votes}))
-  ].sort((a,b)=>b.votes-a.votes);
+  document.getElementById('kpiWomen').textContent = wTotal;
+  document.getElementById('kpiMen').textContent   = mTotal;
+  document.getElementById('kpiWomenViews').textContent = `Vistas: —`;
+  document.getElementById('kpiMenViews').textContent   = `Vistas: —`;
+  document.getElementById('kpiPartWomen').textContent  = wTotal;
+  document.getElementById('kpiPartMen').textContent    = mTotal;
+  document.getElementById('lastUpdate').textContent    = data.updated_at ? new Date(data.updated_at).toLocaleString() : '—';
 
+  const combined = [...wArr, ...mArr].sort((a,b)=>b.votes-a.votes);
   barChart.data.labels = combined.map(x=>x.name);
   barChart.data.datasets[0].data = combined.map(x=>x.votes);
   barChart.update();
 
-  pieChart.data.datasets[0].data = [women.totals||0, men.totals||0];
+  pieChart.data.datasets[0].data = [wTotal, mTotal];
   pieChart.update();
 
-  renderTables([...women.options].sort((a,b)=>b.votes-a.votes),'tblWomen');
-  renderTables([...men.options].sort((a,b)=>b.votes-a.votes),'tblMen');
-  renderPeopleGrid(women, men);
+  renderTables(wArr,'tblWomen');
+  renderTables(mArr,'tblMen');
+  renderPeopleGrid(wArr, mArr);
 }
 
-/** ========= “Realtime” (polling al JSON) ========= */
+/** ========= Polling al JSON ========= */
 let pollTimer=null;
 async function fetchOnce(){
-  try{
-    const r=await fetch(STATS_URL+'?t='+(Date.now()),{cache:'no-store'});
-    if(!r.ok) throw 0;
-    return await r.json();
-  }catch{
-    // fallback si aún no existe data/stats.json
-    return {
-      women:{ poll_meta:{vote_count:0,participant_count:0,view_count:0}, poll_options:[] },
-      men:{   poll_meta:{vote_count:0,participant_count:0,view_count:0}, poll_options:[] }
-    };
-  }
+  const r=await fetch(STATS_URL+'?t='+(Date.now()),{cache:'no-store'});
+  if(!r.ok) return { updated_at:null, mujer:{}, hombre:{} };
+  return r.json();
 }
 function startRealtime(){
   const run=()=>fetchOnce().then(updateUI).catch(console.warn);
@@ -385,7 +350,6 @@ function startRealtime(){
 
 /** ========= INIT ========= */
 (function(){
-  // si ya hay sesión, empieza
   const saved=localStorage.getItem('admin_user');
   if(saved){ try{ const u=JSON.parse(saved); if(u?.name){ paintAdmin(u.name); startRealtime(); } }catch{} }
 })();

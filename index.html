@@ -24,36 +24,14 @@
     .sticky-actions{ position:sticky; bottom:0; z-index:40; }
     .kbd{ @apply px-2 py-[2px] border rounded text-[11px] opacity-70; }
 
-    /* Imagen responsiva con proporción estable (mejor en móvil) */
     .card-img{ width:100%; aspect-ratio:4/5; object-fit:cover; border-radius:0.75rem; }
 
-    /* ===== Top loader sólido #0c5080 ===== */
-    #topLoader{
-      position:fixed; top:0; left:0; height:3px; width:0; z-index:2147483647;
-      background:#0c5080;
-      box-shadow:0 0 8px rgba(12,80,128,.45), 0 0 2px rgba(12,80,128,.9) inset;
-      transform:translateZ(0);
-      transition:opacity .35s ease;
-    }
+    #topLoader{ position:fixed; top:0; left:0; height:3px; width:0; z-index:2147483647; background:#0c5080; box-shadow:0 0 8px rgba(12,80,128,.45), 0 0 2px rgba(12,80,128,.9) inset; transform:translateZ(0); transition:opacity .35s ease; }
     .loader-fade{ opacity:0; }
 
-    /* ===== Loader central ===== */
-    #pageLoader{
-      position:fixed; inset:0; z-index:2147483000; display:flex;
-      align-items:center; justify-content:center; padding: 20px;
-      backdrop-filter: blur(6px);
-      background: rgba(2,6,23,.55);
-      transition: opacity .45s ease, visibility .45s ease;
-    }
+    #pageLoader{ position:fixed; inset:0; z-index:2147483000; display:flex; align-items:center; justify-content:center; padding: 20px; backdrop-filter: blur(6px); background: rgba(2,6,23,.55); transition: opacity .45s ease, visibility .45s ease; }
     #pageLoader.hidden{ opacity:0; visibility:hidden; pointer-events:none; }
-    .pl-card{
-      width:min(92vw,440px);
-      border-radius:16px; padding:28px 24px 22px;
-      background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.04));
-      border: 1px solid rgba(255,255,255,.14);
-      box-shadow: 0 24px 64px rgba(0,0,0,.35), 0 2px 10px rgba(0,0,0,.25);
-      color:#eaf2ff; text-align:center;
-    }
+    .pl-card{ width:min(92vw,440px); border-radius:16px; padding:28px 24px 22px; background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.04)); border: 1px solid rgba(255,255,255,.14); box-shadow: 0 24px 64px rgba(0,0,0,.35), 0 2px 10px rgba(0,0,0,.25); color:#eaf2ff; text-align:center; }
     .pl-logo{ width:110px; height:110px; margin:0 auto 12px; position:relative; }
     .pl-logo img{ width:100%; height:100%; object-fit:contain; filter: drop-shadow(0 12px 24px rgba(12,80,128,.35)); }
     .pl-orbs::before, .pl-orbs::after{ content:""; position:absolute; border-radius:9999px; inset:auto; animation: orb 3.2s ease-in-out infinite; filter: blur(10px); }
@@ -66,146 +44,44 @@
     .pl-bar i{ display:block; height:100%; width:60%; border-radius:999px; background:#0c5080; animation: bar 1.4s ease-in-out infinite; }
     @keyframes bar{ 50%{ transform: translateX(80%)} 100%{ transform: translateX(0)} }
 
-    /* ===== Rule Banner UI/UX ===== */
-    .rule-card{
-      border-radius:18px;
-      border:1px solid color-mix(in oklab, var(--accent) 22%, transparent);
-      background:
-        radial-gradient(1200px 600px at 0% 0%, color-mix(in oklab, var(--accent) 15%, transparent), transparent 60%),
-        linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
-      backdrop-filter: blur(6px);
-      display:grid; grid-template-columns: 1fr auto; align-items:center; gap:18px; padding:18px 20px;
-    }
-    .rule-ribbon{ position:absolute; inset:0 0 auto 0; height:3px; background:#0c5080; opacity:.95; }
-    .rule-icon{
-      width:44px; height:44px; border-radius:12px; display:grid; place-items:center; color:white;
+    /* Rule Banner */
+    .rule-card{ border-radius:18px; border:1px solid color-mix(in oklab, var(--accent) 22%, transparent);
+      background: radial-gradient(1200px 600px at 0% 0%, color-mix(in oklab, var(--accent) 15%, transparent), transparent 60%), linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+      backdrop-filter: blur(6px); display:grid; grid-template-columns: 1fr auto; align-items:center; gap:18px; padding:18px 20px; position:relative; }
+    .rule-ribbon{ display:none !important; } /* evita superposición */
+    .rule-icon{ width:44px; height:44px; border-radius:12px; display:grid; place-items:center; color:white;
       background: linear-gradient(180deg, color-mix(in oklab, var(--accent) 92%, #0b1220 8%), #0c5080);
-      box-shadow:0 12px 30px color-mix(in oklab, var(--accent) 35%, transparent);
-    }
+      box-shadow: 0 12px 30px color-mix(in oklab, var(--accent) 35%, transparent); }
     .pill{ display:inline-flex; align-items:center; gap:.4rem; padding:.35rem .65rem; border-radius:999px; font-size:12px; border:1px solid rgba(255,255,255,.14); background: rgba(255,255,255,.06); }
     .rule-state{ display:inline-flex; align-items:center; gap:.5rem; font-size:12px; padding:.35rem .55rem; border-radius:10px; border:1px solid rgba(255,255,255,.14); background: rgba(255,255,255,.04); }
     .rule-state .dot{ width:8px; height:8px; border-radius:999px; display:inline-block; background:#f59e0b; box-shadow:0 0 0 4px rgba(245,158,11,.12); }
     #ruleBanner.alert-success .rule-state .dot{ background:#22c55e; box-shadow:0 0 0 4px rgba(34,197,94,.14); }
 
-    /* Header sólido + blur para que no se mezcle con el banner */
-    header.sticky{ background-color:rgb(var(--b1)/.9); -webkit-backdrop-filter:blur(8px); backdrop-filter:blur(8px); }
+    /* NAVBAR */
+    .govbar{ position: sticky; top: 0; z-index: 30; background: rgba(255,255,255,.85);
+      backdrop-filter: saturate(1.1) blur(8px); -webkit-backdrop-filter: saturate(1.1) blur(8px);
+      border-bottom: 1px solid rgb(229 231 235); }
+    [data-theme="dark"] .govbar{ background: rgba(17,24,39,.75); border-bottom-color: rgb(55 65 81); }
+    .govbrand{ display:flex; align-items:center; gap:.75rem; min-width:0; }
+    .govtitle{ font-weight: 800; line-height: 1.1; font-size: clamp(1rem, 2vw, 1.375rem); }
+    .govsub{ font-size: .75rem; opacity:.75; }
+    .govlogo{ height: 44px; width:auto; border-radius: .75rem; box-shadow: 0 6px 16px rgba(2,6,23,.12); }
 
-    /* ====== LOGIN OVERLAY (restaurado) ====== */
-    #loginOverlay{
-      position:fixed; inset:0; z-index:2147483600; display:none;
-      align-items:center; justify-content:center; padding:1.25rem;
-      background:rgba(2,6,23,.55); -webkit-backdrop-filter:blur(6px); backdrop-filter:blur(6px);
-    }
-    .nf-panel{
-      width:100%; max-width:420px; border-radius:14px; overflow:hidden;
-      background: linear-gradient(180deg, rgba(2,6,23,.55), rgba(2,6,23,.35));
-      border:1px solid rgba(255,255,255,.10);
-      box-shadow:0 30px 70px rgba(2,6,23,.40), 0 2px 8px rgba(2,6,23,.25);
-      color:#e5eef8;
-    }
-    .nf-head{ padding:26px 26px 0 26px; }
-    .nf-brand{ display:flex; align-items:center; gap:.6rem; }
-    .nf-logo{ width:34px; height:34px; border-radius:10px; background:var(--accent); display:grid; place-items:center; color:#fff; font-weight:800; box-shadow:0 10px 24px color-mix(in oklab, var(--accent) 40%, transparent); }
-    .nf-title{ font-size:26px; font-weight:800; color:#fff; margin:10px 0 6px; }
-    .nf-sub{ font-size:12.5px; opacity:.8; }
-    .nf-body{ padding:18px 26px 24px; }
-    .nf-field{ margin-bottom:12px; }
-    .nf-label{ display:block; font-size:12px; opacity:.85; margin:0 0 6px 2px; }
-    .nf-input{ width:100%; border-radius:10px; border:1px solid rgba(255,255,255,.14);
-      background: rgba(255,255,255,.06); color:white; padding:.85rem .9rem; outline:none;
-      transition:border-color .15s ease, background .15s ease; }
-    .nf-input::placeholder{ color:#c7d2fe88; }
-    .nf-input:focus{ border-color: color-mix(in oklab, var(--accent) 65%, white 0%); background:rgba(255,255,255,.10); }
-    .nf-help{ display:flex; justify-content:space-between; align-items:center; font-size:12px; opacity:.9; }
-    .nf-link{ color:#cfe3ff; }
-    .nf-btn{ width:100%; border:none; border-radius:10px; margin-top:8px; background:var(--accent); color:#fff; font-weight:800; letter-spacing:.2px; padding:.85rem 1rem; box-shadow:0 16px 28px color-mix(in oklab, var(--accent) 35%, transparent); }
-    .nf-meta, .nf-footer{ padding:0 26px 18px; font-size:11.5px; color:#a9b6cd; }
+    /* FOOTER deep */
+    .govfoot{ position: relative;
+      background: radial-gradient(900px 400px at 20% -80%, rgba(12,80,128,.18), transparent 60%),
+                 radial-gradient(700px 300px at 100% 0%, rgba(34,197,94,.10), transparent 55%),
+                 linear-gradient(180deg, rgba(2,6,23,.94), rgba(2,6,23,.98));
+      color: #e6eef7; border-top: 1px solid rgba(255,255,255,.08); }
+    .govfoot .brandline{ position:absolute; inset:0 0 auto 0; height:3px; background:#0c5080; opacity:.95; box-shadow:0 0 18px rgba(12,80,128,.35); }
+    .govfoot .wrap{ max-width: 80rem; margin: 0 auto; padding: 28px 1rem 34px; }
+    .govfoot .meta{ display:flex; align-items:center; justify-content:center; gap:.75rem; font-size:.8rem; opacity:.9; text-wrap:balance; text-align:center; }
+    .govfoot .chip{ display:inline-flex; align-items:center; gap:.35rem; padding:.28rem .55rem; font-size:.7rem; border-radius:999px; border:1px solid rgba(255,255,255,.16); background: rgba(255,255,255,.06); }
+    .govfoot .mark{ display:inline-grid; place-items:center; width:60px; height:60px; border-radius:10px; box-shadow:0 8px 18px rgba(12,80,128,.35); overflow:hidden; background:none; }
+    .govfoot .mark img{ width:100%; height:100%; object-fit:contain; }
+    .govfoot .legal{ margin-top:.6rem; font-size:.72rem; opacity:.75; }
 
-    /* Navbar/mobile compact */
-    @media (max-width:640px){
-      header .max-w-7xl > div{ gap:10px }
-      header h1{ font-size:1rem }
-      header p{ display:none } /* compactamos subtítulo en móvil */
-    }
-
-
-/* ===== Footer Deep Institucional ===== */
-.govfoot{
-  position: relative;
-  background:
-    radial-gradient(900px 400px at 20% -80%, rgba(12,80,128,.18), transparent 60%),
-    radial-gradient(700px 300px at 100% 0%, rgba(34,197,94,.10), transparent 55%),
-    linear-gradient(180deg, rgba(2,6,23,.94), rgba(2,6,23,.98));
-  color: #e6eef7;
-  border-top: 1px solid rgba(255,255,255,.08);
-}
-.govfoot .brandline{
-  position:absolute; inset:0 0 auto 0; height:3px; background:#0c5080; opacity:.95;
-  box-shadow:0 0 18px rgba(12,80,128,.35);
-}
-.govfoot .wrap{ max-width: 80rem; margin: 0 auto; padding: 28px 1rem 34px; }
-.govfoot .meta{
-  display:flex; align-items:center; justify-content:center; gap:.75rem; 
-  font-size: .8rem; opacity:.9; text-wrap:balance; text-align:center;
-}
-.govfoot .chip{
-  display:inline-flex; align-items:center; gap:.35rem;
-  padding:.28rem .55rem; font-size:.7rem; border-radius:999px;
-  border:1px solid rgba(255,255,255,.16); background: rgba(255,255,255,.06);
-}
-.govfoot .mark{
-  display:inline-grid;
-  place-items:center;
-  width:60px; height:60px;
-  border-radius:10px;
-  box-shadow:0 8px 18px rgba(12,80,128,.35);
-  overflow:hidden;
-  background:none; /* 🔥 quitar el azul */
-}
-.govfoot .mark img{
-  width:100%; height:100%; object-fit:contain;
-}
-.govfoot .legal{ margin-top:.6rem; font-size:.72rem; opacity:.75; }
-@media (max-width:640px){
-  .govfoot .wrap{ padding:22px 1rem 26px; }
-  .govfoot .meta{ flex-direction:column; gap:.5rem; }
-}
-
-    /* ===== NAVBAR INSTITUCIONAL ===== */
-.govbar {
-  position: sticky; top: 0; z-index: 30;
-  background: rgba(255,255,255,.85);
-  backdrop-filter: saturate(1.1) blur(8px);
-  -webkit-backdrop-filter: saturate(1.1) blur(8px);
-  border-bottom: 1px solid rgb(229 231 235); /* base-300 */
-}
-[data-theme="dark"] .govbar{
-  background: rgba(17,24,39,.75); /* base-100 en oscuro */
-  border-bottom-color: rgb(55 65 81);
-}
-.govbrand {
-  display:flex; align-items:center; gap:.75rem; min-width:0;
-}
-.govtitle {
-  font-weight: 800; line-height: 1.1;
-  font-size: clamp(1rem, 2vw, 1.375rem);
-}
-.govsub {
-  font-size: .75rem; opacity:.75;
-}
-.govlogo {
-  height: 44px; width:auto; border-radius: .75rem; box-shadow: 0 6px 16px rgba(2,6,23,.12);
-}
-@media (max-width:640px){
-  .govsub{ display:none; }
-}
-
-
-
-
-.rule-card{ position:relative; }      /* asegura contexto */
-.rule-ribbon{ display:none !important; }  /* <— adiós superposición */
-
+    @media (max-width:640px){ .govsub{ display:none; } .govfoot .wrap{ padding:22px 1rem 26px; } .govfoot .meta{ flex-direction:column; gap:.5rem; } }
   </style>
 </head>
 <body class="min-h-full bg-base-200 text-base-content">
@@ -216,7 +92,7 @@
   <div id="pageLoader" aria-hidden="true">
     <div class="pl-card">
       <div class="pl-logo pl-orbs">
-        <img src="static/img/logo2.png" alt="Cargando…" />
+        <img src="static/img/logo2.png" alt="Cargando…"/>
       </div>
       <div class="pl-title">Preparando tu votación…</div>
       <div class="pl-sub">Validando recursos y UI</div>
@@ -225,52 +101,44 @@
   </div>
 
   <!-- Header -->
- <header class="govbar">
-  <div class="max-w-7xl mx-auto px-4 md:px-8 py-3 flex items-center justify-between">
-    <div class="govbrand">
-      <img src="static/img/logo2.png" alt="Logo institucional" class="govlogo">
-      <div class="min-w-0">
-        <h1 class="govtitle truncate text-base-content">
-          Votación 2025 — Persona Servidora Pública Honesta
-        </h1>
-        <p class="govsub">Seleccione exactamente <b>1 mujer</b> y <b>1 hombre</b>. Voto único por persona.</p>
-      </div>
-    </div>
-
-    <div class="flex items-center gap-2">
-      <!-- Botón admin -->
-      <a id="btnAdmin" href="admin.html"
-         class="btn btn-sm btn-outline rounded-xl hidden"
-         title="Resultados en tiempo real">
-        <span class="material-symbols-rounded text-base">monitoring</span>
-        Resultados (admin)
-      </a>
-
-      <!-- Sesión -->
-      <div id="sessionBox" class="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-xl border border-base-300 bg-base-100">
-        <span class="material-symbols-rounded text-base opacity-70">account_circle</span>
-        <span id="sessionName" class="text-sm font-semibold">—</span>
-        <button id="btnLogout" class="btn btn-xs">Salir</button>
-      </div>
-
-      <!-- Tema -->
-      <div class="dropdown dropdown-end">
-        <div tabindex="0" role="button" class="btn btn-ghost btn-circle" title="Tema">
-          <span class="material-symbols-rounded">dark_mode</span>
+  <header class="govbar">
+    <div class="max-w-7xl mx-auto px-4 md:px-8 py-3 flex items-center justify-between">
+      <div class="govbrand">
+        <img src="static/img/logo2.png" alt="Logo institucional" class="govlogo">
+        <div class="min-w-0">
+          <h1 class="govtitle truncate text-base-content">Votación 2025 — Persona Servidora Pública Honesta</h1>
+          <p class="govsub">Seleccione exactamente <b>1 mujer</b> y <b>1 hombre</b>. Voto único por persona.</p>
         </div>
-        <ul tabindex="0" class="dropdown-content z-[60] menu p-2 shadow bg-base-100 rounded-box w-40">
-          <li><a id="themeLight">Claro</a></li>
-          <li><a id="themeDark">Oscuro</a></li>
-          <li><a id="themeAuto">Auto</a></li>
-        </ul>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <a id="btnAdmin" href="admin.html" class="btn btn-sm btn-outline rounded-xl hidden" title="Resultados en tiempo real">
+          <span class="material-symbols-rounded text-base">monitoring</span> Resultados (admin)
+        </a>
+
+        <div id="sessionBox" class="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-xl border border-base-300 bg-base-100">
+          <span class="material-symbols-rounded text-base opacity-70">account_circle</span>
+          <span id="sessionName" class="text-sm font-semibold">—</span>
+          <button id="btnLogout" class="btn btn-xs">Salir</button>
+        </div>
+
+        <div class="dropdown dropdown-end">
+          <div tabindex="0" role="button" class="btn btn-ghost btn-circle" title="Tema">
+            <span class="material-symbols-rounded">dark_mode</span>
+          </div>
+          <ul tabindex="0" class="dropdown-content z-[60] menu p-2 shadow bg-base-100 rounded-box w-40">
+            <li><a id="themeLight">Claro</a></li>
+            <li><a id="themeDark">Oscuro</a></li>
+            <li><a id="themeAuto">Auto</a></li>
+          </ul>
+        </div>
       </div>
     </div>
-  </div>
-</header>
+  </header>
+
   <!-- Avisos -->
   <section class="max-w-7xl mx-auto px-4 md:px-8 mt-6">
     <div id="ruleBanner" class="alert alert-info elev rule-card overflow-hidden">
-      <div class="rule-ribbon" aria-hidden="true"></div>
       <div class="flex-1 flex items-start gap-4">
         <div class="rule-icon"><span class="material-symbols-rounded">gavel</span></div>
         <div class="min-w-0">
@@ -298,9 +166,7 @@
       <kbd class="kbd hidden md:inline">⌘/Ctrl</kbd><kbd class="kbd hidden md:inline">K</kbd>
     </label>
     <div class="bg-base-100 rounded-2xl p-2 elev flex items-center justify-between flex-wrap gap-2">
-      <div class="flex items-center gap-2 text-sm opacity-70">
-        <span class="material-symbols-rounded">tune</span> Filtro rápido
-      </div>
+      <div class="flex items-center gap-2 text-sm opacity-70"><span class="material-symbols-rounded">tune</span> Filtro rápido</div>
       <div class="join">
         <input class="join-item btn btn-sm" type="radio" name="filtroGenero" id="filtroTodos" checked>
         <label class="join-item btn btn-sm" for="filtroTodos">Todos</label>
@@ -373,9 +239,7 @@
         <div class="text-xs opacity-70" id="whoami"></div>
         <div class="modal-action">
           <form method="dialog"><button class="btn btn-ghost rounded-xl">Cancelar</button></form>
-          <button id="btnConfirm" class="btn btn-primary rounded-xl">
-            <span class="material-symbols-rounded">how_to_vote</span> Confirmar y enviar
-          </button>
+          <button id="btnConfirm" class="btn btn-primary rounded-xl"><span class="material-symbols-rounded">how_to_vote</span> Confirmar y enviar</button>
         </div>
       </div>
     </div>
@@ -388,14 +252,8 @@
       <h3 class="font-bold text-lg">Datos para registrar tu voto</h3>
       <p class="text-sm opacity-80 mt-1">Solo para control interno del proceso.</p>
       <form id="identityForm" class="mt-4 grid gap-3">
-        <label class="form-control">
-          <span class="label-text">Nombre completo</span>
-          <input id="fullName" class="input input-bordered" placeholder="Nombre(s) y Apellidos" required>
-        </label>
-        <label class="form-control">
-          <span class="label-text">Usuario (área/municipio)</span>
-          <input id="loginUser" class="input input-bordered bg-base-200" readonly>
-        </label>
+        <label class="form-control"><span class="label-text">Nombre completo</span><input id="fullName" class="input input-bordered" placeholder="Nombre(s) y Apellidos" required></label>
+        <label class="form-control"><span class="label-text">Usuario (área/municipio)</span><input id="loginUser" class="input input-bordered bg-base-200" readonly></label>
         <div class="modal-action">
           <button type="button" class="btn btn-ghost rounded-xl" onclick="document.getElementById('modalIdentity').close()">Cancelar</button>
           <button type="submit" class="btn btn-primary rounded-xl">Continuar</button>
@@ -405,68 +263,44 @@
     <form method="dialog" class="modal-backdrop"><button>close</button></form>
   </dialog>
 
-  <!-- Overlay LOGIN (restaurado y centrado) -->
+  <!-- Overlay LOGIN -->
   <section id="loginOverlay" aria-hidden="true" style="display:none">
     <div class="nf-panel">
       <div class="nf-head">
         <div class="nf-brand">
           <div class="nf-logo">V</div>
-          <div>
-            <div class="text-[12px] opacity-80">Sistema de Votación</div>
-            <div class="text-sm font-semibold">Ingreso</div>
-          </div>
+          <div><div class="text-[12px] opacity-80">Sistema de Votación</div><div class="text-sm font-semibold">Ingreso</div></div>
         </div>
         <h2 class="nf-title">Inicia sesión</h2>
         <div class="nf-sub">Tu usuario es el municipio/área. Acceso seguro para emitir tu voto.</div>
       </div>
-
       <form id="loginForm" class="nf-body">
-        <div class="nf-field">
-          <label class="nf-label">Usuario</label>
-          <input id="inpUser" class="nf-input" placeholder="p. ej., irapuato"/>
-        </div>
-        <div class="nf-field">
-          <label class="nf-label">Contraseña</label>
-          <input id="inpPass" type="password" class="nf-input" placeholder="••••••••"/>
-        </div>
+        <div class="nf-field"><label class="nf-label">Usuario</label><input id="inpUser" class="nf-input" placeholder="p. ej., irapuato"/></div>
+        <div class="nf-field"><label class="nf-label">Contraseña</label><input id="inpPass" type="password" class="nf-input" placeholder="••••••••"/></div>
         <div class="nf-help">
-          <label class="nf-remember">
-            <input id="remember" type="checkbox" class="checkbox checkbox-xs checkbox-info mr-1.5" checked>
-            Recordarme
-          </label>
+          <label class="nf-remember"><input id="remember" type="checkbox" class="checkbox checkbox-xs checkbox-info mr-1.5" checked> Recordarme</label>
           <a href="#" class="nf-link" onclick="alert('Contacta a DTICP para recuperar el acceso.');return false;">¿Olvidaste tu acceso?</a>
         </div>
-        <button class="nf-btn" type="submit" id="loginBtn">
-          <span class="align-middle">Entrar</span>
-        </button>
+        <button class="nf-btn" type="submit" id="loginBtn"><span class="align-middle">Entrar</span></button>
       </form>
-
-      <div class="nf-meta">
-        <span>Soporte: DTICP</span><span>© 2025</span>
-      </div>
-      <div class="nf-footer">
-        Al continuar aceptas el aviso de privacidad y condiciones del proceso de votación.
-      </div>
+      <div class="nf-meta"><span>Soporte: DTICP</span><span>© 2025</span></div>
+      <div class="nf-footer">Al continuar aceptas el aviso de privacidad y condiciones del proceso de votación.</div>
     </div>
   </section>
 
-<footer class="govfoot mt-12">
-  <div class="brandline" aria-hidden="true"></div>
-  <div class="wrap">
-    <div class="meta">
- <span class="mark">
-  <img src="static/img/logo_brand.png" alt="Logo institucional">
-</span>
-      <span>© 2025 — Dirección de Tecnologías de la Información y Control Penitenciario · Dirección General del Sistema Penitenciario · Secretaría de Seguridad y Paz</span>
-      <span class="chip">DTICP</span>
-      <span class="chip">DGSP</span>
+  <!-- Footer -->
+  <footer class="govfoot mt-12">
+    <div class="brandline" aria-hidden="true"></div>
+    <div class="wrap">
+      <div class="meta">
+        <span class="mark"><img src="static/img/logo_brand.png" alt="Logo institucional"></span>
+        <span>© 2025 — Dirección de Tecnologías de la Información y Control Penitenciario · Dirección General del Sistema Penitenciario · Secretaría de Seguridad y Paz</span>
+        <span class="chip">DTICP</span>
+        <span class="chip">DGSP</span>
+      </div>
+      <div class="legal text-center">La identidad de los votantes se valida localmente para esta prueba.</div>
     </div>
-    <div class="legal text-center">
-      La identidad de los votantes se valida localmente para esta prueba.
-    </div>
-  </div>
-</footer>
-
+  </footer>
 
 <script>
 /** =========================
@@ -474,14 +308,15 @@
  * ========================= */
 const POLL_ID_MUJER  = "7rnzVbMBanO";
 const POLL_ID_HOMBRE = "e6Z2A3DXXgN";
-const PROXY_VOTE_URL = "/api/vote"; // tu proxy
+
+// 👇 Usa tu Worker (ruta absoluta con /vote)
+const PROXY_VOTE_URL = "https://vote-proxy.oimirandao.workers.dev/vote";
 
 const OPTION_IDS = {
   M:{ "ALVARO HERNANDEZ":"B2ZBawNAQgJ","UBALDO YEPEZ":"61gDkX6Kznw","JORGE CORTÉS":"mpnbbvJMPn5","MAURICIO VAZQUEZ":"jVyGeXxokg7","JOSE VARELA":"kogjGWq81Z6","RICARDO CHAGOLLA":"ajnE7Xx4mZW","HIGINIO ROSAS":"YVyPNXwb3gN","GILBERTO SANDOVAL":"jVyGeX1qkg7","ANTONIO CASAS":"NPgxGa81rn2","LUCIO CHAVEZ":"wAg3MOwbKy8","MARCELINO MEDINA":"6QnM5Xwqane" },
   F:{ "KARINA VEGA":"NoZrRwPkBZ3","IVETTE RODRIGUEZ":"bVg8AaGqbZY","NOHEMI RODRIGUEZ":"xVg7MzQGOyr","FATIMA CAMACHO":"QrgeGJmELyp","JANETH SALINAS":"wAg3MODddy8","ALEJANDRA GARCIA":"DwyodpP8YnA","BRISSA GARCIA":"xVg7Mzwbzyr","TERESA CEJA":"3RnYb6YR9ge","YAQUELIN VERGARA":"QrgeGJLMQyp","CLAUDIA RODRIGUEZ":"PKglGYB9onp" }
 };
 
-/* Agrega aquí 'lugar' desde StrawPoll; si se omite, usa id como fallback */
 const CANDIDATURAS = [
   { id:'F-01', nombre:'KARINA VEGA',       genero:'F', foto:'static/img/1.jpg',  lugar:'CEPRERESO SAN FELIPE' },
   { id:'F-02', nombre:'IVETTE RODRIGUEZ',  genero:'F', foto:'static/img/2.png',  lugar:'CEPRERESO GUANAJUATO' },
@@ -506,41 +341,31 @@ const CANDIDATURAS = [
   { id:'M-11', nombre:'MARCELINO MEDINA',  genero:'M', foto:'static/img/21.png', lugar:'CEPRERESO ACÁMBARO' }
 ];
 
-// Login local
-const CREDENTIALS = {
-  "acambaro":"aca1","celaya":"cel1","guanajuato":"gto1","irapuato":"ira1","leon":"leon1",
-  "penjamo":"pen1","sanfe":"sanfe1","san miguel":"sanmike1","vallevar":"valleva1","vallefem":"vallefem1","admin":"admin1"
-};
-
-/** ===== Helpers/estado ===== */
+// ===== Helpers/estado =====
 const $=s=>document.querySelector(s); const $$=s=>Array.from(document.querySelectorAll(s));
 const state={ seleccion:{F:null,M:null}, filtro:'ALL', q:'', user:null, identity:{ full_name:'' } };
 
-/** ===== TopLoader ===== */
+// ===== TopLoader =====
 const topLoader=document.getElementById('topLoader'); let raf,prog=0,active=false;
 function tick(){ prog+=(95-prog)*.12+.6; topLoader.style.width=prog+'%'; raf=requestAnimationFrame(tick); }
 function showTop(){ if(active) return; active=true; topLoader.hidden=false; topLoader.classList.remove('loader-fade'); topLoader.style.width='0%'; prog=0; cancelAnimationFrame(raf); tick(); }
-function hideTop(){ cancelAnimationFrame(raf); topLoader.style.width='100%';
-  setTimeout(()=>topLoader.classList.add('loader-fade'),40);
-  setTimeout(()=>{ topLoader.hidden=true; topLoader.classList.remove('loader-fade'); topLoader.style.width='0%'; prog=0; active=false; },350);
-}
+function hideTop(){ cancelAnimationFrame(raf); topLoader.style.width='100%'; setTimeout(()=>topLoader.classList.add('loader-fade'),40); setTimeout(()=>{ topLoader.hidden=true; topLoader.classList.remove('loader-fade'); topLoader.style.width='0%'; prog=0; active=false; },350); }
 
-/** ===== Orquestación de loaders ===== */
+// ===== Loader orchestration =====
 const pageLoader = document.getElementById('pageLoader');
 (function mountPageLoader(){
   if (!pageLoader) return;
   const MIN_MS = 900, HARD_TIMEOUT = 3500, start = performance.now();
   showTop();
   const closeBoth = () => { pageLoader.classList.add('hidden'); hideTop(); };
-  const hardRemove = () => { if (document.body.contains(pageLoader)) pageLoader.remove(); };
   const scheduleClose = () => { const elapsed = performance.now() - start; const wait = Math.max(0, MIN_MS - elapsed); setTimeout(closeBoth, wait); };
   if (document.readyState === 'interactive' || document.readyState === 'complete') scheduleClose();
   else document.addEventListener('DOMContentLoaded', scheduleClose, { once:true });
   window.addEventListener('load', scheduleClose, { once:true });
-  setTimeout(()=>{ hardRemove(); hideTop(); }, HARD_TIMEOUT);
+  setTimeout(()=>{ if (document.body.contains(pageLoader)) pageLoader.remove(); hideTop(); }, HARD_TIMEOUT);
 })();
 
-/** ===== Tema ===== */
+// ===== Tema =====
 function setTheme(mode){
   if(mode==='light'){ document.documentElement.setAttribute('data-theme','light'); localStorage.setItem('theme','light'); }
   else if(mode==='dark'){ document.documentElement.setAttribute('data-theme','dark'); localStorage.setItem('theme','dark'); }
@@ -552,7 +377,7 @@ $('#themeDark').addEventListener('click', ()=>setTheme('dark'));
 $('#themeAuto').addEventListener('click', ()=>setTheme('auto'));
 (function(){ const saved=localStorage.getItem('theme'); if(saved==='light'||saved==='dark') setTheme(saved); else setTheme('auto'); })();
 
-/** ===== Login overlay ===== */
+// ===== Login overlay =====
 const loginOverlay=$('#loginOverlay'), loginForm=$('#loginForm'), inpUser=$('#inpUser'), inpPass=$('#inpPass'), loginBtn=$('#loginBtn');
 const sessionBox=$('#sessionBox'), sessionName=$('#sessionName'), btnLogout=$('#btnLogout');
 const btnAdmin=$('#btnAdmin');
@@ -576,34 +401,25 @@ function tryAutoSession(){
 loginForm.addEventListener('submit', (e)=>{
   e.preventDefault();
   const u=normalize(inpUser.value), p=inpPass.value.trim();
+  const CREDENTIALS = {"acambaro":"aca1","celaya":"cel1","guanajuato":"gto1","irapuato":"ira1","leon":"leon1","penjamo":"pen1","sanfe":"sanfe1","san miguel":"sanmike1","vallevar":"valleva1","vallefem":"vallefem1","admin":"admin1"};
   if(!(CREDENTIALS.hasOwnProperty(u) && CREDENTIALS[u]===p)){ alert('Usuario o contraseña incorrectos.'); return; }
   loginBtn.disabled=true; const prev=loginBtn.innerHTML; loginBtn.innerHTML='<span class="material-symbols-rounded" style="font-size:18px;vertical-align:-3px">hourglass_empty</span> Verificando…';
   setTimeout(()=>{ state.user={name:u}; if($('#remember').checked) localStorage.setItem('voto_user', JSON.stringify(state.user));
     loginBtn.disabled=false; loginBtn.innerHTML=prev; hideLogin(); paintSession(); }, 650);
 });
-btnLogout.addEventListener('click', ()=>{
-  localStorage.removeItem('voto_user'); state.user=null;
-  sessionBox.classList.add('hidden'); $('#sessionHint').textContent='No has iniciado sesión.';
-  btnAdmin.classList.add('hidden');
-  showLogin(); updateButtons();
-});
+btnLogout.addEventListener('click', ()=>{ localStorage.removeItem('voto_user'); state.user=null; sessionBox.classList.add('hidden'); $('#sessionHint').textContent='No has iniciado sesión.'; btnAdmin.classList.add('hidden'); showLogin(); updateButtons(); });
 
-/** ===== Full name persist ===== */
-(function loadFullName(){
-  const saved = localStorage.getItem('voto_fullname');
-  if(saved){ state.identity.full_name = saved; }
-})();
+// ===== Full name persist =====
+(function(){ const saved = localStorage.getItem('voto_fullname'); if(saved){ state.identity.full_name = saved; } })();
 
-/** ===== Render tarjetas ===== */
+// ===== Render tarjetas =====
 function displayLugar(c){ return c.lugar && c.lugar.trim() ? c.lugar : c.id; }
 function isSelected(c){ const s=state.seleccion[c.genero]; return !!(s && s.id===c.id); }
 function cardTemplate(c){
   const badge = c.genero==='F' ? 'badge-secondary' : 'badge-info';
   return `
   <article class="card bg-base-100 border border-base-300 hover:border-primary/40 hover:translate-y-[-1px] transition-all duration-150 ${isSelected(c)?'card-sel':''}">
-    <figure class="px-4 pt-4">
-      <img class="card-img" src="${c.foto}" alt="${c.nombre}"/>
-    </figure>
+    <figure class="px-4 pt-4"><img class="card-img" src="${c.foto}" alt="${c.nombre}"/></figure>
     <div class="card-body">
       <h3 class="card-title text-base">${c.nombre}</h3>
       <div class="flex items-center gap-2 flex-wrap">
@@ -634,9 +450,8 @@ function renderListas(){
 function toggleSelect(c){ const cur=state.seleccion[c.genero]; state.seleccion[c.genero]=(cur && cur.id===c.id)?null:{id:c.id, nombre:c.nombre, lugar: displayLugar(c)}; renderListas(); }
 function renderResumen(){
   const ul=$('#seleccionResumen'), f=state.seleccion.F, m=state.seleccion.M;
-  ul.innerHTML=
-    `<li>🟣 Mujer: <b>${f?f.nombre:'—'}</b>${f?` <span class="chip">${f.lugar||f.id}</span>`:''}</li>
-     <li>🔵 Hombre: <b>${m?m.nombre:'—'}</b>${m?` <span class="chip">${m.lugar||m.id}</span>`:''}</li>`;
+  ul.innerHTML=`<li>🟣 Mujer: <b>${f?f.nombre:'—'}</b>${f?` <span class="chip">${f.lugar||f.id}</span>`:''}</li>
+                <li>🔵 Hombre: <b>${m?m.nombre:'—'}</b>${m?` <span class="chip">${m.lugar||m.id}</span>`:''}</li>`;
   const ok=!!(f&&m); const banner=$('#ruleBanner');
   banner.className=`alert ${ok?'alert-success':'alert-info'} elev rule-card overflow-hidden`;
   const text=ok?'Listo: regla cumplida (1 mujer + 1 hombre).':'Debes elegir exactamente 1 mujer y 1 hombre.';
@@ -650,14 +465,12 @@ function updateButtons(){ const ready=!!(state.seleccion.F && state.seleccion.M)
   $('#sessionHint').textContent=authed?`Sesión iniciada como ${state.user?.name}`:'No has iniciado sesión.';
 }
 
-/** ===== Búsqueda / Filtro / Hotkey ===== */
+// ===== Búsqueda / Filtro / Hotkey =====
 $('#search').addEventListener('input', e=>{ state.q=e.target.value||''; renderListas(); });
-$$('input[name="filtroGenero"]').forEach(r=>r.addEventListener('change', ()=>{
-  state.filtro=$('#filtroMujer').checked?'F':($('#filtroHombre').checked?'M':'ALL'); renderListas();
-}));
+$$('input[name="filtroGenero"]').forEach(r=>r.addEventListener('change', ()=>{ state.filtro=$('#filtroMujer').checked?'F':($('#filtroHombre').checked?'M':'ALL'); renderListas(); }));
 window.addEventListener('keydown', e=>{ if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='k'){ e.preventDefault(); $('#search').focus(); } });
 
-/** ===== Flujo Envío: Identity -> Preview -> Confirm ===== */
+// ===== Flujo Envío =====
 const identityModal = document.getElementById('modalIdentity');
 const identityForm  = document.getElementById('identityForm');
 const fullNameInput = document.getElementById('fullName');
@@ -690,7 +503,6 @@ identityForm.addEventListener('submit', (e)=>{
   document.getElementById('modalPreview').showModal();
 });
 
-/** ===== Previsualizar directo ===== */
 document.getElementById('btnPreview').addEventListener('click', ()=>{
   const f=state.seleccion.F, m=state.seleccion.M; if(!(f&&m)) return alert('Falta seleccionar 1 mujer y 1 hombre.');
   $('#previewList').innerHTML=
@@ -702,7 +514,6 @@ document.getElementById('btnPreview').addEventListener('click', ()=>{
   document.getElementById('modalPreview').showModal();
 });
 
-/** ===== Confirm & Send ===== */
 document.getElementById('btnConfirm').addEventListener('click', async ()=>{
   const f=state.seleccion.F, m=state.seleccion.M; if(!(f&&m)) return;
   const optIdF=OPTION_IDS.F[f.nombre], optIdM=OPTION_IDS.M[m.nombre]; if(!optIdF||!optIdM) return alert('Faltan option_id reales en OPTION_IDS.');
@@ -715,7 +526,7 @@ document.getElementById('btnConfirm').addEventListener('click', async ()=>{
         {poll_id:POLL_ID_HOMBRE, option_id:optIdM}
       ]
     };
-    const res=await fetch(PROXY_VOTE_URL,{ method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body)});
+    const res=await fetch(PROXY_VOTE_URL,{ method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body) });
     if(!res.ok){ const t=await res.text(); return alert('Error al votar: '+t); }
     document.getElementById('modalPreview').close();
     alert('¡Voto registrado en ambas encuestas! 🎉');
@@ -724,7 +535,7 @@ document.getElementById('btnConfirm').addEventListener('click', async ()=>{
 
 document.getElementById('btnLimpiar').addEventListener('click', ()=>{ state.seleccion.F=null; state.seleccion.M=null; renderListas(); });
 
-/** ===== INIT ===== */
+// INIT
 (function init(){
   const openLogin = ()=>{ if(!tryAutoSession()) showLogin(); else paintSession(); };
   if (pageLoader.classList.contains('hidden')) openLogin();

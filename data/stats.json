@@ -1,4 +1,5 @@
 {
-  "women": { "poll_meta": { "vote_count": 0, "participant_count": 0, "view_count": 0 }, "poll_options": [] },
-  "men":   { "poll_meta": { "vote_count": 0, "participant_count": 0, "view_count": 0 }, "poll_options": [] }
+  "updated_at": null,
+  "mujer": {},
+  "hombre": {}
 }

@@ -1,33 +1,37 @@
 name: Update StrawPoll stats
-
 on:
   schedule:
-    - cron: "*/5 * * * *"   # cada 5 minutos
-  workflow_dispatch: {}      # ejecutable manualmente desde la pestaña Actions
+    - cron: "*/5 * * * *"
+  workflow_dispatch:
   push:
     paths:
-      - ".github/workflows/strawpoll-stats.yml"
       - "scripts/fetch_strawpoll.mjs"
 
 jobs:
-  fetch:
+  update:
     runs-on: ubuntu-latest
     permissions:
-      contents: write  # para commitear el JSON
+      contents: write
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: 20
       - run: node --version
-      - name: Fetch StrawPoll
+      - name: Fetch stats
         env:
-          STRAWPOLL_API_KEY: ${{ secrets.STRAWPOLL_API_KEY }}
+          STRAWPOLL_KEY: ${{ secrets.STRAWPOLL_KEY }}
+          POLL_ID_MUJER: 7rnzVbMBanO
+          POLL_ID_HOMBRE: e6Z2A3DXXgN
         run: node scripts/fetch_strawpoll.mjs
-      - name: Commit JSON
+      - name: Commit changes
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add data/stats.json
-          git commit -m "chore: update stats.json [skip ci]" || echo "No changes"
-          git push
+          if [ -n "$(git status --porcelain)" ]; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add data/stats.json
+            git commit -m "chore: update stats.json"
+            git push
+          else
+            echo "No changes."
+          fi
