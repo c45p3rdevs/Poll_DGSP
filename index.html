@@ -1,122 +1,133 @@
 <!doctype html>
-<html lang="es" class="h-full">
+<html lang="es" data-theme="light" class="h-full">
 <head>
-  <meta charset="utf-8" />
+  <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>Votación 2025 — Persona Servidora Pública Honesta</title>
 
   <!-- Tailwind + DaisyUI -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <script>tailwind.config={darkMode:'class'};</script>
+  <script>tailwind.config={darkMode:['class','[data-theme="dark"]']};</script>
   <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.10/dist/full.min.css" rel="stylesheet"/>
 
   <!-- Inter + Material Symbols -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded" rel="stylesheet"/>
+
   <meta name="color-scheme" content="light dark"/>
-
   <style>
-    :root { font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, "Helvetica Neue", Arial; }
-    .brand-gradient { background: radial-gradient(1000px 500px at 0% 0%, rgba(7,89,133,.10), transparent 60%),
-                               radial-gradient(1000px 500px at 100% 0%, rgba(22,163,74,.10), transparent 60%); }
-    .btn-quiet { @apply btn btn-sm md:btn-md rounded-xl; }
-    .chip { @apply badge badge-outline rounded-xl text-xs; }
-    .grid-colx { grid-template-columns: repeat(auto-fill,minmax(240px,1fr)); }
-    .elev { box-shadow: 0 10px 30px rgba(2,6,23,.10); }
-    .sticky-actions { position: sticky; bottom: 0; z-index: 50; }
-    .kbd { @apply px-2 py-[2px] border rounded text-[11px] opacity-70; }
-    .card-sel { outline: 2px solid rgba(37,99,235,.55); outline-offset: 0; }
+    :root{ --accent:#0c5080; font-family:Inter, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, "Helvetica Neue", Arial; }
+    .brand-gradient{ background:
+      radial-gradient(1200px 600px at 0% 0%, rgba(7,89,133,.12), transparent 60%),
+      radial-gradient(1200px 600px at 100% 0%, rgba(22,163,74,.12), transparent 60%); }
+    .grid-colx{ grid-template-columns: repeat(auto-fill,minmax(240px,1fr)); }
+    .elev{ box-shadow:0 10px 30px rgba(2,6,23,.10); }
+    .card-sel{ outline:2px solid color-mix(in oklab, var(--accent) 55%, transparent); outline-offset:0; }
+    .chip{ @apply badge badge-outline rounded-xl text-xs; }
+    .sticky-actions{ position:sticky; bottom:0; z-index:40; }
+    .kbd{ @apply px-2 py-[2px] border rounded text-[11px] opacity-70; }
 
-    /* Toploader azul institucional */
-    #topLoader{ position:fixed; inset:0 0 auto 0; height:3px; width:0; z-index:2147483647;
-      background: linear-gradient(90deg,#1767ff,#00069a); box-shadow:0 0 12px rgba(23,103,255,.35); transform: translateZ(0); }
+    /* ===== Top loader azul institucional ===== */
+    #topLoader{ position:fixed; top:0; left:0; height:3px; width:0; z-index:2147483647;
+      background: linear-gradient(90deg, #1767ff, #00069a); box-shadow:0 0 12px rgba(23,103,255,.35); transform:translateZ(0); }
     #topLoader::after{ content:""; position:absolute; inset:0;
-      background: linear-gradient(120deg,transparent,rgba(255,255,255,.6),transparent);
-      background-size:200% 100%; animation: loaderBarShine 1s linear infinite; mix-blend-mode: screen; }
+      background: linear-gradient(120deg, transparent, rgba(255,255,255,.6), transparent);
+      background-size:200% 100%; animation:loaderBarShine 1s linear infinite; mix-blend-mode:screen; }
     .loader-fade{ transition:opacity .4s ease; opacity:0; }
     @keyframes loaderBarShine{ to{ background-position:-200% 0; } }
 
-    /* Loader “light” con blur suave */
-    #loginLoader{
-      position:fixed; inset:0; z-index:2147483000; display:flex; align-items:center; justify-content:center;
-      background: rgba(15,23,42,.35); /* blur suave */
+    /* ===== Loader central (blur suave + logo) ===== */
+    #pageLoader{
+      position:fixed; inset:0; z-index:2147483000; display:flex;
+      align-items:center; justify-content:center; padding: 20px;
       backdrop-filter: blur(6px);
-      transition: opacity .5s ease-out;
+      background: rgba(2,6,23,.55);
+      transition: opacity .45s ease, visibility .45s ease;
     }
-    .login-animate-pulse{ animation: lpulse 1.6s cubic-bezier(.4,0,.6,1) infinite; }
-    .login-animate-spin-slow{ animation: lspin 3s linear infinite; }
-    .login-fade-out{ animation: lfade .5s ease-out forwards; }
-    @keyframes lpulse { 0%,100%{transform:scale(1);opacity:1} 50%{transform:scale(1.04);opacity:.9} }
-    @keyframes lspin { to { transform: rotate(360deg); } }
-    @keyframes lfade { to { opacity:0; visibility:hidden; } }
+    /* ← añadido pointer-events:none cuando está oculto para no bloquear clics */
+    #pageLoader.hidden{ opacity:0; visibility:hidden; pointer-events:none; }
 
-    #loginLoader .loader { width:120px; height:18px; display:grid; margin:12px auto 0; }
-    #loginLoader .loader::before, #loginLoader .loader::after{
-      content:""; grid-area:1/1; --c:no-repeat linear-gradient(#1767ff 0 0);
-      background:var(--c),var(--c),var(--c);
-      animation:l16-1 2s infinite linear, l16-2 2s infinite linear;
-      transform: scale(var(--s,-1)) translate(3px,3px);
+    .pl-card{
+      width:min(92vw,440px);
+      border-radius:16px; padding:28px 24px 22px;
+      background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.04));
+      border: 1px solid rgba(255,255,255,.14);
+      box-shadow: 0 24px 64px rgba(0,0,0,.35), 0 2px 10px rgba(0,0,0,.25);
+      color:#eaf2ff; text-align:center;
     }
-    #loginLoader .loader::after{ --s:1; }
-    @keyframes l16-1{
-      0%,3%{background-size:0 4px,4px 0,0 4px}
-      16.67%{background-size:100% 4px,4px 0,0 4px}
-      33.33%{background-size:100% 4px,4px 100%,0 4px}
-      46%,54%{background-size:100% 4px,4px 100%,100% 4px}
-      66.67%{background-size:0 4px,4px 100%,100% 4px}
-      83.33%{background-size:0 4px,4px 0,100% 4px}
-      96%,100%{background-size:0 4px,4px 0,0 4px}
+    .pl-logo{
+      width:110px; height:110px; margin:0 auto 12px; position:relative;
     }
-    @keyframes l16-2{
-      0%,49.9%{background-position:0 0,100% 0,100% 100%}
-      50%,100%{background-position:100% 0,100% 100%,0 100%}
+    .pl-logo img{
+      width:100%; height:100%; object-fit:contain;
+      filter: drop-shadow(0 12px 24px rgba(12,80,128,.35));
     }
+    .pl-orbs::before, .pl-orbs::after{
+      content:""; position:absolute; border-radius:9999px; inset:auto;
+      animation: orb 3.2s ease-in-out infinite;
+      filter: blur(10px);
+    }
+    .pl-orbs::before{ width:32px; height:32px; left:-8px; top:-8px; background:#3b82f6aa; }
+    .pl-orbs::after { width:26px; height:26px; right:-8px; bottom:-8px; background:#22d3ee88; animation-direction:reverse; }
+    @keyframes orb{ 50%{ transform: translate3d(6px,-4px,0) scale(1.08); } }
+
+    .pl-title{ font-weight:800; font-size:20px; margin-top:6px; }
+    .pl-sub{ opacity:.85; font-size:13px; margin-top:2px; }
+
+    .pl-bar{ margin:14px auto 4px; width:180px; height:6px; border-radius:999px; background:rgba(255,255,255,.16); overflow:hidden; }
+    .pl-bar i{ display:block; height:100%; width:60%; border-radius:999px;
+      background: linear-gradient(90deg, #0c5080, #3b82f6);
+      animation: bar 1.4s ease-in-out infinite; }
+    @keyframes bar{ 50%{ transform: translateX(80%)} 100%{ transform: translateX(0)} }
   </style>
-  <style>
-  /* resalta la opción activa */
-  .dropdown .menu .active { background: rgb(226 232 240 / .6); border-radius: .5rem; font-weight: 600; }
-</style>
-
-  <!-- Google Identity Services -->
-  <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body class="min-h-full bg-base-200 text-base-content">
-
-  <!-- Toploader -->
+  <!-- Top loader -->
   <div id="topLoader" hidden></div>
 
-  <!-- Loader light con fondo blur e imagen de /static/img -->
-  <div id="loginLoader" aria-hidden="true">
-    <div class="text-center">
-      <div class="relative w-56 h-56 mx-auto mb-4">
-        <img src="/static/img/logo2.png" alt="DGSP" class="w-full h-full object-contain login-animate-pulse">
-        <div class="absolute -top-2 -left-2 w-12 h-12 rounded-full bg-blue-500/20 login-animate-spin-slow"></div>
-        <div class="absolute -bottom-2 -right-2 w-10 h-10 rounded-full bg-purple-500/20 login-animate-spin-slow" style="animation-direction:reverse"></div>
+  <!-- ===== LOADER CENTRAL (reaparecido) ===== -->
+  <div id="pageLoader" aria-hidden="true">
+    <div class="pl-card">
+      <div class="pl-logo pl-orbs">
+        <!-- Coloca tu imagen en static/img/loader.png -->
+        <img src="static/img/logo2.png" alt="Cargando…" />
       </div>
-      <p class="text-base-content/90 text-lg font-semibold">Cargando Candidatos</p>
-      <div class="loader"></div>
+      <div class="pl-title">Preparando tu votación…</div>
+      <div class="pl-sub">Validando recursos y UI</div>
+      <div class="pl-bar"><i></i></div>
     </div>
   </div>
 
   <!-- Header -->
-  <header class="brand-gradient border-b border-base-300">
+  <header class="brand-gradient border-b border-base-300 sticky top-0 z-30">
     <div class="max-w-7xl mx-auto px-4 md:px-8 py-4 flex items-center justify-between">
       <div class="flex items-center gap-3">
-        <img src="/static/img/logo2.png" alt="Logo" class="h-10 w-auto hidden sm:block">
+        <!-- Logo -->
+        <div class="flex-shrink-0">
+          <img src="static/img/logo2.png" alt="Logo Institucional" class="h-12 w-auto rounded-xl elev"/>
+        </div>
+        <!-- Títulos -->
         <div>
-          <h1 class="text-xl md:text-2xl font-extrabold leading-tight">Votación 2025 — Persona Servidora Pública Honesta</h1>
-          <p class="text-xs md:text-sm opacity-70">Elige exactamente <b>1 mujer</b> y <b>1 hombre</b>. Autenticación con Google requerida.</p>
+          <h1 class="text-xl md:text-2xl font-extrabold leading-tight">
+            Votación 2025 — Persona Servidora Pública Honesta
+          </h1>
+          <p class="text-xs md:text-sm opacity-70">
+            Seleccione exactamente <b>1 mujer</b> y <b>1 hombre</b>. Voto único por persona.
+          </p>
         </div>
       </div>
 
-      <!-- Sesión / tema -->
-      <div class="flex items-center gap-3">
-        <button id="btnGoogle" class="btn btn-outline btn-sm rounded-xl">
-          <span class="material-symbols-rounded text-base">account_circle</span>
-          <span class="hidden sm:inline">Iniciar sesión</span>
-        </button>
+      <div class="flex items-center gap-2">
+        <!-- Sesión -->
+        <div id="sessionBox" class="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-xl border border-base-300 bg-base-100">
+          <span class="material-symbols-rounded text-base opacity-70">account_circle</span>
+          <span id="sessionName" class="text-sm font-semibold">—</span>
+          <button id="btnLogout" class="btn btn-xs">Salir</button>
+        </div>
+
+        <!-- Tema -->
         <div class="dropdown dropdown-end">
-          <div tabindex="0" role="button" class="btn btn-ghost btn-circle">
+          <div tabindex="0" role="button" class="btn btn-ghost btn-circle" title="Tema">
             <span class="material-symbols-rounded">dark_mode</span>
           </div>
           <ul tabindex="0" class="dropdown-content z-[60] menu p-2 shadow bg-base-100 rounded-box w-40">
@@ -129,19 +140,20 @@
     </div>
   </header>
 
-  <!-- Aviso -->
+  <!-- Avisos -->
   <section class="max-w-7xl mx-auto px-4 md:px-8 mt-4">
     <div id="ruleBanner" class="alert alert-info elev">
       <div class="flex-1">
         <span class="material-symbols-rounded">gavel</span>
         <div>
-          <h3 class="font-semibold">Reglas</h3>
-          <p class="text-sm opacity-80">Selecciona <b>1 mujer</b> y <b>1 hombre</b>. Para enviar, inicia sesión con Google.</p>
+          <h3 class="font-semibold">Reglas de la boleta</h3>
+          <p class="text-sm opacity-80">Debes elegir <b>exactamente 1 mujer</b> y <b>1 hombre</b>. Para emitir el voto, debes iniciar sesión.</p>
         </div>
       </div>
       <div class="hidden md:flex items-center gap-2">
-        <span class="chip">Duplicidad bloqueada</span>
-        <span class="chip">Verificación de identidad</span>
+        <span class="chip">Duplicidad: bloqueada</span>
+        <span class="chip">Anónimo al público</span>
+        <span class="chip">Verificación local</span>
       </div>
     </div>
   </section>
@@ -150,12 +162,12 @@
   <section class="max-w-7xl mx-auto px-4 md:px-8 mt-6 grid gap-3 md:grid-cols-2">
     <label class="input input-bordered bg-base-100 flex items-center gap-2 elev">
       <span class="material-symbols-rounded opacity-70">search</span>
-      <input id="search" type="text" class="grow" placeholder="Buscar candidata/o (⌘/Ctrl+K)" />
+      <input id="search" type="text" class="grow" placeholder="Buscar candidata/o por nombre (⌘/Ctrl+K)"/>
       <kbd class="kbd hidden md:inline">⌘/Ctrl</kbd><kbd class="kbd hidden md:inline">K</kbd>
     </label>
     <div class="bg-base-100 rounded-2xl p-2 elev flex items-center justify-between flex-wrap gap-2">
       <div class="flex items-center gap-2 text-sm opacity-70">
-        <span class="material-symbols-rounded">tune</span> Filtro
+        <span class="material-symbols-rounded">tune</span> Filtro rápido
       </div>
       <div class="join">
         <input class="join-item btn btn-sm" type="radio" name="filtroGenero" id="filtroTodos" checked>
@@ -193,14 +205,14 @@
         <div class="p-4 md:p-6 grid gap-4 md:grid-cols-[1fr_auto] items-center">
           <div class="flex items-center gap-4">
             <div class="avatar placeholder">
-              <div class="bg-primary text-primary-content rounded-xl w-12">
+              <div class="bg-primary text-primary-content rounded-xl w-12 grid place-items-center">
                 <span class="material-symbols-rounded">how_to_vote</span>
               </div>
             </div>
             <div>
-              <h3 class="font-semibold">Resumen</h3>
+              <h3 class="font-semibold">Resumen de tu boleta</h3>
               <ul id="seleccionResumen" class="text-sm opacity-90 mt-1 space-y-1"></ul>
-              <div class="text-xs opacity-60">2 seleccionados: 1 mujer + 1 hombre. Autenticación obligatoria.</div>
+              <div class="text-xs opacity-60">Debes tener 2 seleccionados: 1 mujer + 1 hombre. Sesión obligatoria.</div>
             </div>
           </div>
           <div class="flex items-center gap-2">
@@ -217,11 +229,11 @@
     </div>
   </div>
 
-  <!-- Modal -->
+  <!-- Modal preview -->
   <dialog id="modalPreview" class="modal">
     <div class="modal-box max-w-xl">
       <h3 class="font-bold text-lg">Confirmar tu boleta</h3>
-      <p class="text-sm opacity-80 mt-1">Verifica que cumpla la regla de paridad.</p>
+      <p class="text-sm opacity-80 mt-1">Revisa que tu selección cumpla la regla de paridad antes de enviar.</p>
       <div class="divider my-3"></div>
       <ul id="previewList" class="space-y-2 text-sm"></ul>
       <div class="divider my-3"></div>
@@ -238,42 +250,74 @@
     <form method="dialog" class="modal-backdrop"><button>close</button></form>
   </dialog>
 
+  <!-- Overlay LOGIN (tipo Netflix azul) -->
+  <section id="loginOverlay" aria-hidden="true" style="display:none">
+    <div class="nf-panel">
+      <div class="nf-head">
+        <div class="nf-brand">
+          <div class="nf-logo">V</div>
+          <div>
+            <div class="text-[12px] opacity-80">Sistema de Votación</div>
+            <div class="text-sm font-semibold">Ingreso</div>
+          </div>
+        </div>
+        <h2 class="nf-title">Inicia sesión</h2>
+        <div class="nf-sub">Tu usuario es el municipio/área. Acceso seguro para emitir tu voto.</div>
+      </div>
+
+      <form id="loginForm" class="nf-body">
+        <div class="nf-field">
+          <label class="nf-label">Usuario</label>
+          <input id="inpUser" class="nf-input" placeholder="p. ej., irapuato"/>
+        </div>
+        <div class="nf-field">
+          <label class="nf-label">Contraseña</label>
+          <input id="inpPass" type="password" class="nf-input" placeholder="••••••••"/>
+        </div>
+        <div class="nf-help">
+          <label class="nf-remember">
+            <input id="remember" type="checkbox" class="checkbox checkbox-xs checkbox-info mr-1.5" checked>
+            Recordarme
+          </label>
+          <a href="#" class="nf-link" onclick="alert('Contacta a DTICP para recuperar el acceso.');return false;">¿Olvidaste tu acceso?</a>
+        </div>
+        <button class="nf-btn" type="submit" id="loginBtn">
+          <span class="align-middle">Entrar</span>
+        </button>
+      </form>
+
+      <div class="nf-meta">
+        <span>Soporte: DTICP</span><span>© 2025</span>
+      </div>
+      <div class="nf-footer">
+        Al continuar aceptas el aviso de privacidad y condiciones del proceso de votación.
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
   <footer class="max-w-7xl mx-auto px-4 md:px-8 py-10">
     <div class="text-center text-xs opacity-70">
-      © 2025 — Prototipo institucional. La identidad de los votantes se verifica con Google y se envía únicamente al servidor para validación.
+      © 2025 — Prototipo institucional. La identidad de los votantes se valida localmente para esta prueba.
     </div>
   </footer>
 
 <script>
-/** ============================
+/** =========================
  * CONFIG
- * ============================ */
+ * ========================= */
 const POLL_ID_MUJER  = "7rnzVbMBanO";
 const POLL_ID_HOMBRE = "e6Z2A3DXXgN";
+const PROXY_VOTE_URL = "/api/vote"; // tu proxy
+
+// option_id por nombre (StrawPoll)
 const OPTION_IDS = {
-  M: {
-    "ALVARO HERNANDEZ":"B2ZBawNAQgJ","UBALDO YEPEZ":"61gDkX6Kznw","JORGE CORTÉS":"mpnbbvJMPn5",
-    "MAURICIO VAZQUEZ":"jVyGeXxokg7","JOSE VARELA":"kogjGWq81Z6","RICARDO CHAGOLLA":"ajnE7Xx4mZW",
-    "HIGINIO ROSAS":"YVyPNXwb3gN","GILBERTO SANDOVAL":"jVyGeX1qkg7","ANTONIO CASAS":"NPgxGa81rn2",
-    "LUCIO CHAVEZ":"wAg3MOwbKy8","MARCELINO MEDINA":"6QnM5Xwqane"
-  },
-  F: {
-    "KARINA VEGA":"NoZrRwPkBZ3","IVETTE RODRIGUEZ":"bVg8AaGqbZY","NOHEMI RODRIGUEZ":"xVg7MzQGOyr",
-    "FATIMA CAMACHO":"QrgeGJmELyp","JANETH SALINAS":"wAg3MODddy8","ALEJANDRA GARCIA":"DwyodpP8YnA",
-    "BRISSA GARCIA":"xVg7Mzwbzyr","TERESA CEJA":"3RnYb6YR9ge","YAQUELIN VERGARA":"QrgeGJLMQyp",
-    "CLAUDIA RODRIGUEZ":"PKglGYB9onp"
-  }
+  M:{ "ALVARO HERNANDEZ":"B2ZBawNAQgJ","UBALDO YEPEZ":"61gDkX6Kznw","JORGE CORTÉS":"mpnbbvJMPn5","MAURICIO VAZQUEZ":"jVyGeXxokg7","JOSE VARELA":"kogjGWq81Z6","RICARDO CHAGOLLA":"ajnE7Xx4mZW","HIGINIO ROSAS":"YVyPNXwb3gN","GILBERTO SANDOVAL":"jVyGeX1qkg7","ANTONIO CASAS":"NPgxGa81rn2","LUCIO CHAVEZ":"wAg3MOwbKy8","MARCELINO MEDINA":"6QnM5Xwqane" },
+  F:{ "KARINA VEGA":"NoZrRwPkBZ3","IVETTE RODRIGUEZ":"bVg8AaGqbZY","NOHEMI RODRIGUEZ":"xVg7MzQGOyr","FATIMA CAMACHO":"QrgeGJmELyp","JANETH SALINAS":"wAg3MODddy8","ALEJANDRA GARCIA":"DwyodpP8YnA","BRISSA GARCIA":"xVg7Mzwbzyr","TERESA CEJA":"3RnYb6YR9ge","YAQUELIN VERGARA":"QrgeGJLMQyp","CLAUDIA RODRIGUEZ":"PKglGYB9onp" }
 };
-const PROXY_VOTE_URL = "/api/vote";
 
-// 🔐 Sustituye por tu Client ID real (pasos abajo)
-const GOOGLE_CLIENT_ID = "TU_GOOGLE_CLIENT_ID.apps.googleusercontent.com";
-
-/** ============================
- * DATOS (fotos en /static/img)
- * ============================ */
+// Imágenes locales
 const CANDIDATURAS = [
-  // Mujeres (1–10)
   { id:'F-01', nombre:'KARINA VEGA',       genero:'F', foto:'static/img/1.jpg'  },
   { id:'F-02', nombre:'IVETTE RODRIGUEZ',  genero:'F', foto:'static/img/2.png'  },
   { id:'F-03', nombre:'NOHEMI RODRIGUEZ',  genero:'F', foto:'static/img/3.jpg'  },
@@ -284,7 +328,6 @@ const CANDIDATURAS = [
   { id:'F-08', nombre:'TERESA CEJA',       genero:'F', foto:'static/img/8.png'  },
   { id:'F-09', nombre:'YAQUELIN VERGARA',  genero:'F', foto:'static/img/9.png'  },
   { id:'F-10', nombre:'CLAUDIA RODRIGUEZ', genero:'F', foto:'static/img/10.png' },
-  // Hombres (11–21)
   { id:'M-01', nombre:'ALVARO HERNANDEZ',  genero:'M', foto:'static/img/11.jpg' },
   { id:'M-02', nombre:'UBALDO YEPEZ',      genero:'M', foto:'static/img/12.png' },
   { id:'M-03', nombre:'JORGE CORTÉS',      genero:'M', foto:'static/img/13.jpg' },
@@ -295,68 +338,115 @@ const CANDIDATURAS = [
   { id:'M-08', nombre:'GILBERTO SANDOVAL', genero:'M', foto:'static/img/18.jpg' },
   { id:'M-09', nombre:'ANTONIO CASAS',     genero:'M', foto:'static/img/19.png' },
   { id:'M-10', nombre:'LUCIO CHAVEZ',      genero:'M', foto:'static/img/20.png' },
-  { id:'M-11', nombre:'MARCELINO MEDINA',  genero:'M', foto:'static/img/21.png' },
+  { id:'M-11', nombre:'MARCELINO MEDINA',  genero:'M', foto:'static/img/21.png' }
 ];
 
-/** ============================
- * ESTADO
- * ============================ */
-const state = { seleccion:{F:null,M:null}, filtro:'ALL', q:'', user:{email:null,name:null,picture:null,idToken:null} };
-const $ = s=>document.querySelector(s);
-const $$= s=>Array.from(document.querySelectorAll(s));
+// Login local
+const CREDENTIALS = {
+  "acambaro":"aca1","celaya":"cel1","guanajuato":"gto1","irapuato":"ira1","leon":"leon1",
+  "penjamo":"pen1","sanfe":"sanfe1","san miguel":"sanmike1","vallevar":"valleva1","vallefem":"vallefem1","admin":"admin1"
+};
 
-/** ============================
- * TOPLOADER
- * ============================ */
-(function(){
-  const bar = document.getElementById('topLoader');
-  let raf, prog=0, active=false;
-  function tick(){ prog += (95 - prog) * 0.1 + 0.5; bar.style.width = prog + '%'; raf = requestAnimationFrame(tick); }
-  function show(){ if(active) return; active=true; bar.hidden=false; bar.classList.remove('loader-fade'); bar.style.width='0%'; prog=0; cancelAnimationFrame(raf); tick(); }
-  function hide(){ cancelAnimationFrame(raf); bar.style.width='100%'; setTimeout(()=> bar.classList.add('loader-fade'), 60);
-    setTimeout(()=>{ bar.hidden=true; bar.classList.remove('loader-fade'); bar.style.width='0%'; prog=0; active=false; }, 400); }
-  document.addEventListener('readystatechange', ()=>{ if(document.readyState==='interactive') show(); if(document.readyState==='complete') hide(); });
-  // úsalo también cuando hagas fetch si quieres (show/hide)
-  window.TOPBAR={show,hide};
-})();
+/** ===== Helpers/estado ===== */
+const $=s=>document.querySelector(s); const $$=s=>Array.from(document.querySelectorAll(s));
+const state={ seleccion:{F:null,M:null}, filtro:'ALL', q:'', user:null };
 
-/** ============================
- * LOADER LIGHT (auto-cierre)
- * ============================ */
-(function(){
-  const loginLoader = document.getElementById('loginLoader');
-  if(!loginLoader) return;
-  const MIN_SHOW_MS = 1200;
+/** ===== TopLoader ===== */
+const topLoader=document.getElementById('topLoader'); let raf,prog=0,active=false;
+function tick(){ prog+=(95-prog)*.1+.5; topLoader.style.width=prog+'%'; raf=requestAnimationFrame(tick); }
+function showTop(){ if(active) return; active=true; topLoader.hidden=false; topLoader.classList.remove('loader-fade'); topLoader.style.width='0%'; prog=0; cancelAnimationFrame(raf); tick(); }
+function hideTop(){ cancelAnimationFrame(raf); topLoader.style.width='100%'; setTimeout(()=>topLoader.classList.add('loader-fade'),60);
+  setTimeout(()=>{ topLoader.hidden=true; topLoader.classList.remove('loader-fade'); topLoader.style.width='0%'; prog=0; active=false; },400); }
+document.addEventListener('readystatechange',()=>{ if(document.readyState==='interactive') showTop(); if(document.readyState==='complete') hideTop(); });
+
+/** ===== Loader central control (robusto) ===== */
+const pageLoader = document.getElementById('pageLoader');
+(function mountPageLoader(){
+  if (!pageLoader) return;
+
+  const MIN_MS = 900;         // mínimo visible ~0.9s
+  const HARD_TIMEOUT = 3500;  // respaldo duro a 3.5s
   const start = performance.now();
-  const close = ()=>{ if(!document.body.contains(loginLoader)) return; loginLoader.classList.add('login-fade-out'); setTimeout(()=>loginLoader.remove(), 500); };
-  if (document.readyState === 'complete'){
-    const remain = Math.max(0, MIN_SHOW_MS - (performance.now()-start)); setTimeout(close, remain);
+
+  const hideSoft = () => pageLoader.classList.add('hidden');
+  const hideHard = () => pageLoader.remove();
+
+  // Si el DOM ya está listo, agenda cierre suave
+  if (document.readyState === 'interactive' || document.readyState === 'complete') {
+    const elapsed = performance.now() - start;
+    const wait = Math.max(0, MIN_MS - elapsed);
+    setTimeout(hideSoft, wait);
   } else {
-    window.addEventListener('load', ()=>{
-      const remain = Math.max(0, MIN_SHOW_MS - (performance.now()-start)); setTimeout(close, remain);
-    }, {once:true});
-    setTimeout(close, MIN_SHOW_MS + 5000); // fallback
+    // Cierra al estar listo el DOM (sin esperar imágenes/CDNs)
+    document.addEventListener('DOMContentLoaded', () => {
+      const elapsed = performance.now() - start;
+      const wait = Math.max(0, MIN_MS - elapsed);
+      setTimeout(hideSoft, wait);
+    }, { once:true });
   }
+
+  // Refuerzo al llegar 'load' (por si acaso)
+  window.addEventListener('load', () => {
+    const elapsed = performance.now() - start;
+    const wait = Math.max(0, MIN_MS - elapsed);
+    setTimeout(hideSoft, wait);
+  }, { once:true });
+
+  // Respaldo duro: remover del DOM
+  setTimeout(() => {
+    if (document.body.contains(pageLoader)) hideHard();
+  }, HARD_TIMEOUT);
 })();
 
-/** ============================
- * RENDER UI
- * ============================ */
+/** ===== Tema ===== */
+function setTheme(mode){
+  if(mode==='light'){ document.documentElement.setAttribute('data-theme','light'); localStorage.setItem('theme','light'); }
+  else if(mode==='dark'){ document.documentElement.setAttribute('data-theme','dark'); localStorage.setItem('theme','dark'); }
+  else{ localStorage.removeItem('theme'); const prefersDark=window.matchMedia('(prefers-color-scheme: dark)').matches;
+        document.documentElement.setAttribute('data-theme', prefersDark?'dark':'light'); }
+}
+$('#themeLight').addEventListener('click',()=>setTheme('light'));
+$('#themeDark').addEventListener('click', ()=>setTheme('dark'));
+$('#themeAuto').addEventListener('click', ()=>setTheme('auto'));
+(function(){ const saved=localStorage.getItem('theme'); if(saved==='light'||saved==='dark') setTheme(saved); else setTheme('auto'); })();
+
+/** ===== Login estilo Netflix ===== */
+const loginOverlay=$('#loginOverlay'), loginForm=$('#loginForm'), inpUser=$('#inpUser'), inpPass=$('#inpPass'), loginBtn=$('#loginBtn');
+const sessionBox=$('#sessionBox'), sessionName=$('#sessionName'), btnLogout=$('#btnLogout');
+
+function normalize(u){ return (u||'').toString().trim().toLowerCase(); }
+function showLogin(){ loginOverlay.style.display='flex'; inpUser.focus(); }
+function hideLogin(){ loginOverlay.style.display='none'; }
+function paintSession(){ sessionBox.classList.remove('hidden'); sessionName.textContent=state.user?.name||'—'; $('#sessionHint').textContent=`Sesión iniciada como ${state.user?.name}`; updateButtons(); }
+function tryAutoSession(){ const raw=localStorage.getItem('voto_user'); if(!raw) return false; try{ const u=JSON.parse(raw); if(u&&u.name){ state.user=u; paintSession(); return true; } }catch{} return false; }
+
+loginForm.addEventListener('submit', (e)=>{
+  e.preventDefault();
+  const u=normalize(inpUser.value), p=inpPass.value.trim();
+  if(!(CREDENTIALS.hasOwnProperty(u) && CREDENTIALS[u]===p)){ alert('Usuario o contraseña incorrectos.'); return; }
+  loginBtn.disabled=true; const prev=loginBtn.innerHTML; loginBtn.innerHTML='<span class="material-symbols-rounded" style="font-size:18px;vertical-align:-3px">hourglass_empty</span> Verificando…';
+  setTimeout(()=>{ state.user={name:u}; if($('#remember').checked) localStorage.setItem('voto_user', JSON.stringify(state.user));
+    loginBtn.disabled=false; loginBtn.innerHTML=prev; hideLogin(); paintSession(); }, 650);
+});
+btnLogout.addEventListener('click', ()=>{ localStorage.removeItem('voto_user'); state.user=null; sessionBox.classList.add('hidden'); $('#sessionHint').textContent='No has iniciado sesión.'; showLogin(); updateButtons(); });
+
+/** ===== Render tarjetas ===== */
 function isSelected(c){ const s=state.seleccion[c.genero]; return !!(s && s.id===c.id); }
 function cardTemplate(c){
+  const badge = c.genero==='F' ? 'badge-secondary' : 'badge-info';
   return `
   <article class="card bg-base-100 border border-base-300 hover:border-primary/40 hover:translate-y-[-1px] transition-all duration-150 ${isSelected(c)?'card-sel':''}">
     <figure class="px-4 pt-4">
-      <img class="rounded-xl w-full h-44 object-cover" src="${c.foto}" alt="${c.nombre}" />
+      <img class="rounded-xl w-full h-44 object-cover" src="${c.foto}" alt="${c.nombre}"/>
     </figure>
     <div class="card-body">
       <h3 class="card-title text-base">${c.nombre}</h3>
       <div class="flex items-center gap-2">
-        <span class="badge ${c.genero==='F'?'badge-secondary':'badge-info'}">${c.genero==='F'?'Mujer':'Hombre'}</span>
+        <span class="badge ${badge}">${c.genero==='F'?'Mujer':'Hombre'}</span>
         <span class="chip">${c.id}</span>
       </div>
       <div class="card-actions mt-3">
-        <button class="btn ${isSelected(c)?'btn-error':'btn-primary'} btn-quiet select-btn">
+        <button class="btn ${isSelected(c)?'btn-error':'btn-primary'} btn-sm select-btn">
           ${isSelected(c)?'Quitar':'Seleccionar'}
         </button>
       </div>
@@ -364,198 +454,72 @@ function cardTemplate(c){
   </article>`;
 }
 function renderListas(){
-  const contM = $('#listaMujer'), contH = $('#listaHombre');
-  contM.innerHTML=''; contH.innerHTML='';
-  const q = state.q.trim().toLowerCase();
+  const contF=$('#listaMujer'), contM=$('#listaHombre'); contF.innerHTML=''; contM.innerHTML='';
+  const q=state.q.trim().toLowerCase();
   for(const c of CANDIDATURAS){
     if(state.filtro==='F' && c.genero!=='F') continue;
     if(state.filtro==='M' && c.genero!=='M') continue;
     if(q && !c.nombre.toLowerCase().includes(q)) continue;
-    const wrap = document.createElement('div');
-    wrap.innerHTML = cardTemplate(c);
+    const wrap=document.createElement('div'); wrap.innerHTML=cardTemplate(c);
     wrap.querySelector('.select-btn').addEventListener('click', ()=>toggleSelect(c));
-    (c.genero==='F'?contM:contH).appendChild(wrap.firstElementChild);
+    (c.genero==='F'?contF:contM).appendChild(wrap.firstElementChild);
   }
   renderResumen(); updateButtons();
 }
+function toggleSelect(c){ const cur=state.seleccion[c.genero]; state.seleccion[c.genero]=(cur && cur.id===c.id)?null:{id:c.id, nombre:c.nombre}; renderListas(); }
 function renderResumen(){
-  const f=state.seleccion.F, m=state.seleccion.M;
-  $('#seleccionResumen').innerHTML = `
-    <li>🟣 Mujer: <b>${f?f.nombre+' ('+f.id+')':'—'}</b></li>
-    <li>🔵 Hombre: <b>${m?m.nombre+' ('+m.id+')':'—'}</b></li>`;
-  const ok = !!(f && m);
-  const banner = $('#ruleBanner');
-  banner.className = `alert ${ok?'alert-success':'alert-info'} elev`;
-  const txt = ok ? 'Listo: regla cumplida (1 mujer + 1 hombre).' : 'Debes elegir exactamente 1 mujer y 1 hombre.';
-  banner.querySelector('p')?.replaceWith(Object.assign(document.createElement('p'),{className:'text-sm opacity-80',textContent:txt}));
-  const payload = ok ? { mujer:f?.nombre, hombre:m?.nombre, ts:new Date().toISOString() } : { seleccion:null };
+  const ul=$('#seleccionResumen'), f=state.seleccion.F, m=state.seleccion.M;
+  ul.innerHTML=`<li>🟣 Mujer: <b>${f?f.nombre+' ('+f.id+')':'—'}</b></li><li>🔵 Hombre: <b>${m?m.nombre+' ('+m.id+')':'—'}</b></li>`;
+  const ok=!!(f&&m); const banner=$('#ruleBanner');
+  banner.className=`alert ${ok?'alert-success':'alert-info'} elev`;
+  const text=ok?'Listo: regla cumplida (1 mujer + 1 hombre).':'Debes elegir exactamente 1 mujer y 1 hombre.';
+  banner.querySelector('div > div')?.querySelector('p')?.remove();
+  banner.querySelector('div > div')?.insertAdjacentHTML('beforeend', `<p class="text-sm opacity-75 mt-1">${text}</p>`);
+  const payload = ok ? { mujer:f.nombre, hombre:m.nombre, ts:new Date().toISOString() } : { seleccion:null };
   $('#payload').textContent = JSON.stringify(payload,null,2);
 }
-function toggleSelect(c){ const cur=state.seleccion[c.genero]; state.seleccion[c.genero]=(cur&&cur.id===c.id)?null:{id:c.id,nombre:c.nombre}; renderListas(); }
-function updateButtons(){
-  const ready = !!(state.seleccion.F && state.seleccion.M);
-  const authed = !!state.user.idToken;
-  $('#btnEnviar').disabled = !(ready && authed);
-  $('#sessionHint').textContent = authed ? `Sesión iniciada como ${state.user.email||state.user.name}` : 'No has iniciado sesión.';
-}
+function updateButtons(){ const ready=!!(state.seleccion.F && state.seleccion.M); const authed=!!state.user;
+  $('#btnEnviar').disabled=!(ready&&authed);
+  $('#sessionHint').textContent=authed?`Sesión iniciada como ${state.user?.name}`:'No has iniciado sesión.'; }
 
-/** ============================
- * BÚSQUEDA / FILTRO / HOTKEY
- * ============================ */
-$('#search').addEventListener('input', e=>{ state.q=e.target.value||''; renderListas();});
-$$('input[name="filtroGenero"]').forEach(r=>r.addEventListener('change', ()=>{ state.filtro = $('#filtroMujer').checked?'F' : $('#filtroHombre').checked?'M' : 'ALL'; renderListas(); }));
-window.addEventListener('keydown', (e)=>{ if((e.ctrlKey||e.metaKey) && e.key.toLowerCase()==='k'){ e.preventDefault(); $('#search').focus(); }});
+/** ===== Búsqueda / Filtro / Hotkey ===== */
+$('#search').addEventListener('input', e=>{ state.q=e.target.value||''; renderListas(); });
+$$('input[name="filtroGenero"]').forEach(r=>r.addEventListener('change', ()=>{
+  state.filtro=$('#filtroMujer').checked?'F':($('#filtroHombre').checked?'M':'ALL'); renderListas();
+}));
+window.addEventListener('keydown', e=>{ if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='k'){ e.preventDefault(); $('#search').focus(); } });
 
-/** ============================
- * PREVIEW & ENVÍO
- * ============================ */
+/** ===== Preview & Envío ===== */
 $('#btnPreview').addEventListener('click', ()=>{
-  const f=state.seleccion.F, m=state.seleccion.M;
-  if(!(f&&m)) return alert('Falta seleccionar 1 mujer y 1 hombre.');
-  $('#previewList').innerHTML = `
-    <li>🟣 <b>Mujer</b>: ${f.nombre} <span class="chip">${f.id}</span></li>
-    <li>🔵 <b>Hombre</b>: ${m.nombre} <span class="chip">${m.id}</span></li>`;
-  $('#whoami').textContent = state.user.email ? `Se enviará como: ${state.user.email}` : 'Inicia sesión para continuar';
+  const f=state.seleccion.F, m=state.seleccion.M; if(!(f&&m)) return alert('Falta seleccionar 1 mujer y 1 hombre.');
+  $('#previewList').innerHTML=`<li>🟣 <b>Mujer</b>: ${f.nombre} <span class="chip">${f.id}</span></li><li>🔵 <b>Hombre</b>: ${m.nombre} <span class="chip">${m.id}</span></li>`;
+  $('#whoami').textContent=state.user?`Se enviará como: ${state.user.name}`:'Inicia sesión para continuar';
   document.getElementById('modalPreview').showModal();
 });
-
 $('#btnConfirm').addEventListener('click', async ()=>{
-  const f=state.seleccion.F, m=state.seleccion.M;
-  if(!(f&&m)) return;
-  const optIdF = OPTION_IDS.F[f.nombre], optIdM = OPTION_IDS.M[m.nombre];
-  if(!optIdF || !optIdM) return alert('Faltan option_id reales en OPTION_IDS.');
+  const f=state.seleccion.F, m=state.seleccion.M; if(!(f&&m)) return;
+  const optIdF=OPTION_IDS.F[f.nombre], optIdM=OPTION_IDS.M[m.nombre]; if(!optIdF||!optIdM) return alert('Faltan option_id reales en OPTION_IDS.');
   try{
-    TOPBAR.show();
-    const res = await fetch(PROXY_VOTE_URL, {
-      method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({
-        id_token: state.user.idToken, // <-- el backend debe validar el ID token
-        votes: [
-          { poll_id: POLL_ID_MUJER,  option_id: optIdF },
-          { poll_id: POLL_ID_HOMBRE, option_id: optIdM }
-        ]
-      })
-    });
-    if(!res.ok){ const t = await res.text(); throw new Error(t||'Error al votar'); }
+    const res=await fetch(PROXY_VOTE_URL,{ method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ local_user: state.user?.name||null, votes:[{poll_id:POLL_ID_MUJER,option_id:optIdF},{poll_id:POLL_ID_HOMBRE,option_id:optIdM}] })});
+    if(!res.ok){ const t=await res.text(); return alert('Error al votar: '+t); }
     document.getElementById('modalPreview').close();
     alert('¡Voto registrado en ambas encuestas! 🎉');
-  }catch(e){ alert(e.message||'No se pudo enviar el voto.'); }
-  finally{ TOPBAR.hide(); }
+  }catch{ alert('No se pudo enviar el voto.'); }
 });
-
 $('#btnLimpiar').addEventListener('click', ()=>{ state.seleccion.F=null; state.seleccion.M=null; renderListas(); });
 
-/** ============================
- * TEMA
- * ============================ */
-$('#themeLight').addEventListener('click', ()=>{ document.documentElement.classList.remove('dark'); localStorage.setItem('theme','light'); });
-$('#themeDark').addEventListener('click',  ()=>{ document.documentElement.classList.add('dark');    localStorage.setItem('theme','dark');  });
-$('#themeAuto').addEventListener('click',  ()=>{ localStorage.removeItem('theme'); applyAutoTheme(); });
-function applyAutoTheme(){
-  const saved = localStorage.getItem('theme');
-  if (!saved){ const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches; document.documentElement.classList.toggle('dark', prefersDark); }
-}
-(function initTheme(){ const saved=localStorage.getItem('theme'); if(saved==='dark') document.documentElement.classList.add('dark'); else if(saved==='light') document.documentElement.classList.remove('dark'); else applyAutoTheme(); })();
-
-/** ============================
- * GOOGLE LOGIN (GIS)
- * ============================ */
-window.handleCredentialResponse = (resp) => {
-  state.user.idToken = resp.credential;
-  try{
-    const payload = JSON.parse(atob(resp.credential.split('.')[1]));
-    state.user.email   = payload.email   || null;
-    state.user.name    = payload.name    || null;
-    state.user.picture = payload.picture || null;
-  }catch{}
-  $('#btnGoogle').innerHTML = `<span class="material-symbols-rounded text-base">verified_user</span> ${state.user.email || 'Sesión iniciada'}`;
-  updateButtons();
-};
-// Botón -> popup GIS
-$('#btnGoogle').addEventListener('click', ()=>{
-  google.accounts.id.initialize({ client_id: GOOGLE_CLIENT_ID, callback: handleCredentialResponse, ux_mode:'popup', auto_select:false });
-  google.accounts.id.prompt();
-});
-
-/** ============================
- * INIT
- * ============================ */
-renderListas();
-updateButtons();
+/** ===== INIT ===== */
+(function init(){
+  // muestra login cuando se oculte el loader central
+  const openLogin = ()=>{ if(!tryAutoSession()) showLogin(); else paintSession(); };
+  if (pageLoader.classList.contains('hidden')) openLogin();
+  else {
+    const obs = new MutationObserver(()=>{ if(pageLoader.classList.contains('hidden')){ openLogin(); obs.disconnect(); } });
+    obs.observe(pageLoader, { attributes:true, attributeFilter:['class'] });
+  }
+  renderListas(); updateButtons();
+})();
 </script>
-
-
-<script>
-  // ===== THEME DROPDOWN DaisyUI (real) =====
-  (function () {
-    const root = document.documentElement;        // <html>
-    const THEME_KEY = 'theme';                    // 'light' | 'dark' | 'auto'
-    const btn   = document.querySelector('.dropdown-end [role="button"]');
-    const liLight = document.getElementById('themeLight');
-    const liDark  = document.getElementById('themeDark');
-    const liAuto  = document.getElementById('themeAuto');
-    const iconEl  = btn?.querySelector('.material-symbols-rounded');
-    const mqlDark = window.matchMedia('(prefers-color-scheme: dark)');
-
-    // Aplica tema DaisyUI (usa data-theme). Nota: no dependemos de class="dark"
-    function applyTheme(mode, { persist = true } = {}) {
-      let effective = mode;
-      if (mode === 'auto') effective = mqlDark.matches ? 'dark' : 'light';
-
-      // Establece el tema DaisyUI
-      root.setAttribute('data-theme', effective);
-      // Asegura que no quede "dark" colgando que te ensucie estilos
-      root.classList.toggle('dark', false);
-
-      if (persist) localStorage.setItem(THEME_KEY, mode);
-      setIcon(mode);
-      markActive(mode);
-      // meta color-scheme para barras del navegador
-      const meta = document.querySelector('meta[name="color-scheme"]');
-      if (meta) meta.setAttribute('content', effective === 'dark' ? 'dark light' : 'light dark');
-    }
-
-    function setIcon(mode) {
-      if (!iconEl) return;
-      iconEl.textContent = mode === 'dark'
-        ? 'dark_mode'
-        : mode === 'light'
-        ? 'light_mode'
-        : 'auto_awesome';
-    }
-
-    function markActive(mode) {
-      [liLight, liDark, liAuto].forEach(el => el?.classList.remove('active'));
-      (mode === 'light' ? liLight : mode === 'dark' ? liDark : liAuto)?.classList.add('active');
-    }
-
-    function closeDropdown() {
-      const dd = btn?.closest('.dropdown');
-      dd?.classList.remove('dropdown-open');
-      document.activeElement?.blur();
-      setTimeout(() => btn?.blur(), 10);
-    }
-
-    // Clicks
-    liLight?.addEventListener('click', () => { applyTheme('light'); closeDropdown(); });
-    liDark ?.addEventListener('click', () => { applyTheme('dark');  closeDropdown(); });
-    liAuto ?.addEventListener('click', () => { applyTheme('auto');  closeDropdown(); });
-
-    // Cambios del SO cuando estás en Auto
-    mqlDark.addEventListener?.('change', () => {
-      const mode = localStorage.getItem(THEME_KEY) || 'auto';
-      if (mode === 'auto') applyTheme('auto', { persist: false });
-    });
-
-    // INIT
-    const saved = localStorage.getItem(THEME_KEY) || 'auto';
-    applyTheme(saved, { persist: false });
-  })();
-</script>
-<style>
-  /* Opcional: resalta opción activa del menú */
-  .dropdown .menu .active{ background: rgb(226 232 240 / .6); border-radius:.5rem; font-weight:600; }
-</style>
-
 </body>
 </html>
