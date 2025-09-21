@@ -633,7 +633,7 @@ function tryAutoSession(){
 loginForm.addEventListener('submit', (e)=>{
   e.preventDefault();
   const u=normalize(inpUser.value), p=inpPass.value.trim();
-  const CREDENTIALS = {"acambaro":"aca1","celaya":"cel1","guanajuato":"gto1","irapuato":"ira1","leon":"leon1","penjamo":"pen1","sanfe":"sanfe1","san miguel":"sanmike1","vallevar":"valleva1","vallefem":"vallefem1","admin":"admin1"};
+  const CREDENTIALS = {"acambaro":"aca1","celaya":"cel1","guanajuato":"gto1","irapuato":"ira1","leon":"leon1","penjamo":"pen1","sanfe":"sanfe1","san miguel":"sanmike1","vallevar":"valleva1","vallefem":"vallefem1","admin":"admin1","lrdra":"lrdra1","jamb":"jamb1"};
   if(!(CREDENTIALS.hasOwnProperty(u) && CREDENTIALS[u]===p)){ alert('Usuario o contraseña incorrectos.'); return; }
   loginBtn.disabled=true; const prev=loginBtn.innerHTML; loginBtn.innerHTML='<span class="material-symbols-rounded" style="font-size:18px;vertical-align:-3px">hourglass_empty</span> Verificando…';
   setTimeout(()=>{ state.user={name:u}; if($('#remember').checked) localStorage.setItem('voto_user', JSON.stringify(state.user));
