@@ -589,6 +589,28 @@ const CANDIDATURAS = [
 const $=s=>document.querySelector(s); const $$=s=>Array.from(document.querySelectorAll(s));
 const state={ seleccion:{F:null,M:null}, filtro:'ALL', q:'', user:null, identity:{ full_name:'' } };
 
+// ===== Admines =====
+const ADMINS = new Set(['admin','lrdra','jamb']);
+
+// ===== Anti-duplicados de nombre (local) =====
+const NAME_STORE_KEY = 'voto_names_v1';
+function normName(s=''){
+  return s.normalize('NFD').replace(/[\u0300-\u036f]/g,'')
+          .toLowerCase().replace(/\s+/g,' ').trim();
+}
+function loadNameSet(){
+  try{
+    const raw = localStorage.getItem(NAME_STORE_KEY);
+    const arr = raw ? JSON.parse(raw) : [];
+    return new Set(Array.isArray(arr)?arr:[]);
+  }catch{ return new Set(); }
+}
+function saveNameToSet(nNorm){
+  const set = loadNameSet();
+  set.add(nNorm);
+  localStorage.setItem(NAME_STORE_KEY, JSON.stringify([...set]));
+}
+
 // ===== TopLoader =====
 const topLoader=document.getElementById('topLoader'); let raf,prog=0,active=false;
 function tick(){ prog+=(95-prog)*.12+.6; topLoader.style.width=prog+'%'; raf=requestAnimationFrame(tick); }
@@ -624,11 +646,9 @@ $('#themeAuto').addEventListener('click', ()=>setTheme('auto'));
 // ===== Login overlay =====
 const loginOverlay=$('#loginOverlay'), loginForm=$('#loginForm'), inpUser=$('#inpUser'), inpPass=$('#inpPass'), loginBtn=$('#loginBtn');
 const sessionBox=$('#sessionBox'), sessionName=$('#sessionName'), btnLogout=$('#btnLogout');
-const btnAdmin=$('#btnAdmin');   // ✅ FIX: corchete corregido
+const btnAdmin=$('#btnAdmin');
 
 function normalize(u){ return (u||'').toString().trim().toLowerCase(); }
-function showLogin(){ loginOverlay.style.display='flex'; inpUser.focus(); }
-function hideLogin(){ loginOverlay.style.display='none'; }
 function showLogin(){ document.body.style.overflow='hidden'; loginOverlay.style.display='flex'; inpUser.focus(); }
 function hideLogin(){ loginOverlay.style.display='none'; document.body.style.overflow=''; }
 
@@ -636,7 +656,7 @@ function paintSession(){
   sessionBox.classList.remove('hidden');
   sessionName.textContent=state.user?.name||'—';
   $('#sessionHint').textContent=`Sesión iniciada como ${state.user?.name}`;
-  if (state.user?.name === 'admin', 'lrdra','jamb') btnAdmin.classList.remove('hidden'); else btnAdmin.classList.add('hidden');
+  if (ADMINS.has(state.user?.name)) btnAdmin.classList.remove('hidden'); else btnAdmin.classList.add('hidden');
   updateButtons();
 }
 function tryAutoSession(){
@@ -732,10 +752,20 @@ document.getElementById('btnEnviar').addEventListener('click', ()=>{
   identityModal.showModal();
 });
 
+// ✅ Anti-duplicado local aquí
 identityForm.addEventListener('submit', (e)=>{
   e.preventDefault();
   const name = (fullNameInput.value||'').trim();
   if(!name){ fullNameInput.focus(); return; }
+
+  const nNorm = normName(name);
+  const used  = loadNameSet();
+  if(used.has(nNorm)){
+    alert('Ese nombre ya registró voto en este dispositivo. Si es homónimo, agrega un segundo apellido u otra referencia.');
+    fullNameInput.focus();
+    return;
+  }
+
   state.identity.full_name = name;
   localStorage.setItem('voto_fullname', name);
   identityModal.close();
@@ -775,6 +805,11 @@ document.getElementById('btnConfirm').addEventListener('click', async ()=>{
     };
     const res=await fetch(PROXY_VOTE_URL,{ method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body) });
     if(!res.ok){ const t=await res.text(); return alert('Error al votar: '+t); }
+
+    // ✅ Registrar el nombre como usado SOLO si el envío fue exitoso
+    const nNorm = normName(state.identity.full_name || '');
+    if(nNorm) saveNameToSet(nNorm);
+
     document.getElementById('modalPreview').close();
     alert('¡Voto registrado en ambas encuestas! 🎉');
   }catch{ alert('No se pudo enviar el voto.'); }
@@ -792,7 +827,6 @@ document.getElementById('btnLimpiar').addEventListener('click', ()=>{ state.sele
   }
   renderListas(); updateButtons();
 })();
-
 
 
 // Inicializa host y expone window.toast()
@@ -864,11 +898,14 @@ document.getElementById('btnLimpiar').addEventListener('click', ()=>{ state.sele
 
     // Pausa con hover
     el.addEventListener('mouseenter', ()=> cancelAnimationFrame(raf));
-    el.addEventListener('mouseleave', ()=> { tStart = performance.now() - (duration * (1 - parseFloat(bar.style.transform.replace('scaleX(','').replace(')','')))); tick(performance.now()); });
+    el.addEventListener('mouseleave', ()=> {
+      const remain = parseFloat(bar.style.transform.replace('scaleX(','').replace(')','')) || 1;
+      tStart = performance.now() - (duration * (1 - remain));
+      tick(performance.now());
+    });
   }
 
   function createToast(opts){
-    // Permite usar toast('mensaje') o toast({title, message, ...})
     const cfg = typeof opts === 'string' ? { message: opts } : { ...opts };
     cfg.type = (cfg.type||'info').toLowerCase();
     queue.push(cfg); flush();
@@ -880,8 +917,7 @@ document.getElementById('btnLimpiar').addEventListener('click', ()=>{ state.sele
 // toast({ message:'Cargando datos…', type:'info', duration:3000 });
 // toast({ title:'Atención', message:'Revisa los campos', type:'warn' });
 // toast({ title:'Error', message:'No se pudo enviar', type:'error', actionText:'Reintentar', onAction:()=>reintentar() });
-
-
 </script>
+
 </body>
 </html>
