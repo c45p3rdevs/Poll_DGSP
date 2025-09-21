@@ -1,37 +1,56 @@
 name: Update StrawPoll stats
+
 on:
   schedule:
-    - cron: "*/5 * * * *"
-  workflow_dispatch:
-  push:
+    - cron: "*/5 * * * *"      # cada 5 min
+  workflow_dispatch:           # correr manual
+  push:                        # sólo si cambia el script
     paths:
       - "scripts/fetch_strawpoll.mjs"
+
+# Evita runs encimados (si se dispara de nuevo, cancela el anterior)
+concurrency:
+  group: strawpoll-stats
+  cancel-in-progress: true
+
+permissions:
+  contents: write
 
 jobs:
   update:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
+
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
         with:
           node-version: 20
+
       - run: node --version
+
+      - name: Preparar carpeta de salida
+        run: mkdir -p data
+
       - name: Fetch stats
         env:
-          STRAWPOLL_KEY: ${{ secrets.STRAWPOLL_KEY }}
+          STRAWPOLL_KEY: ${{ secrets.STRAWPOLL_KEY }}   # ← asegúrate de crearlo en Repo Settings → Secrets
           POLL_ID_MUJER: 7rnzVbMBanO
           POLL_ID_HOMBRE: e6Z2A3DXXgN
-        run: node scripts/fetch_strawpoll.mjs
-      - name: Commit changes
         run: |
-          if [ -n "$(git status --porcelain)" ]; then
-            git config user.name "github-actions[bot]"
-            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-            git add data/stats.json
-            git commit -m "chore: update stats.json"
-            git push
-          else
+          node scripts/fetch_strawpoll.mjs
+          test -f data/stats.json || (echo "❌ No se generó data/stats.json" && exit 1)
+
+      - name: Commit changes (si los hay)
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/stats.json || true
+          if git diff --cached --quiet; then
             echo "No changes."
+          else
+            git commit -m "chore: update stats.json [skip ci]"
+            git push
           fi
