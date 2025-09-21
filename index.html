@@ -20,9 +20,21 @@
     .grid-colx{ grid-template-columns: repeat(auto-fill,minmax(200px,1fr)); }
     .elev{ box-shadow:0 10px 30px rgba(2,6,23,.10); }
     .card-sel{ outline:2px solid color-mix(in oklab, var(--accent) 55%, transparent); outline-offset:0; }
-    .chip{ @apply badge badge-outline rounded-xl text-xs; }
+
+    /* chip y kbd sin @apply */
+    .chip{
+      display:inline-flex; align-items:center; gap:.35rem;
+      padding:.28rem .55rem; font-size:.75rem; border-radius:999px;
+      border:1px solid rgba(2,6,23,.15);
+      background: rgba(255,255,255,.06);
+    }
     .sticky-actions{ position:sticky; bottom:0; z-index:40; }
-    .kbd{ @apply px-2 py-[2px] border rounded text-[11px] opacity-70; }
+    .kbd{
+      display:inline-block; padding:0 .5rem;
+      border:1px solid rgba(2,6,23,.25); border-radius:.375rem;
+      font-size:11px; line-height:1.5; opacity:.7;
+      background: rgba(255,255,255,.06);
+    }
 
     .card-img{ width:100%; aspect-ratio:4/5; object-fit:cover; border-radius:0.75rem; }
 
@@ -36,7 +48,7 @@
     .pl-logo img{ width:100%; height:100%; object-fit:contain; filter: drop-shadow(0 12px 24px rgba(12,80,128,.35)); }
     .pl-orbs::before, .pl-orbs::after{ content:""; position:absolute; border-radius:9999px; inset:auto; animation: orb 3.2s ease-in-out infinite; filter: blur(10px); }
     .pl-orbs::before{ width:32px; height:32px; left:-8px; top:-8px; background:#3b82f6aa; }
-    .pl-orbs::after { width:26px; height:26px; right:-8px; bottom:-8px; background:#22d3ee88; animation-direction:reverse; }
+    .pl-orbs::after{ width:26px; height:26px; right:-8px; bottom:-8px; background:#22d3ee88; animation-direction:reverse; }
     @keyframes orb{ 50%{ transform: translate3d(6px,-4px,0) scale(1.08); } }
     .pl-title{ font-weight:800; font-size:20px; margin-top:6px; }
     .pl-sub{ opacity:.85; font-size:13px; margin-top:2px; }
@@ -48,7 +60,7 @@
     .rule-card{ border-radius:18px; border:1px solid color-mix(in oklab, var(--accent) 22%, transparent);
       background: radial-gradient(1200px 600px at 0% 0%, color-mix(in oklab, var(--accent) 15%, transparent), transparent 60%), linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
       backdrop-filter: blur(6px); display:grid; grid-template-columns: 1fr auto; align-items:center; gap:18px; padding:18px 20px; position:relative; }
-    .rule-ribbon{ display:none !important; } /* evita superposición */
+    .rule-ribbon{ display:none !important; }
     .rule-icon{ width:44px; height:44px; border-radius:12px; display:grid; place-items:center; color:white;
       background: linear-gradient(180deg, color-mix(in oklab, var(--accent) 92%, #0b1220 8%), #0c5080);
       box-shadow: 0 12px 30px color-mix(in oklab, var(--accent) 35%, transparent); }
@@ -82,11 +94,111 @@
     .govfoot .legal{ margin-top:.6rem; font-size:.72rem; opacity:.75; }
 
     @media (max-width:640px){ .govsub{ display:none; } .govfoot .wrap{ padding:22px 1rem 26px; } .govfoot .meta{ flex-direction:column; gap:.5rem; } }
+  
+  
+  
+  
+  
+  
+  
+  /* ===== LOGIN OVERLAY (nf-*) ===== */
+#loginOverlay{
+  position: fixed; inset: 0; display: none; /* JS lo cambia a flex */
+  align-items: center; justify-content: center;
+  background: rgba(2,6,23,.65); backdrop-filter: blur(6px);
+  z-index: 2147483600; padding: 20px;
+}
+.nf-panel{
+  width: min(92vw, 440px);
+  border-radius: 16px; padding: 22px 20px;
+  background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.04));
+  border: 1px solid rgba(255,255,255,.14);
+  box-shadow: 0 24px 64px rgba(0,0,0,.35), 0 2px 10px rgba(0,0,0,.25);
+  color: #eaf2ff;
+}
+[data-theme="light"] .nf-panel{
+  color:#0b1220;
+  background: linear-gradient(180deg, rgba(255,255,255,.96), rgba(255,255,255,.92));
+  border: 1px solid rgba(2,6,23,.08);
+  box-shadow: 0 24px 64px rgba(2,6,23,.15), 0 2px 10px rgba(2,6,23,.06);
+}
+.nf-head{ display:flex; align-items:center; justify-content:space-between; gap:12px; }
+.nf-brand{ display:flex; align-items:center; gap:10px; }
+.nf-logo{
+  width:40px; height:40px; border-radius:12px;
+  display:grid; place-items:center; overflow:hidden;
+  background:#0c5080; box-shadow:0 10px 22px rgba(12,80,128,.35);
+}
+.nf-logo .nf-img{
+  width:100%; height:100%; object-fit:cover;
+}
+
+.nf-title{ font-weight:800; font-size:18px; margin-top:12px; }
+.nf-sub{ opacity:.85; font-size:13px; margin-top:2px; }
+
+.nf-body{ margin-top:14px; display:grid; gap:12px; }
+.nf-field{ display:grid; gap:6px; }
+.nf-label{ font-size:12px; opacity:.85; }
+.nf-input{
+  border-radius:12px; padding:10px 12px; outline:0;
+  border:1px solid rgba(2,6,23,.18); background:rgba(255,255,255,.96);
+}
+[data-theme="dark"] .nf-input{
+  border-color:rgba(255,255,255,.16); background:rgba(17,24,39,.6); color:#eaf2ff;
+}
+.nf-help{ display:flex; align-items:center; justify-content:space-between; font-size:12px; opacity:.9; }
+.nf-link{ text-decoration:underline; cursor:pointer; }
+.nf-btn{
+  margin-top:6px; width:100%; border:0; border-radius:12px; padding:10px 14px;
+  background:#0c5080; color:white; font-weight:700; cursor:pointer;
+  box-shadow:0 10px 22px rgba(12,80,128,.35);
+}
+.nf-btn:disabled{ opacity:.7; cursor:not-allowed; }
+
+.nf-meta{ margin-top:10px; display:flex; justify-content:space-between; font-size:12px; opacity:.85; }
+.nf-footer{ margin-top:6px; font-size:11px; opacity:.7; text-align:center; }
+
+  
+
+
+#toast-container{
+  position:fixed; top:1rem; right:1rem;
+  display:flex; flex-direction:column; gap:.75rem;
+  z-index:99999; pointer-events:none;
+}
+.toast{
+  min-width:260px; max-width:340px;
+  border-radius:14px; padding:12px 14px; display:flex; align-items:center; gap:.65rem;
+  font-size:.9rem; font-weight:500; color:white;
+  box-shadow:0 6px 16px rgba(0,0,0,.25); animation:slideIn .4s ease, fadeOut .4s ease forwards;
+  pointer-events:auto;
+}
+.toast.success{ background:linear-gradient(135deg,#16a34a,#22c55e); }
+.toast.error{ background:linear-gradient(135deg,#dc2626,#ef4444); }
+.toast.warning{ background:linear-gradient(135deg,#ca8a04,#eab308); color:#1a1a1a; }
+.toast.info{ background:linear-gradient(135deg,#0c5080,#38bdf8); }
+
+.toast .icon{
+  font-family:'Material Symbols Rounded'; font-size:22px; line-height:1;
+}
+
+@keyframes slideIn{ from{opacity:0; transform:translateX(100%);} to{opacity:1; transform:translateX(0);} }
+@keyframes fadeOut{ to{opacity:0; transform:translateX(100%);} }
+
+
+  
   </style>
 </head>
 <body class="min-h-full bg-base-200 text-base-content">
   <!-- Top loader -->
   <div id="topLoader" hidden></div>
+
+
+<!-- TOAST CONTAINER -->
+<div id="toast-container"></div>
+
+
+
 
   <!-- Loader central -->
   <div id="pageLoader" aria-hidden="true">
@@ -268,11 +380,14 @@
     <div class="nf-panel">
       <div class="nf-head">
         <div class="nf-brand">
-          <div class="nf-logo">V</div>
+          <div class="nf-logo">
+  <img src="static/img/logo2.png" alt="Logo" class="nf-img">
+</div>
+
           <div><div class="text-[12px] opacity-80">Sistema de Votación</div><div class="text-sm font-semibold">Ingreso</div></div>
         </div>
         <h2 class="nf-title">Inicia sesión</h2>
-        <div class="nf-sub">Tu usuario es el municipio/área. Acceso seguro para emitir tu voto.</div>
+        <div class="nf-sub"></div>
       </div>
       <form id="loginForm" class="nf-body">
         <div class="nf-field"><label class="nf-label">Usuario</label><input id="inpUser" class="nf-input" placeholder="p. ej., irapuato"/></div>
@@ -380,11 +495,14 @@ $('#themeAuto').addEventListener('click', ()=>setTheme('auto'));
 // ===== Login overlay =====
 const loginOverlay=$('#loginOverlay'), loginForm=$('#loginForm'), inpUser=$('#inpUser'), inpPass=$('#inpPass'), loginBtn=$('#loginBtn');
 const sessionBox=$('#sessionBox'), sessionName=$('#sessionName'), btnLogout=$('#btnLogout');
-const btnAdmin=$('#btnAdmin');
+const btnAdmin=$('#btnAdmin');   // ✅ FIX: corchete corregido
 
 function normalize(u){ return (u||'').toString().trim().toLowerCase(); }
 function showLogin(){ loginOverlay.style.display='flex'; inpUser.focus(); }
 function hideLogin(){ loginOverlay.style.display='none'; }
+function showLogin(){ document.body.style.overflow='hidden'; loginOverlay.style.display='flex'; inpUser.focus(); }
+function hideLogin(){ loginOverlay.style.display='none'; document.body.style.overflow=''; }
+
 function paintSession(){
   sessionBox.classList.remove('hidden');
   sessionName.textContent=state.user?.name||'—';
@@ -413,7 +531,7 @@ btnLogout.addEventListener('click', ()=>{ localStorage.removeItem('voto_user'); 
 (function(){ const saved = localStorage.getItem('voto_fullname'); if(saved){ state.identity.full_name = saved; } })();
 
 // ===== Render tarjetas =====
-function displayLugar(c){ return c.lugar && c.lugar.trim() ? c.lugar : c.id; }
+function displayLugar(c){ return (c.lugar && c.lugar.trim()) ? c.lugar : c.id; }
 function isSelected(c){ const s=state.seleccion[c.genero]; return !!(s && s.id===c.id); }
 function cardTemplate(c){
   const badge = c.genero==='F' ? 'badge-secondary' : 'badge-info';
@@ -545,6 +663,37 @@ document.getElementById('btnLimpiar').addEventListener('click', ()=>{ state.sele
   }
   renderListas(); updateButtons();
 })();
+
+
+
+function notify(type='info', message='Mensaje genérico', duration=4000){
+  const container = document.getElementById('toast-container');
+  if(!container) return;
+
+  // iconos por tipo
+  const icons = {
+    success:'check_circle',
+    error:'error',
+    warning:'warning',
+    info:'info'
+  };
+
+  const toast = document.createElement('div');
+  toast.className = `toast ${type}`;
+  toast.innerHTML = `
+    <span class="icon material-symbols-rounded">${icons[type]||'info'}</span>
+    <span class="msg">${message}</span>
+  `;
+
+  container.appendChild(toast);
+
+  // quitar después de tiempo
+  setTimeout(()=>{
+    toast.style.animation = 'fadeOut .45s ease forwards';
+    toast.addEventListener('animationend', ()=>toast.remove());
+  }, duration);
+}
+
 </script>
 </body>
 </html>
