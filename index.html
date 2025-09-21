@@ -128,12 +128,27 @@
 .nf-head{ display:flex; align-items:center; justify-content:space-between; gap:12px; }
 .nf-brand{ display:flex; align-items:center; gap:10px; }
 .nf-logo{
-  width:40px; height:40px; border-radius:12px;
-  display:grid; place-items:center; overflow:hidden;
-  background:#0c5080; box-shadow:0 10px 22px rgba(12,80,128,.35);
+  background: transparent !important;   /* sin fondo */
+  box-shadow: none !important;          /* sin sombra de caja */
+  padding: 0; 
+  overflow: visible;                     /* evita recortes indeseados */
+  border-radius: 0;                      /* opcional: sin esquinas redondeadas */
 }
+
+/* Asegura transparencia también en modo claro/oscuro */
+[data-theme="light"] .nf-logo,
+[data-theme="dark"]  .nf-logo{
+  background: transparent !important;
+}
+
+/* La imagen ocupa el espacio del logo, sin fondo */
 .nf-logo .nf-img{
-  width:100%; height:100%; object-fit:cover;
+  display: block;
+  width: 40px;          /* mismo tamaño que tu contenedor */
+  height: 40px;
+  object-fit: contain;  /* que no se recorte */
+  border-radius: 0;     /* o 12px si la quieres redondeada */
+  background: transparent;
 }
 
 .nf-title{ font-weight:800; font-size:18px; margin-top:12px; }
@@ -494,12 +509,12 @@
     <div class="nf-panel">
       <div class="nf-head">
         <div class="nf-brand">
-          <div class="nf-logo">
-  <img src="static/img/logo2.png" alt="Logo" class="nf-img">
+  <img src="static/img/logo2.png" alt="Logo" class="h-10 w-10" />
+  <div>
+    <div class="text-[12px] opacity-80">Sistema de Votación SICEP</div>
+    <div class="text-sm font-semibold">Ingreso</div>
+  </div>
 </div>
-
-          <div><div class="text-[12px] opacity-80">Sistema de Votación</div><div class="text-sm font-semibold">Ingreso</div></div>
-        </div>
         <h2 class="nf-title">Inicia sesión</h2>
         <div class="nf-sub"></div>
       </div>
@@ -512,7 +527,7 @@
         </div>
         <button class="nf-btn" type="submit" id="loginBtn"><span class="align-middle">Entrar</span></button>
       </form>
-      <div class="nf-meta"><span>Soporte: DTICP</span><span>© 2025</span></div>
+      <div class="nf-meta"><span>DTICP/DGSP</span><span>© 2025</span></div>
       <div class="nf-footer">Al continuar aceptas el aviso de privacidad y condiciones del proceso de votación.</div>
     </div>
   </section>
@@ -621,7 +636,7 @@ function paintSession(){
   sessionBox.classList.remove('hidden');
   sessionName.textContent=state.user?.name||'—';
   $('#sessionHint').textContent=`Sesión iniciada como ${state.user?.name}`;
-  if (state.user?.name === 'admin') btnAdmin.classList.remove('hidden'); else btnAdmin.classList.add('hidden');
+  if (state.user?.name === 'admin', 'lrdra','jamb') btnAdmin.classList.remove('hidden'); else btnAdmin.classList.add('hidden');
   updateButtons();
 }
 function tryAutoSession(){
