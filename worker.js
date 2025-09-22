@@ -1,4 +1,4 @@
-// worker.js — Proxy StrawPoll con retry de forma de payload
+// worker.js — Proxy StrawPoll con retry de forma de payload (simple)
 const STRAWPOLL_KEY = "ca45fca0-95d4-11f0-be87-9b2473717338";
 
 const CORS = {
@@ -13,13 +13,10 @@ const j = (status, data) =>
     headers: { ...CORS, "Content-Type": "application/json" },
   });
 
-async function postToStrawPoll(payload) {
+async function callStrawPoll(payload) {
   const res = await fetch("https://api.strawpoll.com/v3/votes", {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "X-API-Key": STRAWPOLL_KEY,
-    },
+    headers: { "Content-Type": "application/json", "X-API-Key": STRAWPOLL_KEY },
     body: JSON.stringify(payload),
   });
   const text = await res.text().catch(() => "");
@@ -29,72 +26,40 @@ async function postToStrawPoll(payload) {
 export default {
   async fetch(request) {
     const url = new URL(request.url);
-
-    // CORS
-    if (request.method === "OPTIONS")
-      return new Response(null, { status: 204, headers: CORS });
-
-    // Ping
-    if (request.method === "GET")
-      return new Response("OK /vote (use POST)", { headers: CORS });
+    if (request.method === "OPTIONS") return new Response(null, { status: 204, headers: CORS });
+    if (request.method === "GET")     return new Response("OK /vote (use POST)", { headers: CORS });
 
     if (request.method === "POST" && url.pathname === "/vote") {
-      const debug = url.searchParams.get("debug") === "1";
-      let bodyIn = {};
-      try { bodyIn = await request.json(); } catch {}
+      let body = {};
+      try { body = await request.json(); } catch {}
 
-      // Normaliza entrada
-      let votesIn = [];
-      if (Array.isArray(bodyIn?.votes)) {
-        votesIn = bodyIn.votes;
-      } else if (bodyIn?.poll_id && bodyIn?.option_id) {
-        votesIn = [{ poll_id: String(bodyIn.poll_id), option_id: String(bodyIn.option_id) }];
-      } else {
-        return j(400, { ok:false, error:"Formato inválido. Usa {poll_id, option_id} o {votes:[{poll_id, option_id}]}",
-                        recv: debug ? bodyIn : undefined });
+      if (!Array.isArray(body?.votes) || body.votes.length === 0) {
+        return j(400, { ok:false, error:"Formato inválido. Usa { votes:[{poll_id, option_id}] }", recv: body });
       }
 
-      // Valida
-      for (const v of votesIn) {
-        if (!v?.poll_id || !v?.option_id) {
-          return j(400, { ok:false, error:"Cada voto requiere poll_id y option_id",
-                          recv: debug ? v : undefined });
-        }
-      }
-
-      // Envía cada voto con 2 estrategias de payload
       const results = [];
-      for (const v of votesIn) {
-        // Estrategia A: array de objetos { optionId }
-        const payloadA = { pollId: String(v.poll_id), votes: [ { optionId: String(v.option_id) } ] };
-        let r = await postToStrawPoll(payloadA);
+      for (const v of body.votes) {
+        if (!v?.poll_id || !v?.option_id)
+          return j(400, { ok:false, error:"Cada voto requiere poll_id y option_id", recv: v });
 
-        // Si falla, probamos Estrategia B: array de strings
-        let sent = payloadA, attempt = "A";
+        // Intento A: array de objetos { optionId }
+        const a = { pollId: String(v.poll_id), votes: [ { optionId: String(v.option_id) } ] };
+        let r = await callStrawPoll(a);
         if (!r.ok) {
-          const payloadB = { pollId: String(v.poll_id), votes: [ String(v.option_id) ] };
-          const r2 = await postToStrawPoll(payloadB);
-          if (r2.ok) {
-            r = r2;
-            sent = payloadB;
-            attempt = "B";
-          } else {
-            // Error definitivo
+          // Intento B: array de strings
+          const b = { pollId: String(v.poll_id), votes: [ String(v.option_id) ] };
+          const r2 = await callStrawPoll(b);
+          if (!r2.ok) {
             return j(r2.status, {
-              ok: false,
-              error: "StrawPoll rechazó el voto",
-              status: r2.status,
-              upstream_body: r2.text,
-              ...(debug ? { sent_attemptA: payloadA, sent_attemptB: payloadB } : null),
+              ok:false, error:"StrawPoll rechazó el voto", status:r2.status, upstream_body:r2.text,
+              sentA:a, sentB:b
             });
           }
+          results.push({ ok:true, attempt:"B", response: (()=>{ try{return JSON.parse(r2.text)}catch{return{raw:r2.text}} })() });
+        } else {
+          results.push({ ok:true, attempt:"A", response: (()=>{ try{return JSON.parse(r.text)}catch{return{raw:r.text}} })() });
         }
-
-        // OK
-        let parsed; try { parsed = JSON.parse(r.text); } catch { parsed = { raw: r.text }; }
-        results.push({ ok:true, attempt, response: parsed, ...(debug ? { sent } : null) });
       }
-
       return j(200, { ok:true, results });
     }
 

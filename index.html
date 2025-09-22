@@ -515,7 +515,7 @@ function getOptionId(genero, nombre){
   return null;
 }
 async function voteOnce(pollId, optionId){
-  const body = JSON.stringify({ poll_id: pollId, option_id: optionId });
+  const body = JSON.stringify({ votes: [{ poll_id: pollId, option_id: optionId }] });
   const res = await withTimeout(fetch(PROXY_VOTE_URL, {
     method:'POST', headers:{ 'Content-Type':'application/json', 'Accept':'application/json' },
     body, mode:'cors', credentials:'omit', cache:'no-store'
