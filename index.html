@@ -13,9 +13,6 @@
   <!-- Inter + Material Symbols -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded" rel="stylesheet"/>
-  <!-- Material Symbols (iconos) si no los tienes ya -->
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded" rel="stylesheet"/>
-
 
   <meta name="color-scheme" content="light dark"/>
   <style>
@@ -24,7 +21,6 @@
     .elev{ box-shadow:0 10px 30px rgba(2,6,23,.10); }
     .card-sel{ outline:2px solid color-mix(in oklab, var(--accent) 55%, transparent); outline-offset:0; }
 
-    /* chip y kbd sin @apply */
     .chip{
       display:inline-flex; align-items:center; gap:.35rem;
       padding:.28rem .55rem; font-size:.75rem; border-radius:999px;
@@ -97,244 +93,80 @@
     .govfoot .legal{ margin-top:.6rem; font-size:.72rem; opacity:.75; }
 
     @media (max-width:640px){ .govsub{ display:none; } .govfoot .wrap{ padding:22px 1rem 26px; } .govfoot .meta{ flex-direction:column; gap:.5rem; } }
-  
-  
-  
-  
-  
-  
-  
-  /* ===== LOGIN OVERLAY (nf-*) ===== */
-#loginOverlay{
-  position: fixed; inset: 0; display: none; /* JS lo cambia a flex */
-  align-items: center; justify-content: center;
-  background: rgba(2,6,23,.65); backdrop-filter: blur(6px);
-  z-index: 2147483600; padding: 20px;
-}
-.nf-panel{
-  width: min(92vw, 440px);
-  border-radius: 16px; padding: 22px 20px;
-  background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.04));
-  border: 1px solid rgba(255,255,255,.14);
-  box-shadow: 0 24px 64px rgba(0,0,0,.35), 0 2px 10px rgba(0,0,0,.25);
-  color: #eaf2ff;
-}
-[data-theme="light"] .nf-panel{
-  color:#0b1220;
-  background: linear-gradient(180deg, rgba(255,255,255,.96), rgba(255,255,255,.92));
-  border: 1px solid rgba(2,6,23,.08);
-  box-shadow: 0 24px 64px rgba(2,6,23,.15), 0 2px 10px rgba(2,6,23,.06);
-}
-.nf-head{ display:flex; align-items:center; justify-content:space-between; gap:12px; }
-.nf-brand{ display:flex; align-items:center; gap:10px; }
-.nf-logo{
-  background: transparent !important;   /* sin fondo */
-  box-shadow: none !important;          /* sin sombra de caja */
-  padding: 0; 
-  overflow: visible;                     /* evita recortes indeseados */
-  border-radius: 0;                      /* opcional: sin esquinas redondeadas */
-}
 
-/* Asegura transparencia también en modo claro/oscuro */
-[data-theme="light"] .nf-logo,
-[data-theme="dark"]  .nf-logo{
-  background: transparent !important;
-}
+    #toastHost{ position: fixed; right: 16px; top: 16px; z-index: 60; display: grid; gap: 10px; width: min(92vw, 360px); }
+    .ui-toast{ display:grid; grid-template-columns:auto 1fr auto; align-items:center; gap:10px; background: var(--toast-bg); color: var(--toast-fg); border:1px solid var(--toast-border); border-radius:14px; padding:12px 12px; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); box-shadow: var(--toast-shadow); overflow:hidden; }
+    .ui-toast .t-icon{ width:28px; height:28px; border-radius:10px; display:grid; place-items:center; color:#fff; }
+    .ui-toast .t-body{ min-width:0; }
+    .ui-toast .t-title{ font-weight:800; font-size:14px; line-height:1.1; }
+    .ui-toast .t-msg{ font-size:12.5px; opacity:.9; margin-top:2px; word-wrap:break-word; }
+    .ui-toast .t-close{ border:0; background:transparent; color:inherit; opacity:.7; cursor:pointer; }
+    .ui-toast .t-close:hover{ opacity:1; }
+    .ui-toast .t-action{ margin-left:6px; border:0; border-radius:10px; padding:6px 10px; font-weight:700; cursor:pointer; }
+    .ui-toast .t-bar{ position:relative; grid-column:1 / -1; height:3px; margin-top:8px; background:linear-gradient(90deg, rgba(255,255,255,.15), transparent); }
+    .ui-toast .t-bar > i{ position:absolute; inset:0; transform-origin:left; }
+    .ui-toast.success .t-icon, .ui-toast.success .t-action{ background:var(--toast-success); }
+    .ui-toast.info    .t-icon, .ui-toast.info    .t-action{ background:var(--toast-info); }
+    .ui-toast.warn    .t-icon, .ui-toast.warn    .t-action{ background:var(--toast-warn); }
+    .ui-toast.error   .t-icon, .ui-toast.error   .t-action{ background:var(--toast-error); }
+    .ui-toast{ transform: translateY(-8px); opacity:0; }
+    .ui-toast.enter{ animation: toastIn .28s ease forwards; }
+    .ui-toast.exit { animation: toastOut .22s ease forwards; }
+    @keyframes toastIn{ to{ transform:none; opacity:1; } }
+    @keyframes toastOut{ to{ transform: translateY(-8px); opacity:0; } }
 
-/* La imagen ocupa el espacio del logo, sin fondo */
-.nf-logo .nf-img{
-  display: block;
-  width: 40px;          /* mismo tamaño que tu contenedor */
-  height: 40px;
-  object-fit: contain;  /* que no se recorte */
-  border-radius: 0;     /* o 12px si la quieres redondeada */
-  background: transparent;
-}
-
-.nf-title{ font-weight:800; font-size:18px; margin-top:12px; }
-.nf-sub{ opacity:.85; font-size:13px; margin-top:2px; }
-
-.nf-body{ margin-top:14px; display:grid; gap:12px; }
-.nf-field{ display:grid; gap:6px; }
-.nf-label{ font-size:12px; opacity:.85; }
-.nf-input{
-  border-radius:12px; padding:10px 12px; outline:0;
-  border:1px solid rgba(2,6,23,.18); background:rgba(255,255,255,.96);
-}
-[data-theme="dark"] .nf-input{
-  border-color:rgba(255,255,255,.16); background:rgba(17,24,39,.6); color:#eaf2ff;
-}
-.nf-help{ display:flex; align-items:center; justify-content:space-between; font-size:12px; opacity:.9; }
-.nf-link{ text-decoration:underline; cursor:pointer; }
-.nf-btn{
-  margin-top:6px; width:100%; border:0; border-radius:12px; padding:10px 14px;
-  background:#0c5080; color:white; font-weight:700; cursor:pointer;
-  box-shadow:0 10px 22px rgba(12,80,128,.35);
-}
-.nf-btn:disabled{ opacity:.7; cursor:not-allowed; }
-
-.nf-meta{ margin-top:10px; display:flex; justify-content:space-between; font-size:12px; opacity:.85; }
-.nf-footer{ margin-top:6px; font-size:11px; opacity:.7; text-align:center; }
-
-  
-
-#toastHost{
-  position: fixed; right: 16px; top: 16px; z-index: var(--toast-z);
-  display: grid; gap: 10px; width: min(92vw, 360px);
-}
-
-.ui-toast{
-  display:grid; grid-template-columns:auto 1fr auto; align-items:center; gap:10px;
-  background: var(--toast-bg); color: var(--toast-fg);
-  border:1px solid var(--toast-border);
-  border-radius:14px; padding:12px 12px;
-  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
-  box-shadow: var(--toast-shadow);
-  overflow:hidden;
-}
-.ui-toast .t-icon{ width:28px; height:28px; border-radius:10px; display:grid; place-items:center; color:#fff; }
-.ui-toast .t-body{ min-width:0; }
-.ui-toast .t-title{ font-weight:800; font-size:14px; line-height:1.1; }
-.ui-toast .t-msg{ font-size:12.5px; opacity:.9; margin-top:2px; word-wrap:break-word; }
-.ui-toast .t-close{ border:0; background:transparent; color:inherit; opacity:.7; cursor:pointer; }
-.ui-toast .t-close:hover{ opacity:1; }
-.ui-toast .t-action{ margin-left:6px; border:0; border-radius:10px; padding:6px 10px; font-weight:700; cursor:pointer; }
-
-.ui-toast .t-bar{
-  position:relative; grid-column:1 / -1; height:3px; margin-top:8px;
-  background:linear-gradient(90deg, rgba(255,255,255,.15), transparent);
-}
-.ui-toast .t-bar > i{ position:absolute; inset:0; transform-origin:left; }
-
-.ui-toast.success .t-icon, .ui-toast.success .t-action{ background:var(--toast-success); }
-.ui-toast.info    .t-icon, .ui-toast.info    .t-action{ background:var(--toast-info); }
-.ui-toast.warn    .t-icon, .ui-toast.warn    .t-action{ background:var(--toast-warn); }
-.ui-toast.error   .t-icon, .ui-toast.error   .t-action{ background:var(--toast-error); }
-
-/* Animaciones */
-.ui-toast{ transform: translateY(-8px); opacity:0; }
-.ui-toast.enter{ animation: toastIn .28s ease forwards; }
-.ui-toast.exit { animation: toastOut .22s ease forwards; }
-@keyframes toastIn{ to{ transform:none; opacity:1; } }
-@keyframes toastOut{ to{ transform: translateY(-8px); opacity:0; } }
-
-
-  /* === FIX PACK MÓVIL (solo estilos, sin romper nada) === */
-
-/* micro-ajustes generales */
-@media (max-width: 768px){
-  .elev{ box-shadow:0 8px 22px rgba(2,6,23,.10); }
-  .govbar .max-w-7xl{ padding-left:12px; padding-right:12px; }
-  .govlogo{ height:36px; border-radius:.6rem; }
-  .govtitle{ font-size:clamp(.95rem, 3.5vw, 1.1rem); }
-}
-
-/* banner de reglas: compacto y legible */
-@media (max-width: 640px){
-  .rule-card{
-    grid-template-columns: 1fr;           /* apila contenido */
-    gap:12px; padding:14px 14px;
-    border-radius:14px;
-    background: radial-gradient(600px 300px at 0% 0%,
-                 color-mix(in oklab, var(--accent) 12%, transparent), transparent 55%),
-                linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
-  }
-  .rule-icon{ width:38px; height:38px; border-radius:10px; }
-  .rule-state{ align-self:flex-start; }   /* estado bajo el texto */
-  .rule-card .pill{ font-size:11px; padding:.28rem .5rem; }
-}
-
-/* buscador + filtro: respiración vertical */
-@media (max-width: 640px){
-  .input.input-bordered{ padding-left:.6rem; }
-  .kbd{ display:none; } /* oculta ⌘K en móvil */
-  .join .btn{ min-width:auto; padding-left:.9rem; padding-right:.9rem; }
-}
-
-/* grillas de tarjetas: 2 col. cómodas en pantallas chicas */
-@media (max-width: 640px){
-  .grid-colx{ grid-template-columns: repeat(2, minmax(0,1fr)) !important; }
-}
-@media (max-width: 420px){
-  .grid-colx{ grid-template-columns: repeat(2, minmax(0,1fr)) !important; gap:.6rem !important; }
-  .card .card-body{ padding:10px 12px 12px; }
-  .card-img{ border-radius:.6rem; }
-  .card-title{ font-size:.95rem; }
-}
-
-/* resumen + barra pegajosa: no tape contenido y botones usables */
-.sticky-actions{ padding-bottom: max(10px, env(safe-area-inset-bottom)); }
-@media (max-width: 640px){
-  .sticky-actions .bg-base-100{
-    border-radius:18px; margin-left:-2px; margin-right:-2px;
-  }
-  .sticky-actions .p-4, 
-  .sticky-actions .p-6{ padding:14px !important; }
-  .sticky-actions .flex.items-center.gap-2{ flex-wrap:wrap; gap:.5rem; }
-  #btnLimpiar, #btnPreview, #btnEnviar{
-    min-height:44px;
-  }
-  #btnEnviar{ flex:1 1 100%; }           /* botón principal ancho completo */
-}
-
-/* tarjetas persona: chips sin desbordar */
-@media (max-width: 420px){
-  .chip{ font-size:11px; padding:.22rem .45rem; }
-}
-
-/* modal overlay/login: centrado y sin rebalses en móvil */
-#loginOverlay[aria-hidden="false"],
-#loginOverlay{ align-items:center; justify-content:center; padding:16px; }
-#loginOverlay .nf-panel{ width:100%; max-width:420px; }
-@media (max-width: 420px){
-  #loginOverlay .nf-head{ padding:18px 18px 0; }
-  #loginOverlay .nf-body{ padding:14px 18px 18px; }
-  #loginOverlay .nf-title{ font-size:22px; }
-  #loginOverlay .nf-input{ padding:.75rem .8rem; }
-  #loginOverlay .nf-btn{ padding:.75rem .9rem; }
-}
-
-/* loader central: caja más chica en móviles */
-@media (max-width: 420px){
-  .pl-card{ width:min(92vw,360px); padding:22px 18px 18px; }
-  .pl-logo{ width:84px; height:84px; }
-  .pl-title{ font-size:18px; }
-}
-
-/* footer: apila y reduce padding */
-@media (max-width: 640px){
-  .govfoot .wrap{ padding:18px 12px 22px; }
-  .govfoot .meta{ flex-direction:column; gap:.45rem; text-align:center; }
-  .govfoot .mark{ width:48px; height:48px; border-radius:8px; }
-}
-
-/* session hint: tamaño legible y separación */
-#sessionHint{ margin-top:.35rem; font-size:11.5px; }
-
-/* evita que el badge "Resultados (admin)" y el box de sesión empujen demasiado en móvil */
-@media (max-width: 640px){
-  #btnAdmin{ padding-left:.6rem; padding-right:.6rem; }
-}
-
+    /* === FIX PACK MÓVIL === */
+    @media (max-width: 768px){
+      .elev{ box-shadow:0 8px 22px rgba(2,6,23,.10); }
+      .govbar .max-w-7xl{ padding-left:12px; padding-right:12px; }
+      .govlogo{ height:36px; border-radius:.6rem; }
+      .govtitle{ font-size:clamp(.95rem, 3.5vw, 1.1rem); }
+    }
+    @media (max-width: 640px){
+      .rule-card{ grid-template-columns: 1fr; gap:12px; padding:14px 14px; border-radius:14px;
+        background: radial-gradient(600px 300px at 0% 0%, color-mix(in oklab, var(--accent) 12%, transparent), transparent 55%), linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02)); }
+      .rule-icon{ width:38px; height:38px; border-radius:10px; }
+      .rule-state{ align-self:flex-start; }
+      .rule-card .pill{ font-size:11px; padding:.28rem .5rem; }
+    }
+    @media (max-width: 640px){
+      .input.input-bordered{ padding-left:.6rem; }
+      .kbd{ display:none; }
+      .join .btn{ min-width:auto; padding-left:.9rem; padding-right:.9rem; }
+    }
+    @media (max-width: 640px){
+      .grid-colx{ grid-template-columns: repeat(2, minmax(0,1fr)) !important; }
+    }
+    @media (max-width: 420px){
+      .grid-colx{ grid-template-columns: repeat(2, minmax(0,1fr)) !important; gap:.6rem !important; }
+      .card .card-body{ padding:10px 12px 12px; }
+      .card-img{ border-radius:.6rem; }
+      .card-title{ font-size:.95rem; }
+    }
+    .sticky-actions{ padding-bottom: max(10px, env(safe-area-inset-bottom)); }
+    @media (max-width: 640px){
+      .sticky-actions .bg-base-100{ border-radius:18px; margin-left:-2px; margin-right:-2px; }
+      .sticky-actions .p-4, .sticky-actions .p-6{ padding:14px !important; }
+      .sticky-actions .flex.items-center.gap-2{ flex-wrap:wrap; gap:.5rem; }
+      #btnLimpiar, #btnPreview, #btnEnviar{ min-height:44px; }
+      #btnEnviar{ flex:1 1 100%; }
+    }
+    @media (max-width: 420px){ .chip{ font-size:11px; padding:.22rem .45rem; } }
+    #sessionHint{ margin-top:.35rem; font-size:11.5px; }
+    @media (max-width: 640px){ #btnAdmin{ padding-left:.6rem; padding-right:.6rem; } }
   </style>
 </head>
 <body class="min-h-full bg-base-200 text-base-content">
   <!-- Top loader -->
   <div id="topLoader" hidden></div>
 
-
-<!-- TOAST CONTAINER -->
-<div id="toast-container"></div>
-
-
-
+  <!-- Toast host -->
+  <div id="toastHost"></div>
 
   <!-- Loader central -->
   <div id="pageLoader" aria-hidden="true">
     <div class="pl-card">
-      <div class="pl-logo pl-orbs">
-        <img src="static/img/logo2.png" alt="Cargando…"/>
-      </div>
+      <div class="pl-logo pl-orbs"><img src="static/img/logo2.png" alt="Cargando…"/></div>
       <div class="pl-title">Preparando tu votación…</div>
       <div class="pl-sub">Validando recursos y UI</div>
       <div class="pl-bar"><i></i></div>
@@ -357,12 +189,6 @@
           <span class="material-symbols-rounded text-base">monitoring</span> Resultados (admin)
         </a>
 
-        <div id="sessionBox" class="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-xl border border-base-300 bg-base-100">
-          <span class="material-symbols-rounded text-base opacity-70">account_circle</span>
-          <span id="sessionName" class="text-sm font-semibold">—</span>
-          <button id="btnLogout" class="btn btn-xs">Salir</button>
-        </div>
-
         <div class="dropdown dropdown-end">
           <div tabindex="0" role="button" class="btn btn-ghost btn-circle" title="Tema">
             <span class="material-symbols-rounded">dark_mode</span>
@@ -384,7 +210,7 @@
         <div class="rule-icon"><span class="material-symbols-rounded">gavel</span></div>
         <div class="min-w-0">
           <h3 class="font-extrabold text-base md:text-lg leading-tight tracking-tight">Reglas de la boleta</h3>
-          <p class="text-sm opacity-85 mt-0.5">Debes elegir <b>exactamente 1 mujer</b> y <b>1 hombre</b>. Para emitir el voto, debes iniciar sesión.</p>
+          <p class="text-sm opacity-85 mt-0.5">Debes elegir <b>exactamente 1 mujer</b> y <b>1 hombre</b>. No necesitas iniciar sesión para votar.</p>
           <div class="mt-3 flex flex-wrap gap-2">
             <span class="pill">Duplicidad bloqueada</span>
             <span class="pill">Anónimo al público</span>
@@ -451,19 +277,19 @@
             <div>
               <h3 class="font-semibold">Resumen de tu boleta</h3>
               <ul id="seleccionResumen" class="text-sm opacity-90 mt-1 space-y-1"></ul>
-              <div class="text-xs opacity-60">Debes tener 2 seleccionados: 1 mujer + 1 hombre. Sesión obligatoria.</div>
+              <div class="text-xs opacity-60">Debes tener 2 seleccionados: 1 mujer + 1 hombre.</div>
             </div>
           </div>
           <div class="flex items-center gap-2">
             <button id="btnLimpiar" class="btn btn-ghost rounded-xl">Limpiar</button>
             <button id="btnPreview" class="btn btn-outline rounded-xl">Previsualizar</button>
             <button id="btnEnviar" class="btn btn-primary rounded-xl" disabled>
-              <span class="material-symbols-rounded">lock</span> Enviar voto
+              <span class="material-symbols-rounded">how_to_vote</span> Enviar voto
             </button>
           </div>
         </div>
       </div>
-      <div class="text-xs opacity-60 mt-2 px-1" id="sessionHint">No has iniciado sesión.</div>
+      <div class="text-xs opacity-60 mt-2 px-1" id="sessionHint">No necesitas iniciar sesión para votar.</div>
       <pre id="payload" class="mt-3 text-xs bg-base-200 p-3 rounded-2xl overflow-auto hidden"></pre>
     </div>
   </div>
@@ -487,51 +313,6 @@
     <form method="dialog" class="modal-backdrop"><button>close</button></form>
   </dialog>
 
-  <!-- Modal identidad -->
-  <dialog id="modalIdentity" class="modal">
-    <div class="modal-box max-w-md">
-      <h3 class="font-bold text-lg">Datos para registrar tu voto</h3>
-      <p class="text-sm opacity-80 mt-1">Solo para control interno del proceso.</p>
-      <form id="identityForm" class="mt-4 grid gap-3">
-        <label class="form-control"><span class="label-text">Nombre completo</span><input id="fullName" class="input input-bordered" placeholder="Nombre(s) y Apellidos" required></label>
-        <label class="form-control"><span class="label-text">Usuario (área/municipio)</span><input id="loginUser" class="input input-bordered bg-base-200" readonly></label>
-        <div class="modal-action">
-          <button type="button" class="btn btn-ghost rounded-xl" onclick="document.getElementById('modalIdentity').close()">Cancelar</button>
-          <button type="submit" class="btn btn-primary rounded-xl">Continuar</button>
-        </div>
-      </form>
-    </div>
-    <form method="dialog" class="modal-backdrop"><button>close</button></form>
-  </dialog>
-
-  <!-- Overlay LOGIN -->
-  <section id="loginOverlay" aria-hidden="true" style="display:none">
-    <div class="nf-panel">
-      <div class="nf-head">
-        <div class="nf-brand">
-  <img src="static/img/logo2.png" alt="Logo" class="h-10 w-10" />
-  <div>
-    <div class="text-[12px] opacity-80">Sistema de Votación SICEP</div>
-    <div class="text-sm font-semibold">Ingreso</div>
-  </div>
-</div>
-        <h2 class="nf-title">Inicia sesión</h2>
-        <div class="nf-sub"></div>
-      </div>
-      <form id="loginForm" class="nf-body">
-        <div class="nf-field"><label class="nf-label">Usuario</label><input id="inpUser" class="nf-input" placeholder="usuario"/></div>
-        <div class="nf-field"><label class="nf-label">Contraseña</label><input id="inpPass" type="password" class="nf-input" placeholder="••••••••"/></div>
-        <div class="nf-help">
-          <label class="nf-remember"><input id="remember" type="checkbox" class="checkbox checkbox-xs checkbox-info mr-1.5" checked> Recordarme</label>
-          <a href="#" class="nf-link" onclick="alert('Contacta a DTICP para recuperar el acceso.');return false;">¿Olvidaste tu acceso?</a>
-        </div>
-        <button class="nf-btn" type="submit" id="loginBtn"><span class="align-middle">Entrar</span></button>
-      </form>
-      <div class="nf-meta"><span>DTICP/DGSP</span><span>© 2025</span></div>
-      <div class="nf-footer">Al continuar aceptas el aviso de privacidad y condiciones del proceso de votación.</div>
-    </div>
-  </section>
-
   <!-- Footer -->
   <footer class="govfoot mt-12">
     <div class="brandline" aria-hidden="true"></div>
@@ -542,7 +323,7 @@
         <span class="chip">DTICP</span>
         <span class="chip">DGSP</span>
       </div>
-      <div class="legal text-center">La identidad de los votantes se valida localmente para esta prueba.</div>
+      <div class="legal text-center">La identidad de los votantes no se muestra públicamente.</div>
     </div>
   </footer>
 
@@ -585,31 +366,9 @@ const CANDIDATURAS = [
   { id:'M-11', nombre:'MARCELINO MEDINA',  genero:'M', foto:'static/img/21.png', lugar:'CEPRERESO ACÁMBARO' }
 ];
 
-// ===== Helpers/estado =====
+// ===== Helpers / estado (sin sesión) =====
 const $=s=>document.querySelector(s); const $$=s=>Array.from(document.querySelectorAll(s));
-const state={ seleccion:{F:null,M:null}, filtro:'ALL', q:'', user:null, identity:{ full_name:'' } };
-
-// ===== Admines =====
-const ADMINS = new Set(['admin','lrdra','jamb']);
-
-// ===== Anti-duplicados de nombre (local) =====
-const NAME_STORE_KEY = 'voto_names_v1';
-function normName(s=''){
-  return s.normalize('NFD').replace(/[\u0300-\u036f]/g,'')
-          .toLowerCase().replace(/\s+/g,' ').trim();
-}
-function loadNameSet(){
-  try{
-    const raw = localStorage.getItem(NAME_STORE_KEY);
-    const arr = raw ? JSON.parse(raw) : [];
-    return new Set(Array.isArray(arr)?arr:[]);
-  }catch{ return new Set(); }
-}
-function saveNameToSet(nNorm){
-  const set = loadNameSet();
-  set.add(nNorm);
-  localStorage.setItem(NAME_STORE_KEY, JSON.stringify([...set]));
-}
+const state={ seleccion:{F:null,M:null}, filtro:'ALL', q:'' };
 
 // ===== TopLoader =====
 const topLoader=document.getElementById('topLoader'); let raf,prog=0,active=false;
@@ -638,46 +397,10 @@ function setTheme(mode){
   else{ localStorage.removeItem('theme'); const prefersDark=window.matchMedia('(prefers-color-scheme: dark)').matches;
         document.documentElement.setAttribute('data-theme', prefersDark?'dark':'light'); }
 }
-$('#themeLight').addEventListener('click',()=>setTheme('light'));
-$('#themeDark').addEventListener('click', ()=>setTheme('dark'));
-$('#themeAuto').addEventListener('click', ()=>setTheme('auto'));
+$('#themeLight')?.addEventListener('click',()=>setTheme('light'));
+$('#themeDark')?.addEventListener('click', ()=>setTheme('dark'));
+$('#themeAuto')?.addEventListener('click', ()=>setTheme('auto'));
 (function(){ const saved=localStorage.getItem('theme'); if(saved==='light'||saved==='dark') setTheme(saved); else setTheme('auto'); })();
-
-// ===== Login overlay =====
-const loginOverlay=$('#loginOverlay'), loginForm=$('#loginForm'), inpUser=$('#inpUser'), inpPass=$('#inpPass'), loginBtn=$('#loginBtn');
-const sessionBox=$('#sessionBox'), sessionName=$('#sessionName'), btnLogout=$('#btnLogout');
-const btnAdmin=$('#btnAdmin');
-
-function normalize(u){ return (u||'').toString().trim().toLowerCase(); }
-function showLogin(){ document.body.style.overflow='hidden'; loginOverlay.style.display='flex'; inpUser.focus(); }
-function hideLogin(){ loginOverlay.style.display='none'; document.body.style.overflow=''; }
-
-function paintSession(){
-  sessionBox.classList.remove('hidden');
-  sessionName.textContent=state.user?.name||'—';
-  $('#sessionHint').textContent=`Sesión iniciada como ${state.user?.name}`;
-  if (ADMINS.has(state.user?.name)) btnAdmin.classList.remove('hidden'); else btnAdmin.classList.add('hidden');
-  updateButtons();
-}
-function tryAutoSession(){
-  const raw=localStorage.getItem('voto_user'); if(!raw) return false;
-  try{ const u=JSON.parse(raw); if(u&&u.name){ state.user=u; paintSession(); return true; } }catch{}
-  return false;
-}
-
-loginForm.addEventListener('submit', (e)=>{
-  e.preventDefault();
-  const u=normalize(inpUser.value), p=inpPass.value.trim();
-  const CREDENTIALS = {"acambaro":"aca1","celaya":"cel1","guanajuato":"gto1","irapuato":"ira1","leon":"leon1","penjamo":"pen1","sanfe":"sanfe1","san miguel":"sanmike1","vallevar":"valleva1","vallefem":"vallefem1","admin":"admin1","lrdra":"lrdra1","jamb":"jamb1","salamanca":"sala1"};
-  if(!(CREDENTIALS.hasOwnProperty(u) && CREDENTIALS[u]===p)){ alert('Usuario o contraseña incorrectos.'); return; }
-  loginBtn.disabled=true; const prev=loginBtn.innerHTML; loginBtn.innerHTML='<span class="material-symbols-rounded" style="font-size:18px;vertical-align:-3px">hourglass_empty</span> Verificando…';
-  setTimeout(()=>{ state.user={name:u}; if($('#remember').checked) localStorage.setItem('voto_user', JSON.stringify(state.user));
-    loginBtn.disabled=false; loginBtn.innerHTML=prev; hideLogin(); paintSession(); }, 650);
-});
-btnLogout.addEventListener('click', ()=>{ localStorage.removeItem('voto_user'); state.user=null; sessionBox.classList.add('hidden'); $('#sessionHint').textContent='No has iniciado sesión.'; btnAdmin.classList.add('hidden'); showLogin(); updateButtons(); });
-
-// ===== Full name persist =====
-(function(){ const saved = localStorage.getItem('voto_fullname'); if(saved){ state.identity.full_name = saved; } })();
 
 // ===== Render tarjetas =====
 function displayLugar(c){ return (c.lugar && c.lugar.trim()) ? c.lugar : c.id; }
@@ -727,9 +450,10 @@ function renderResumen(){
   const payload = ok ? { mujer:f.nombre, mujer_lugar:f.lugar||f.id, hombre:m.nombre, hombre_lugar:m.lugar||m.id, ts:new Date().toISOString() } : { seleccion:null };
   $('#payload').textContent = JSON.stringify(payload,null,2);
 }
-function updateButtons(){ const ready=!!(state.seleccion.F && state.seleccion.M); const authed=!!state.user;
-  $('#btnEnviar').disabled=!(ready&&authed);
-  $('#sessionHint').textContent=authed?`Sesión iniciada como ${state.user?.name}`:'No has iniciado sesión.';
+function updateButtons(){
+  const ready=!!(state.seleccion.F && state.seleccion.M);
+  $('#btnEnviar').disabled = !ready;
+  $('#sessionHint').textContent='No necesitas iniciar sesión para votar.';
 }
 
 // ===== Búsqueda / Filtro / Hotkey =====
@@ -737,81 +461,43 @@ $('#search').addEventListener('input', e=>{ state.q=e.target.value||''; renderLi
 $$('input[name="filtroGenero"]').forEach(r=>r.addEventListener('change', ()=>{ state.filtro=$('#filtroMujer').checked?'F':($('#filtroHombre').checked?'M':'ALL'); renderListas(); }));
 window.addEventListener('keydown', e=>{ if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='k'){ e.preventDefault(); $('#search').focus(); } });
 
-// ===== Flujo Envío =====
-const identityModal = document.getElementById('modalIdentity');
-const identityForm  = document.getElementById('identityForm');
-const fullNameInput = document.getElementById('fullName');
-const loginUserInput= document.getElementById('loginUser');
-
+// ===== Flujo: preview y envío =====
 document.getElementById('btnEnviar').addEventListener('click', ()=>{
   const f=state.seleccion.F, m=state.seleccion.M;
   if(!(f&&m)) return alert('Falta seleccionar 1 mujer y 1 hombre.');
-  if(!state.user) return alert('Inicia sesión para continuar.');
-  loginUserInput.value = state.user.name || '';
-  fullNameInput.value  = state.identity.full_name || localStorage.getItem('voto_fullname') || '';
-  identityModal.showModal();
-});
-
-// ✅ Anti-duplicado local aquí
-identityForm.addEventListener('submit', (e)=>{
-  e.preventDefault();
-  const name = (fullNameInput.value||'').trim();
-  if(!name){ fullNameInput.focus(); return; }
-
-  const nNorm = normName(name);
-  const used  = loadNameSet();
-  if(used.has(nNorm)){
-    alert('Ese nombre ya registró voto en este dispositivo. Si es homónimo, agrega un segundo apellido u otra referencia.');
-    fullNameInput.focus();
-    return;
-  }
-
-  state.identity.full_name = name;
-  localStorage.setItem('voto_fullname', name);
-  identityModal.close();
-
-  const f=state.seleccion.F, m=state.seleccion.M;
-  $('#previewList').innerHTML=
+  $('#previewList').innerHTML =
     `<li>🟣 <b>Mujer</b>: ${f.nombre} <span class="chip">${f.lugar||f.id}</span></li>
-     <li>🔵 <b>Hombre</b>: ${m.nombre} <span class="chip">${m.lugar||m.id}</span></li>
-     <li>🧾 <b>Nombre</b>: ${state.identity.full_name}</li>
-     <li>🏷️ <b>Usuario</b>: ${state.user?.name||'—'}</li>`;
-  $('#whoami').textContent = `Se enviará como: ${state.user?.name} — ${state.identity.full_name}`;
+     <li>🔵 <b>Hombre</b>: ${m.nombre} <span class="chip">${m.lugar||m.id}</span></li>`;
+  $('#whoami').textContent = '';
   document.getElementById('modalPreview').showModal();
 });
 
 document.getElementById('btnPreview').addEventListener('click', ()=>{
   const f=state.seleccion.F, m=state.seleccion.M; if(!(f&&m)) return alert('Falta seleccionar 1 mujer y 1 hombre.');
-  $('#previewList').innerHTML=
+  $('#previewList').innerHTML =
     `<li>🟣 <b>Mujer</b>: ${f.nombre} <span class="chip">${f.lugar||f.id}</span></li>
-     <li>🔵 <b>Hombre</b>: ${m.nombre} <span class="chip">${m.lugar||m.id}</span></li>
-     ${state.identity.full_name?`<li>🧾 <b>Nombre</b>: ${state.identity.full_name}</li>`:''}
-     ${state.user?`<li>🏷️ <b>Usuario</b>: ${state.user.name}</li>`:''}`;
-  $('#whoami').textContent=state.user?`Se enviará como: ${state.user.name}${state.identity.full_name?' — '+state.identity.full_name:''}`:'Inicia sesión para continuar';
+     <li>🔵 <b>Hombre</b>: ${m.nombre} <span class="chip">${m.lugar||m.id}</span></li>`;
+  $('#whoami').textContent = '';
   document.getElementById('modalPreview').showModal();
 });
 
 document.getElementById('btnConfirm').addEventListener('click', async ()=>{
   const f=state.seleccion.F, m=state.seleccion.M; if(!(f&&m)) return;
-  const optIdF=OPTION_IDS.F[f.nombre], optIdM=OPTION_IDS.M[m.nombre]; if(!optIdF||!optIdM) return alert('Faltan option_id reales en OPTION_IDS.');
+  const optIdF=OPTION_IDS.F[f.nombre], optIdM=OPTION_IDS.M[m.nombre];
+  if(!optIdF||!optIdM) return alert('Faltan option_id reales en OPTION_IDS.');
   try{
     const body = {
-      local_user: state.user?.name || null,
-      full_name: state.identity.full_name || null,
       votes:[
-        {poll_id:POLL_ID_MUJER, option_id:optIdF},
+        {poll_id:POLL_ID_MUJER,  option_id:optIdF},
         {poll_id:POLL_ID_HOMBRE, option_id:optIdM}
       ]
     };
-    const res=await fetch(PROXY_VOTE_URL,{ method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body) });
+    const res = await fetch(PROXY_VOTE_URL,{ method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body) });
     if(!res.ok){ const t=await res.text(); return alert('Error al votar: '+t); }
-
-    // ✅ Registrar el nombre como usado SOLO si el envío fue exitoso
-    const nNorm = normName(state.identity.full_name || '');
-    if(nNorm) saveNameToSet(nNorm);
-
     document.getElementById('modalPreview').close();
     alert('¡Voto registrado en ambas encuestas! 🎉');
+    // reset selección
+    state.seleccion.F=null; state.seleccion.M=null; renderListas();
   }catch{ alert('No se pudo enviar el voto.'); }
 });
 
@@ -819,104 +505,38 @@ document.getElementById('btnLimpiar').addEventListener('click', ()=>{ state.sele
 
 // INIT
 (function init(){
-  const openLogin = ()=>{ if(!tryAutoSession()) showLogin(); else paintSession(); };
-  if (pageLoader.classList.contains('hidden')) openLogin();
-  else {
-    const obs = new MutationObserver(()=>{ if(pageLoader.classList.contains('hidden')){ openLogin(); obs.disconnect(); } });
-    obs.observe(pageLoader, { attributes:true, attributeFilter:['class'] });
-  }
   renderListas(); updateButtons();
 })();
 
-
-// Inicializa host y expone window.toast()
+// ===== Toast minimal (opcional) =====
 (function initToast(){
-  if (document.getElementById('toastHost')) { window.toast = createToast; return; }
-  const host = document.createElement('div'); host.id = 'toastHost';
-  document.body.appendChild(host);
-  window.toast = createToast;
-
-  const queue = [];
-  let showing = 0, MAX = 4;
-
-  function flush(){
-    while (queue.length && showing < MAX){
-      const cfg = queue.shift();
-      spawn(cfg);
-    }
-  }
-
+  if (document.getElementById('toastHost')) { window.toast = createToast; }
+  const queue = []; let showing = 0, MAX = 4;
+  function flush(){ while (queue.length && showing < MAX) spawn(queue.shift()); }
   function spawn({title, message, type='info', duration=5000, actionText=null, onAction=null}){
     showing++;
     const el = document.createElement('div');
     el.className = `ui-toast ${type} enter`;
-
-    const ICON = {
-      success:'check_circle', info:'info', warn:'warning', error:'error'
-    }[type] || 'notifications';
-
+    const ICON = { success:'check_circle', info:'info', warn:'warning', error:'error' }[type] || 'notifications';
     el.innerHTML = `
       <div class="t-icon"><span class="material-symbols-rounded">${ICON}</span></div>
-      <div class="t-body">
-        ${title ? `<div class="t-title">${title}</div>` : ''}
-        <div class="t-msg">${message || ''}</div>
-      </div>
-      <div class="t-cta">
-        ${actionText ? `<button class="t-action">${actionText}</button>` : ''}
-        <button class="t-close" title="Cerrar"><span class="material-symbols-rounded">close</span></button>
-      </div>
-      <div class="t-bar"><i></i></div>
-    `;
-
-    const bar = el.querySelector('.t-bar > i');
-    bar.style.background = getComputedStyle(el.querySelector('.t-action') || el.querySelector('.t-icon')).backgroundColor;
-    bar.style.transform = 'scaleX(1)';
-
+      <div class="t-body">${title ? `<div class="t-title">${title}</div>` : ''}<div class="t-msg">${message || ''}</div></div>
+      <div class="t-cta">${actionText ? `<button class="t-action">${actionText}</button>` : ''}<button class="t-close" title="Cerrar"><span class="material-symbols-rounded">close</span></button></div>
+      <div class="t-bar"><i></i></div>`;
+    const host = document.getElementById('toastHost'); host.appendChild(el);
+    const bar = el.querySelector('.t-bar > i'); bar.style.background = getComputedStyle(el.querySelector('.t-action') || el.querySelector('.t-icon')).backgroundColor; bar.style.transform = 'scaleX(1)';
     let tStart = performance.now(), raf;
-    function tick(now){
-      const p = Math.min(1, (now - tStart) / duration);
-      bar.style.transform = `scaleX(${1-p})`;
-      raf = p < 1 ? requestAnimationFrame(tick) : close();
-    }
-
-    const host = document.getElementById('toastHost');
-    host.appendChild(el);
+    function tick(now){ const p=Math.min(1,(now-tStart)/duration); bar.style.transform=`scaleX(${1-p})`; raf = p<1 ? requestAnimationFrame(tick) : close(); }
     requestAnimationFrame(()=> requestAnimationFrame(()=> tick(performance.now())));
-
-    const closeBtn = el.querySelector('.t-close');
-    const actionBtn = el.querySelector('.t-action');
-
-    function close(){
-      cancelAnimationFrame(raf);
-      el.classList.remove('enter'); el.classList.add('exit');
-      setTimeout(()=>{ el.remove(); showing--; flush(); }, 220);
-    }
-    closeBtn.addEventListener('click', close);
-    if (actionBtn && typeof onAction === 'function'){
-      actionBtn.addEventListener('click', ()=>{ try{ onAction(); }finally{ close(); }});
-    }
-
-    // Pausa con hover
+    function close(){ cancelAnimationFrame(raf); el.classList.remove('enter'); el.classList.add('exit'); setTimeout(()=>{ el.remove(); showing--; flush(); }, 220); }
+    el.querySelector('.t-close').addEventListener('click', close);
+    const actionBtn = el.querySelector('.t-action'); if(actionBtn && typeof onAction==='function'){ actionBtn.addEventListener('click', ()=>{ try{ onAction(); }finally{ close(); }}); }
     el.addEventListener('mouseenter', ()=> cancelAnimationFrame(raf));
-    el.addEventListener('mouseleave', ()=> {
-      const remain = parseFloat(bar.style.transform.replace('scaleX(','').replace(')','')) || 1;
-      tStart = performance.now() - (duration * (1 - remain));
-      tick(performance.now());
-    });
+    el.addEventListener('mouseleave', ()=>{ const remain=parseFloat(bar.style.transform.replace('scaleX(','').replace(')',''))||1; tStart=performance.now()-(duration*(1-remain)); tick(performance.now()); });
   }
-
-  function createToast(opts){
-    const cfg = typeof opts === 'string' ? { message: opts } : { ...opts };
-    cfg.type = (cfg.type||'info').toLowerCase();
-    queue.push(cfg); flush();
-  }
+  function createToast(opts){ const cfg=typeof opts==='string'?{message:opts}:{...opts}; cfg.type=(cfg.type||'info').toLowerCase(); queue.push(cfg); flush(); }
+  window.toast = window.toast || createToast;
 })();
-
-// Ejemplos rápidos:
-// toast({ title:'Listo', message:'Se guardó correctamente', type:'success' });
-// toast({ message:'Cargando datos…', type:'info', duration:3000 });
-// toast({ title:'Atención', message:'Revisa los campos', type:'warn' });
-// toast({ title:'Error', message:'No se pudo enviar', type:'error', actionText:'Reintentar', onAction:()=>reintentar() });
 </script>
 
 </body>
