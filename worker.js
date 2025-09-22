@@ -1,122 +1,107 @@
-// worker.js (plug & play)
-// - POST /vote   -> envía votos a StrawPoll
-// - POST /reset  -> reset lógico (no borra en StrawPoll, sólo responde ok para que tu admin reinicie vistas)
-// - GET  /       -> ping
-// CORS abierto.
-
-const STRAWPOLL_KEY = "ca45fca0-95d4-11f0-be87-9b2473717338";
-
+// worker.js
 export default {
-  async fetch(request) {
+  async fetch(request, env, ctx) {
     const url = new URL(request.url);
 
-    // --- CORS preflight ---
+    // --- CORS ---
     if (request.method === "OPTIONS") {
-      return new Response(null, { status: 204, headers: corsHeaders() });
+      return new Response(null, {
+        status: 204,
+        headers: {
+          "Access-Control-Allow-Origin": "*",
+          "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+          "Access-Control-Allow-Headers": "Content-Type",
+          "Access-Control-Max-Age": "86400",
+        },
+      });
     }
 
-    // --- Ping ---
-    if (request.method === "GET" && url.pathname === "/") {
-      return json({ ok: true, msg: "Use POST /vote or POST /reset" });
+    // --- Ping sencillo ---
+    if (request.method === "GET") {
+      return new Response('OK — use POST /vote or /reset', {
+        headers: { "Access-Control-Allow-Origin": "*" },
+      });
     }
 
-    // --- POST /vote ---
+    // --- Reset lógico (sólo para que el admin tenga algo que pegarle) ---
+    if (request.method === "POST" && url.pathname === "/reset") {
+      return new Response(JSON.stringify({ ok: true, resetAt: new Date().toISOString() }), {
+        headers: {
+          "Access-Control-Allow-Origin": "*",
+          "Content-Type": "application/json",
+        },
+      });
+    }
+
+    // --- Votar ---
     if (request.method === "POST" && url.pathname === "/vote") {
       try {
-        const payload = await safeJson(request);
+        const payload = await request.json();
+        // Frontend manda: { votes: [{poll_id, option_id}, ...] }
+        // o bien { poll_id, option_id } (1 solo)
+        let items = [];
 
-        // Acepta:
-        // 1) { poll_id, option_id }
-        // 2) { votes: [{ poll_id, option_id }, ...] }
-        let votes = [];
-        if (payload && payload.poll_id && payload.option_id) {
-          votes = [{ poll_id: payload.poll_id, option_id: payload.option_id }];
-        } else if (Array.isArray(payload?.votes)) {
-          votes = payload.votes;
+        if (Array.isArray(payload?.votes)) {
+          // normaliza: [{poll_id, option_id}] -> [[pollId, optionId], ...]
+          items = payload.votes
+            .map(v => [v?.poll_id || v?.pollId, v?.option_id || v?.optionId])
+            .filter(([p, o]) => p && o);
+        } else if (payload?.poll_id && payload?.option_id) {
+          items = [[payload.poll_id, payload.option_id]];
         }
 
-        if (!votes.length) {
-          return text(
-            "Bad Request: expected {poll_id, option_id} or {votes:[...]}.",
-            400
-          );
+        if (!items.length) {
+          return new Response("Bad request: missing votes", {
+            status: 400,
+            headers: { "Access-Control-Allow-Origin": "*" },
+          });
         }
 
-        if (!STRAWPOLL_KEY) {
-          return text("Server misconfigured: STRAWPOLL_KEY missing.", 500);
-        }
+        const API_KEY = "ca45fca0-95d4-11f0-be87-9b2473717338"; // <-- tu key
 
-        const results = [];
-        for (const v of votes) {
-          if (!v?.poll_id || !v?.option_id) {
-            return text(
-              "Bad Request: each vote needs poll_id and option_id.",
-              400
-            );
-          }
+        async function sendVote(pollId, optionId) {
+          // Lo que espera StrawPoll v3:
+          //  { pollId: "xxx", votes: ["optionId"] }
+          const body = JSON.stringify({ pollId, votes: [optionId] });
 
-          // StrawPoll v3: /v3/votes body: { pollId, votes:[{ optionId }] }
-          const spRes = await fetch("https://api.strawpoll.com/v3/votes", {
+          const r = await fetch("https://api.strawpoll.com/v3/votes", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
-              "X-API-Key": STRAWPOLL_KEY,
+              "X-API-Key": API_KEY,
             },
-            body: JSON.stringify({
-              pollId: v.poll_id,
-              votes: [{ optionId: v.option_id }],
-            }),
+            body,
           });
 
-          const spTxt = await spRes.text();
-          if (!spRes.ok) {
-            return text(`StrawPoll error (${spRes.status}): ${spTxt}`, spRes.status);
+          const txt = await r.text();
+          if (!r.ok) {
+            throw new Error(`StrawPoll ${r.status}: ${txt || "error"}`);
           }
-
-          let parsed;
-          try { parsed = JSON.parse(spTxt); } catch { parsed = { raw: spTxt }; }
-          results.push(parsed);
+          try { return JSON.parse(txt); } catch { return { ok: true, raw: txt }; }
         }
 
-        return json({ ok: true, results });
+        const results = [];
+        for (const [pollId, optionId] of items) {
+          results.push(await sendVote(pollId, optionId));
+        }
+
+        return new Response(JSON.stringify({ ok: true, results }), {
+          headers: {
+            "Access-Control-Allow-Origin": "*",
+            "Content-Type": "application/json",
+          },
+        });
       } catch (err) {
-        return text(`Proxy error: ${err?.message || String(err)}`, 500);
+        return new Response(`Proxy error: ${err?.message || String(err)}`, {
+          status: 500,
+          headers: { "Access-Control-Allow-Origin": "*" },
+        });
       }
     }
 
-    // --- POST /reset ---
-    if (request.method === "POST" && url.pathname === "/reset") {
-      // Reset lógico (no borra en StrawPoll). Úsalo para que el admin ponga en 0 las vistas locales.
-      const nowIso = new Date().toISOString();
-      return json({ ok: true, resetAt: nowIso, mode: "stateless" });
-    }
-
-    return text("Not found", 404);
+    return new Response("Not found", {
+      status: 404,
+      headers: { "Access-Control-Allow-Origin": "*" },
+    });
   },
 };
-
-// ---------- helpers ----------
-function corsHeaders() {
-  return {
-    "Access-Control-Allow-Origin": "*",
-    "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
-    "Access-Control-Allow-Headers": "Content-Type, Authorization",
-    "Access-Control-Max-Age": "86400",
-  };
-}
-function withCors(h = {}) { return { ...corsHeaders(), ...h }; }
-function json(obj, status = 200) {
-  return new Response(JSON.stringify(obj), {
-    status,
-    headers: withCors({ "Content-Type": "application/json" }),
-  });
-}
-function text(t, status = 200) {
-  return new Response(t, {
-    status,
-    headers: withCors({ "Content-Type": "text/plain; charset=utf-8" }),
-  });
-}
-async function safeJson(request) {
-  try { return await request.json(); } catch { return null; }
-}
