@@ -21,19 +21,9 @@
     .elev{ box-shadow:0 10px 30px rgba(2,6,23,.10); }
     .card-sel{ outline:2px solid color-mix(in oklab, var(--accent) 55%, transparent); outline-offset:0; }
 
-    .chip{
-      display:inline-flex; align-items:center; gap:.35rem;
-      padding:.28rem .55rem; font-size:.75rem; border-radius:999px;
-      border:1px solid rgba(2,6,23,.15);
-      background: rgba(255,255,255,.06);
-    }
+    .chip{ display:inline-flex; align-items:center; gap:.35rem; padding:.28rem .55rem; font-size:.75rem; border-radius:999px; border:1px solid rgba(2,6,23,.15); background: rgba(255,255,255,.06); }
     .sticky-actions{ position:sticky; bottom:0; z-index:40; }
-    .kbd{
-      display:inline-block; padding:0 .5rem;
-      border:1px solid rgba(2,6,23,.25); border-radius:.375rem;
-      font-size:11px; line-height:1.5; opacity:.7;
-      background: rgba(255,255,255,.06);
-    }
+    .kbd{ display:inline-block; padding:0 .5rem; border:1px solid rgba(2,6,23,.25); border-radius:.375rem; font-size:11px; line-height:1.5; opacity:.7; background: rgba(255,255,255,.06); }
 
     .card-img{ width:100%; aspect-ratio:4/5; object-fit:cover; border-radius:0.75rem; }
 
@@ -88,7 +78,7 @@
     .govfoot .wrap{ max-width: 80rem; margin: 0 auto; padding: 28px 1rem 34px; }
     .govfoot .meta{ display:flex; align-items:center; justify-content:center; gap:.75rem; font-size:.8rem; opacity:.9; text-wrap:balance; text-align:center; }
     .govfoot .chip{ display:inline-flex; align-items:center; gap:.35rem; padding:.28rem .55rem; font-size:.7rem; border-radius:999px; border:1px solid rgba(255,255,255,.16); background: rgba(255,255,255,.06); }
-    .govfoot .mark{ display:inline-grid; place-items:center; width:60px; height:60px; border-radius:10px; box-shadow:0 8px 18px rgba(12,80,128,.35); overflow:hidden; background:none; }
+    .govfoot .mark{ display:inline-grid; place-items:center; width:60px; height:60px; border-radius:10px; box-shadow: 0 8px 18px rgba(12,80,128,.35); overflow:hidden; background:none; }
     .govfoot .mark img{ width:100%; height:100%; object-fit:contain; }
     .govfoot .legal{ margin-top:.6rem; font-size:.72rem; opacity:.75; }
 
@@ -96,64 +86,47 @@
 
     #toastHost{ position: fixed; right: 16px; top: 16px; z-index: 60; display: grid; gap: 10px; width: min(92vw, 360px); }
     .ui-toast{ display:grid; grid-template-columns:auto 1fr auto; align-items:center; gap:10px; background: var(--toast-bg); color: var(--toast-fg); border:1px solid var(--toast-border); border-radius:14px; padding:12px 12px; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); box-shadow: var(--toast-shadow); overflow:hidden; }
-    .ui-toast .t-icon{ width:28px; height:28px; border-radius:10px; display:grid; place-items:center; color:#fff; }
-    .ui-toast .t-body{ min-width:0; }
-    .ui-toast .t-title{ font-weight:800; font-size:14px; line-height:1.1; }
-    .ui-toast .t-msg{ font-size:12.5px; opacity:.9; margin-top:2px; word-wrap:break-word; }
-    .ui-toast .t-close{ border:0; background:transparent; color:inherit; opacity:.7; cursor:pointer; }
-    .ui-toast .t-close:hover{ opacity:1; }
-    .ui-toast .t-action{ margin-left:6px; border:0; border-radius:10px; padding:6px 10px; font-weight:700; cursor:pointer; }
-    .ui-toast .t-bar{ position:relative; grid-column:1 / -1; height:3px; margin-top:8px; background:linear-gradient(90deg, rgba(255,255,255,.15), transparent); }
-    .ui-toast .t-bar > i{ position:absolute; inset:0; transform-origin:left; }
-    .ui-toast.success .t-icon, .ui-toast.success .t-action{ background:var(--toast-success); }
-    .ui-toast.info    .t-icon, .ui-toast.info    .t-action{ background:var(--toast-info); }
-    .ui-toast.warn    .t-icon, .ui-toast.warn    .t-action{ background:var(--toast-warn); }
-    .ui-toast.error   .t-icon, .ui-toast.error   .t-action{ background:var(--toast-error); }
-    .ui-toast{ transform: translateY(-8px); opacity:0; }
-    .ui-toast.enter{ animation: toastIn .28s ease forwards; }
-    .ui-toast.exit { animation: toastOut .22s ease forwards; }
-    @keyframes toastIn{ to{ transform:none; opacity:1; } }
-    @keyframes toastOut{ to{ transform: translateY(-8px); opacity:0; } }
+    .ui-toast .t-icon{ width:28px; height:28px; border-radius:10px; display:grid; place-items:center; color:#fff }
+    .ui-toast .t-title{ font-weight:800; font-size:14px; line-height:1.1 }
+    .ui-toast .t-msg{ font-size:12.5px; opacity:.9; margin-top:2px; word-wrap:break-word }
+    .ui-toast .t-close{ border:0; background:transparent; color:inherit; opacity:.7; cursor:pointer }
+    .ui-toast .t-close:hover{ opacity:1 }
+    .ui-toast .t-action{ margin-left:6px; border:0; border-radius:10px; padding:6px 10px; font-weight:700; cursor:pointer }
+    .ui-toast .t-bar{ position:relative; grid-column:1 / -1; height:3px; margin-top:8px; background:linear-gradient(90deg, rgba(255,255,255,.15), transparent) }
+    .ui-toast .t-bar > i{ position:absolute; inset:0; transform-origin:left }
+    .ui-toast.success .t-icon, .ui-toast.success .t-action{ background:#16a34a }
+    .ui-toast.info .t-icon, .ui-toast.info .t-action{ background:#0ea5e9 }
+    .ui-toast.warn .t-icon, .ui-toast.warn .t-action{ background:#f59e0b }
+    .ui-toast.error .t-icon, .ui-toast.error .t-action{ background:#ef4444 }
+    .ui-toast{ transform: translateY(-8px); opacity:0 }
+    .ui-toast.enter{ animation: toastIn .28s ease forwards }
+    .ui-toast.exit{ animation: toastOut .22s ease forwards }
+    @keyframes toastIn{ to{ transform:none; opacity:1 } }
+    @keyframes toastOut{ to{ transform: translateY(-8px); opacity:0 } }
 
     /* === FIX PACK MÓVIL === */
-    @media (max-width: 768px){
-      .elev{ box-shadow:0 8px 22px rgba(2,6,23,.10); }
-      .govbar .max-w-7xl{ padding-left:12px; padding-right:12px; }
-      .govlogo{ height:36px; border-radius:.6rem; }
-      .govtitle{ font-size:clamp(.95rem, 3.5vw, 1.1rem); }
-    }
+    @media (max-width: 768px){ .elev{ box-shadow:0 8px 22px rgba(2,6,23,.10) } .govbar .max-w-7xl{ padding-left:12px; padding-right:12px } .govlogo{ height:36px; border-radius:.6rem } .govtitle{ font-size:clamp(.95rem, 3.5vw, 1.1rem) } }
     @media (max-width: 640px){
       .rule-card{ grid-template-columns: 1fr; gap:12px; padding:14px 14px; border-radius:14px;
         background: radial-gradient(600px 300px at 0% 0%, color-mix(in oklab, var(--accent) 12%, transparent), transparent 55%), linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02)); }
-      .rule-icon{ width:38px; height:38px; border-radius:10px; }
-      .rule-state{ align-self:flex-start; }
-      .rule-card .pill{ font-size:11px; padding:.28rem .5rem; }
-    }
-    @media (max-width: 640px){
-      .input.input-bordered{ padding-left:.6rem; }
-      .kbd{ display:none; }
-      .join .btn{ min-width:auto; padding-left:.9rem; padding-right:.9rem; }
-    }
-    @media (max-width: 640px){
-      .grid-colx{ grid-template-columns: repeat(2, minmax(0,1fr)) !important; }
+      .rule-icon{ width:38px; height:38px; border-radius:10px }
+      .rule-state{ align-self:flex-start }
+      .rule-card .pill{ font-size:11px; padding:.28rem .5rem }
+      .input.input-bordered{ padding-left:.6rem }
+      .kbd{ display:none }
+      .join .btn{ min-width:auto; padding-left:.9rem; padding-right:.9rem }
+      .grid-colx{ grid-template-columns: repeat(2, minmax(0,1fr)) !important }
     }
     @media (max-width: 420px){
-      .grid-colx{ grid-template-columns: repeat(2, minmax(0,1fr)) !important; gap:.6rem !important; }
-      .card .card-body{ padding:10px 12px 12px; }
-      .card-img{ border-radius:.6rem; }
-      .card-title{ font-size:.95rem; }
+      .grid-colx{ gap:.6rem !important }
+      .card .card-body{ padding:10px 12px 12px }
+      .card-img{ border-radius:.6rem }
+      .card-title{ font-size:.95rem }
+      .chip{ font-size:11px; padding:.22rem .45rem }
     }
-    .sticky-actions{ padding-bottom: max(10px, env(safe-area-inset-bottom)); }
-    @media (max-width: 640px){
-      .sticky-actions .bg-base-100{ border-radius:18px; margin-left:-2px; margin-right:-2px; }
-      .sticky-actions .p-4, .sticky-actions .p-6{ padding:14px !important; }
-      .sticky-actions .flex.items-center.gap-2{ flex-wrap:wrap; gap:.5rem; }
-      #btnLimpiar, #btnPreview, #btnEnviar{ min-height:44px; }
-      #btnEnviar{ flex:1 1 100%; }
-    }
-    @media (max-width: 420px){ .chip{ font-size:11px; padding:.22rem .45rem; } }
-    #sessionHint{ margin-top:.35rem; font-size:11.5px; }
-    @media (max-width: 640px){ #btnAdmin{ padding-left:.6rem; padding-right:.6rem; } }
+    .sticky-actions{ padding-bottom: max(10px, env(safe-area-inset-bottom)) }
+    #sessionHint{ margin-top:.35rem; font-size:11.5px }
+    @media (max-width: 640px){ #btnAdmin{ padding-left:.6rem; padding-right:.6rem } }
   </style>
 </head>
 <body class="min-h-full bg-base-200 text-base-content">
@@ -185,7 +158,8 @@
       </div>
 
       <div class="flex items-center gap-2">
-        <a id="btnAdmin" href="admin.html" class="btn btn-sm btn-outline rounded-xl hidden" title="Resultados en tiempo real">
+        <!-- Admin visible SIEMPRE -->
+        <a id="btnAdmin" href="admin.html" class="btn btn-sm btn-outline rounded-xl" title="Resultados en tiempo real">
           <span class="material-symbols-rounded text-base">monitoring</span> Resultados (admin)
         </a>
 
@@ -280,9 +254,13 @@
               <div class="text-xs opacity-60">Debes tener 2 seleccionados: 1 mujer + 1 hombre.</div>
             </div>
           </div>
-          <div class="flex items-center gap-2">
+          <div class="flex items-center gap-2 flex-wrap">
             <button id="btnLimpiar" class="btn btn-ghost rounded-xl">Limpiar</button>
             <button id="btnPreview" class="btn btn-outline rounded-xl">Previsualizar</button>
+            <!-- 🔴 botón reiniciar (solo admin) -->
+            <button id="btnReset" class="btn btn-outline btn-error rounded-xl hidden" title="Reinicia los conteos de voto">
+              <span class="material-symbols-rounded">restart_alt</span> Reiniciar votos
+            </button>
             <button id="btnEnviar" class="btn btn-primary rounded-xl" disabled>
               <span class="material-symbols-rounded">how_to_vote</span> Enviar voto
             </button>
@@ -334,8 +312,12 @@
 const POLL_ID_MUJER  = "7rnzVbMBanO";
 const POLL_ID_HOMBRE = "e6Z2A3DXXgN";
 
-// 👇 Usa tu Worker (ruta absoluta con /vote)
-const PROXY_VOTE_URL = "https://vote-proxy.oimirandao.workers.dev/vote";
+// Base del worker — cambia solo esto si te mueves de dominio
+const PROXY_BASE_URL = "https://vote-proxy.oimirandao.workers.dev";
+// Endpoints
+const PROXY_VOTE_URL  = PROXY_BASE_URL + "/vote";
+const RESET_URL       = PROXY_BASE_URL + "/reset";   // <-- POST para reiniciar (ajusta si tu worker usa otra ruta)
+const MODE_URL        = "./data/mode.json";          // open/close control
 
 const OPTION_IDS = {
   M:{ "ALVARO HERNANDEZ":"B2ZBawNAQgJ","UBALDO YEPEZ":"61gDkX6Kznw","JORGE CORTÉS":"mpnbbvJMPn5","MAURICIO VAZQUEZ":"jVyGeXxokg7","JOSE VARELA":"kogjGWq81Z6","RICARDO CHAGOLLA":"ajnE7Xx4mZW","HIGINIO ROSAS":"YVyPNXwb3gN","GILBERTO SANDOVAL":"jVyGeX1qkg7","ANTONIO CASAS":"NPgxGa81rn2","LUCIO CHAVEZ":"wAg3MOwbKy8","MARCELINO MEDINA":"6QnM5Xwqane" },
@@ -363,12 +345,66 @@ const CANDIDATURAS = [
   { id:'M-08', nombre:'GILBERTO SANDOVAL', genero:'M', foto:'static/img/18.png', lugar:'CEPRERESO VALLE DE SANTIAGO VARONIL' },
   { id:'M-09', nombre:'ANTONIO CASAS',     genero:'M', foto:'static/img/19.png', lugar:'CEPRERESO SAN MIGUEL DE ALLENDE' },
   { id:'M-10', nombre:'LUCIO CHAVEZ',      genero:'M', foto:'static/img/20.png', lugar:'CEPRESP IRAPUATO' },
-  { id:'M-11', nombre:'MARCELINO MEDINA',  genero:'M', foto:'static/img/21.png', lugar:'CEPRERESO ACÁMBARO' }
+  { id:'M-11', nombre:'MARCELINO MEDINA',  genero:'M', foto:'static/img/21.png',  lugar:'CEPRERESO ACÁMBARO' }
 ];
 
 // ===== Helpers / estado (sin sesión) =====
 const $=s=>document.querySelector(s); const $$=s=>Array.from(document.querySelectorAll(s));
 const state={ seleccion:{F:null,M:null}, filtro:'ALL', q:'' };
+
+// ===== Admin gate (para mostrar botón Reset sin exponerlo al público) =====
+(function setupAdminFlag(){
+  const q = new URLSearchParams(location.search);
+  if (q.get('admin') === '1') localStorage.setItem('is_admin', '1');
+})();
+function isAdmin(){ return localStorage.getItem('is_admin') === '1'; }
+
+// ===== Modo remoto (open/close) =====
+const mode = { open: true, message: 'Votación abierta.' };
+
+function paintModeUI(){
+  const banner = document.getElementById('ruleBanner');
+  const label  = banner?.querySelector('.label');
+  const dot    = banner?.querySelector('.dot');
+
+  if (mode.open){
+    banner.className = 'alert alert-success elev rule-card overflow-hidden';
+    if (label) label.textContent = 'Paridad requerida • Votación ABIERTA';
+    if (dot)   dot.style.background = '#22c55e';
+    banner.querySelector('div > div')?.querySelector('p')?.remove();
+    banner.querySelector('div > div')?.insertAdjacentHTML('beforeend', `<p class="text-sm opacity-75 mt-1">${mode.message || 'Listo: regla cumplida (1 mujer + 1 hombre).'}</p>`);
+  }else{
+    banner.className = 'alert alert-warning elev rule-card overflow-hidden';
+    if (label) label.textContent = 'Votación CERRADA por el administrador';
+    if (dot)   dot.style.background = '#f59e0b';
+    banner.querySelector('div > div')?.querySelector('p')?.remove();
+    banner.querySelector('div > div')?.insertAdjacentHTML('beforeend', `<p class="text-sm opacity-75 mt-1">${mode.message || 'Temporalmente cerrada. Inténtalo más tarde.'}</p>`);
+  }
+  updateButtons();
+}
+
+async function fetchModeOnce(){
+  try{
+    const r = await fetch(MODE_URL + '?v=' + Date.now(), { cache: 'no-store' });
+    if (!r.ok) throw 0;
+    const data = await r.json();
+    const changed = (data?.open !== mode.open) || (data?.message !== mode.message);
+    mode.open    = (typeof data?.open === 'boolean') ? data.open : true;
+    mode.message = (typeof data?.message === 'string') ? data.message : 'Votación abierta.';
+    if (changed) paintModeUI();
+  }catch{
+    const changed = (mode.open !== true);
+    mode.open = true;
+    if (changed) paintModeUI();
+  }
+}
+
+let modeTimer = null;
+function startModePolling(){
+  fetchModeOnce();
+  if (modeTimer) clearInterval(modeTimer);
+  modeTimer = setInterval(fetchModeOnce, 7000);
+}
 
 // ===== TopLoader =====
 const topLoader=document.getElementById('topLoader'); let raf,prog=0,active=false;
@@ -391,9 +427,9 @@ const pageLoader = document.getElementById('pageLoader');
 })();
 
 // ===== Tema =====
-function setTheme(mode){
-  if(mode==='light'){ document.documentElement.setAttribute('data-theme','light'); localStorage.setItem('theme','light'); }
-  else if(mode==='dark'){ document.documentElement.setAttribute('data-theme','dark'); localStorage.setItem('theme','dark'); }
+function setTheme(modeTheme){
+  if(modeTheme==='light'){ document.documentElement.setAttribute('data-theme','light'); localStorage.setItem('theme','light'); }
+  else if(modeTheme==='dark'){ document.documentElement.setAttribute('data-theme','dark'); localStorage.setItem('theme','dark'); }
   else{ localStorage.removeItem('theme'); const prefersDark=window.matchMedia('(prefers-color-scheme: dark)').matches;
         document.documentElement.setAttribute('data-theme', prefersDark?'dark':'light'); }
 }
@@ -452,8 +488,13 @@ function renderResumen(){
 }
 function updateButtons(){
   const ready=!!(state.seleccion.F && state.seleccion.M);
-  $('#btnEnviar').disabled = !ready;
-  $('#sessionHint').textContent='No necesitas iniciar sesión para votar.';
+  $('#btnEnviar').disabled = !(ready && mode.open);
+  $('#sessionHint').textContent = mode.open
+    ? 'No necesitas iniciar sesión para votar.'
+    : 'Votación cerrada por el administrador.';
+  // Mostrar / ocultar Reset según admin
+  const resetBtn = $('#btnReset');
+  if (resetBtn){ resetBtn.classList.toggle('hidden', !isAdmin()); }
 }
 
 // ===== Búsqueda / Filtro / Hotkey =====
@@ -461,51 +502,117 @@ $('#search').addEventListener('input', e=>{ state.q=e.target.value||''; renderLi
 $$('input[name="filtroGenero"]').forEach(r=>r.addEventListener('change', ()=>{ state.filtro=$('#filtroMujer').checked?'F':($('#filtroHombre').checked?'M':'ALL'); renderListas(); }));
 window.addEventListener('keydown', e=>{ if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='k'){ e.preventDefault(); $('#search').focus(); } });
 
-// ===== Flujo: preview y envío =====
+// ======== ENVÍO (2 POST secuenciales; headers mínimos; normalización de nombres) ========
+function withTimeout(promise, ms=12000){
+  let t; return Promise.race([promise, new Promise((_,rej)=> t=setTimeout(()=>rej(new Error('timeout')), ms))]).finally(()=> clearTimeout(t));
+}
+const normalize = s => (s||'').normalize('NFD').replace(/\p{Diacritic}/gu,'').replace(/\s+/g,' ').trim().toUpperCase();
+function getOptionId(genero, nombre){
+  const table = genero==='F' ? OPTION_IDS.F : OPTION_IDS.M;
+  if (table[nombre]) return table[nombre];
+  const n = normalize(nombre);
+  for (const [k,v] of Object.entries(table)){ if (normalize(k)===n) return v; }
+  return null;
+}
+async function voteOnce(pollId, optionId){
+  const body = JSON.stringify({ poll_id: pollId, option_id: optionId });
+  const res = await withTimeout(fetch(PROXY_VOTE_URL, {
+    method:'POST', headers:{ 'Content-Type':'application/json', 'Accept':'application/json' },
+    body, mode:'cors', credentials:'omit', cache:'no-store'
+  }));
+  const text = await res.text().catch(()=> '');
+  if(!res.ok){ throw new Error((text && text.length<300 ? text : `HTTP ${res.status}`) || 'Error del proxy'); }
+  try{ return JSON.parse(text); }catch{ return { ok:true, raw:text }; }
+}
+
+// Preview
 document.getElementById('btnEnviar').addEventListener('click', ()=>{
-  const f=state.seleccion.F, m=state.seleccion.M;
-  if(!(f&&m)) return alert('Falta seleccionar 1 mujer y 1 hombre.');
-  $('#previewList').innerHTML =
-    `<li>🟣 <b>Mujer</b>: ${f.nombre} <span class="chip">${f.lugar||f.id}</span></li>
-     <li>🔵 <b>Hombre</b>: ${m.nombre} <span class="chip">${m.lugar||m.id}</span></li>`;
+  if (!mode.open){ alert('La votación está cerrada en este momento por el administrador.'); return; }
+  const f=state.seleccion.F, m=state.seleccion.M; if(!(f&&m)) return alert('Falta seleccionar 1 mujer y 1 hombre.');
+  $('#previewList').innerHTML = `<li>🟣 <b>Mujer</b>: ${f.nombre} <span class="chip">${f.lugar||f.id}</span></li>
+                                 <li>🔵 <b>Hombre</b>: ${m.nombre} <span class="chip">${m.lugar||m.id}</span></li>`;
   $('#whoami').textContent = '';
   document.getElementById('modalPreview').showModal();
 });
 
 document.getElementById('btnPreview').addEventListener('click', ()=>{
   const f=state.seleccion.F, m=state.seleccion.M; if(!(f&&m)) return alert('Falta seleccionar 1 mujer y 1 hombre.');
-  $('#previewList').innerHTML =
-    `<li>🟣 <b>Mujer</b>: ${f.nombre} <span class="chip">${f.lugar||f.id}</span></li>
-     <li>🔵 <b>Hombre</b>: ${m.nombre} <span class="chip">${m.lugar||m.id}</span></li>`;
+  $('#previewList').innerHTML = `<li>🟣 <b>Mujer</b>: ${f.nombre} <span class="chip">${f.lugar||f.id}</span></li>
+                                 <li>🔵 <b>Hombre</b>: ${m.nombre} <span class="chip">${m.lugar||m.id}</span></li>`;
   $('#whoami').textContent = '';
   document.getElementById('modalPreview').showModal();
 });
 
+// Confirmar y enviar
 document.getElementById('btnConfirm').addEventListener('click', async ()=>{
+  if (!mode.open){ alert('La votación se cerró mientras confirmabas. Intenta más tarde.'); return; }
   const f=state.seleccion.F, m=state.seleccion.M; if(!(f&&m)) return;
-  const optIdF=OPTION_IDS.F[f.nombre], optIdM=OPTION_IDS.M[m.nombre];
-  if(!optIdF||!optIdM) return alert('Faltan option_id reales en OPTION_IDS.');
+
+  const optIdF = getOptionId('F', f.nombre);
+  const optIdM = getOptionId('M', m.nombre);
+  if(!optIdF || !optIdM){ alert('Faltan option_id reales en OPTION_IDS (revisa nombres/acentos).'); return; }
+
+  const btn = document.getElementById('btnConfirm'); const prev = btn.innerHTML;
+  btn.disabled = true; btn.innerHTML = '<span class="material-symbols-rounded">hourglass_empty</span> Enviando…';
+
   try{
-    const body = {
-      votes:[
-        {poll_id:POLL_ID_MUJER,  option_id:optIdF},
-        {poll_id:POLL_ID_HOMBRE, option_id:optIdM}
-      ]
-    };
-    const res = await fetch(PROXY_VOTE_URL,{ method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body) });
-    if(!res.ok){ const t=await res.text(); return alert('Error al votar: '+t); }
+    await voteOnce(POLL_ID_MUJER,  optIdF);
+    await voteOnce(POLL_ID_HOMBRE, optIdM);
+
     document.getElementById('modalPreview').close();
     alert('¡Voto registrado en ambas encuestas! 🎉');
-    // reset selección
+
     state.seleccion.F=null; state.seleccion.M=null; renderListas();
-  }catch{ alert('No se pudo enviar el voto.'); }
+  }catch(err){
+    alert('No se pudo enviar el voto:\n' + (err?.message || String(err)));
+  }finally{
+    btn.disabled=false; btn.innerHTML=prev;
+  }
 });
+
+// ===== Reiniciar Votaciones (solo admin) =====
+async function resetVotes(){
+  if (!isAdmin()){
+    alert('Acceso restringido. Activa modo admin con ?admin=1 una vez.');
+    return;
+  }
+  if (!confirm('¿Seguro que quieres reiniciar los conteos de voto? Esta acción no se puede deshacer.')){
+    return;
+  }
+  const btn = document.getElementById('btnReset'); const prev = btn.innerHTML;
+  btn.disabled = true; btn.innerHTML = '<span class="material-symbols-rounded">hourglass_empty</span> Reiniciando…';
+  try{
+    const res = await fetch(RESET_URL, {
+      method:'POST',
+      headers:{ 'Content-Type':'application/json', 'Accept':'application/json' },
+      body: JSON.stringify({ action:'reset' }),
+      mode:'cors', credentials:'omit', cache:'no-store'
+    });
+    const text = await res.text().catch(()=> '');
+    if(!res.ok){ throw new Error((text && text.length<300 ? text : `HTTP ${res.status}`) || 'Error al resetear'); }
+
+    // Feedback
+    toast({ title:'Reinicio completado', message:'Se limpiaron los conteos.', type:'success', duration:2200 });
+    // Limpia selección local
+    state.seleccion.F=null; state.seleccion.M=null; renderListas();
+  }catch(err){
+    alert('No se pudo reiniciar:\n' + (err?.message || String(err)));
+  }finally{
+    btn.disabled=false; btn.innerHTML=prev;
+  }
+}
+document.getElementById('btnReset').addEventListener('click', resetVotes);
 
 document.getElementById('btnLimpiar').addEventListener('click', ()=>{ state.seleccion.F=null; state.seleccion.M=null; renderListas(); });
 
 // INIT
 (function init(){
-  renderListas(); updateButtons();
+  renderListas();
+  updateButtons();
+  paintModeUI();
+  startModePolling();
+  // pinta botón reset si admin
+  if (isAdmin()){ const b=$('#btnReset'); if (b) b.classList.remove('hidden'); }
 })();
 
 // ===== Toast minimal (opcional) =====
