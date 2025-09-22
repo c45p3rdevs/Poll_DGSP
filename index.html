@@ -502,7 +502,7 @@ $('#search').addEventListener('input', e=>{ state.q=e.target.value||''; renderLi
 $$('input[name="filtroGenero"]').forEach(r=>r.addEventListener('change', ()=>{ state.filtro=$('#filtroMujer').checked?'F':($('#filtroHombre').checked?'M':'ALL'); renderListas(); }));
 window.addEventListener('keydown', e=>{ if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='k'){ e.preventDefault(); $('#search').focus(); } });
 
-// ======== ENVÍO (2 POST secuenciales; headers mínimos; normalización de nombres) ========
+// ======== ENVÍO (un solo POST con 2 votos) ========
 function withTimeout(promise, ms=12000){
   let t; return Promise.race([promise, new Promise((_,rej)=> t=setTimeout(()=>rej(new Error('timeout')), ms))]).finally(()=> clearTimeout(t));
 }
@@ -514,14 +514,27 @@ function getOptionId(genero, nombre){
   for (const [k,v] of Object.entries(table)){ if (normalize(k)===n) return v; }
   return null;
 }
-async function voteOnce(pollId, optionId){
-  const body = JSON.stringify({ votes: [{ poll_id: pollId, option_id: optionId }] });
+
+// NUEVO: envía mujer+hombre juntos
+async function voteBoth(pollIdF, optionIdF, pollIdM, optionIdM){
+  const body = JSON.stringify({
+    votes: [
+      { poll_id: pollIdF, option_id: optionIdF },
+      { poll_id: pollIdM, option_id: optionIdM }
+    ]
+  });
+
   const res = await withTimeout(fetch(PROXY_VOTE_URL, {
-    method:'POST', headers:{ 'Content-Type':'application/json', 'Accept':'application/json' },
-    body, mode:'cors', credentials:'omit', cache:'no-store'
+    method:'POST',
+    headers:{ 'Content-Type':'application/json', 'Accept':'application/json' },
+    body,
+    mode:'cors', credentials:'omit', cache:'no-store'
   }));
+
   const text = await res.text().catch(()=> '');
-  if(!res.ok){ throw new Error((text && text.length<300 ? text : `HTTP ${res.status}`) || 'Error del proxy'); }
+  if(!res.ok){
+    throw new Error(text && text.length<800 ? text : `HTTP ${res.status}`);
+  }
   try{ return JSON.parse(text); }catch{ return { ok:true, raw:text }; }
 }
 
@@ -543,7 +556,7 @@ document.getElementById('btnPreview').addEventListener('click', ()=>{
   document.getElementById('modalPreview').showModal();
 });
 
-// Confirmar y enviar
+// Confirmar y enviar (usa voteBoth)
 document.getElementById('btnConfirm').addEventListener('click', async ()=>{
   if (!mode.open){ alert('La votación se cerró mientras confirmabas. Intenta más tarde.'); return; }
   const f=state.seleccion.F, m=state.seleccion.M; if(!(f&&m)) return;
@@ -556,8 +569,8 @@ document.getElementById('btnConfirm').addEventListener('click', async ()=>{
   btn.disabled = true; btn.innerHTML = '<span class="material-symbols-rounded">hourglass_empty</span> Enviando…';
 
   try{
-    await voteOnce(POLL_ID_MUJER,  optIdF);
-    await voteOnce(POLL_ID_HOMBRE, optIdM);
+    const resp = await voteBoth(POLL_ID_MUJER, optIdF, POLL_ID_HOMBRE, optIdM);
+    console.log('proxy response:', resp);
 
     document.getElementById('modalPreview').close();
     alert('¡Voto registrado en ambas encuestas! 🎉');
@@ -576,7 +589,7 @@ async function resetVotes(){
     alert('Acceso restringido. Activa modo admin con ?admin=1 una vez.');
     return;
   }
-  if (!confirm('¿Seguro que quieres reiniciar los conteos de voto? Esta acción no se puede deshacer.')){
+  if (!confirm('¿Seguro que quieres reiniciar los conteos de voto? Esta acción no se puede deshacer?')){
     return;
   }
   const btn = document.getElementById('btnReset'); const prev = btn.innerHTML;
@@ -591,9 +604,7 @@ async function resetVotes(){
     const text = await res.text().catch(()=> '');
     if(!res.ok){ throw new Error((text && text.length<300 ? text : `HTTP ${res.status}`) || 'Error al resetear'); }
 
-    // Feedback
     toast({ title:'Reinicio completado', message:'Se limpiaron los conteos.', type:'success', duration:2200 });
-    // Limpia selección local
     state.seleccion.F=null; state.seleccion.M=null; renderListas();
   }catch(err){
     alert('No se pudo reiniciar:\n' + (err?.message || String(err)));
@@ -611,7 +622,6 @@ document.getElementById('btnLimpiar').addEventListener('click', ()=>{ state.sele
   updateButtons();
   paintModeUI();
   startModePolling();
-  // pinta botón reset si admin
   if (isAdmin()){ const b=$('#btnReset'); if (b) b.classList.remove('hidden'); }
 })();
 
